@@ -8,8 +8,12 @@ namespace Zalo_Clone
     {
         public Mapping()
         {
+            //Reaction
             CreateMap<ReactionModel, Reaction>();
             CreateMap<Reaction, ReactionModel>();
+            //UserData
+            CreateMap<UserDataModel, UserData>();
+            CreateMap<UserData, UserDataModel>();
         }
     }
 }

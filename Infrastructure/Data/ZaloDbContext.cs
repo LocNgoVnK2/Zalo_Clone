@@ -15,5 +15,6 @@ namespace Infrastructure.Data
             
         }
         public DbSet<Reaction> reactions { get; set; }
+        public DbSet<UserData> userData { get; set; }
     }
 }
