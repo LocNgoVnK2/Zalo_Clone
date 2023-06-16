@@ -10,8 +10,8 @@ namespace Infrastructure.Repository
     {
         Task<T> GetById(object id);
         IQueryable<T> GetAll();
-        void Add(T entity);
-        void Update(T entity);
-        void Delete(T entity);
+        Task<bool> Add(T entity);
+        Task<bool> Update(T entity);
+        Task<bool> Delete(T entity);
     }
 }

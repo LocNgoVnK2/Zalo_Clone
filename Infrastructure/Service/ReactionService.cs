@@ -11,11 +11,11 @@ namespace Infrastructure.Service
 {
     public interface IReactionService
     {
-        Reaction GetReaction(int id);
+        Task<Reaction> GetReaction(int id);
         IQueryable<Reaction> GetAll();
-        void AddReaction(Reaction reaction);
-        void RemoveReaction(Reaction reaction);
-        void UpdateReaction(Reaction reaction);
+        Task<bool> AddReaction(Reaction reaction);
+        Task<bool> RemoveReaction(Reaction reaction);
+        Task<bool> UpdateReaction(Reaction reaction);
     }
     public class ReactionService : IReactionService
     {
@@ -24,9 +24,9 @@ namespace Infrastructure.Service
         {
             this._repo = repo;
         }
-        public void AddReaction(Reaction reaction)
+        public async Task<bool> AddReaction(Reaction reaction)
         {
-            _repo.Add(reaction);
+            return await _repo.Add(reaction);
         }
 
         public IQueryable<Reaction> GetAll()
@@ -34,20 +34,20 @@ namespace Infrastructure.Service
             return _repo.GetAll();
         }
 
-        public Reaction GetReaction(int id)
+        public async Task<Reaction> GetReaction(int id)
         {
-            return _repo.GetById(id);
+            return  await _repo.GetById(id);
         }
 
 
-        public void RemoveReaction(Reaction reaction)
+        public async Task<bool> RemoveReaction(Reaction reaction)
         {
-            
+            return await _repo.Delete(reaction);
         }
 
-        public void UpdateReaction(Reaction reaction)
+        public async Task<bool> UpdateReaction(Reaction reaction)
         {
-            
+            return await _repo.Update(reaction);    
         }
     }
 }

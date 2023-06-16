@@ -21,21 +21,61 @@ namespace Zalo_Clone.Controllers
         [HttpGet(Name = "GetReactions")]
         public async Task<List<ReactionModel>> GetAll()
         {
-            return await mapper.Map<IQueryable<ReactionModel>>(_reactionService.GetAll()).ToListAsync();
+            Task<List<Reaction>> reactions = _reactionService.GetAll().ToListAsync();
+            List<Reaction> reactionList = await reactions;
+            return mapper.Map < List < ReactionModel>>(reactionList);
+
         }
         [HttpGet("id")]
         [ProducesResponseType(typeof(ReactionModel), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult GetByID(int id)
+        public async Task<IActionResult> GetByID(int id)
         {
-            Reaction reaction = _reactionService.GetReaction(id)
-            if (reaction != null)
+            Task<Reaction> reaction = _reactionService.GetReaction(id);
+            Reaction reactionAwait = await reaction;
+            if (reactionAwait != null)
             {
-                return Ok(mapper.Map<ReactionModel>(reaction));
+                return Ok(mapper.Map<ReactionModel>(reactionAwait));
             }
             return NotFound();
         }
         [HttpPost]
-        public void 
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Create(ReactionModel reactionModel)
+        {
+            if(reactionModel.Id == 0)
+            {
+                return BadRequest();
+            }
+            Reaction reaction = mapper.Map<Reaction>(reactionModel);
+            await _reactionService.AddReaction(reaction);
+            return CreatedAtAction(nameof(GetByID), new {id = reactionModel.Id}, reactionModel);
+        }
+        [HttpPut("id")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Update(int id, ReactionModel reactionModel)
+        {
+            if(id == 0 || id != reactionModel.Id) {
+                return BadRequest();
+            }
+            Reaction reaction = mapper.Map<Reaction>(reactionModel);
+            await _reactionService.UpdateReaction(reaction);
+            return NoContent();
+        }
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Delete(int id)
+        {
+            Reaction reaction = await _reactionService.GetReaction(id);
+            if(id == 0 || reaction == null)
+            {
+                return BadRequest();
+            }
+            await _reactionService.RemoveReaction(reaction);
+            return NoContent();
+        } 
     }
 }
