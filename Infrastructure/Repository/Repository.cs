@@ -50,12 +50,12 @@ namespace Infrastructure.Repository
             return this.Entites;
         }
 
-        public T GetById(object id)
+        public async Task<T> GetById(object id)
         {
-            return this.Entites.Find(id);
+            return await this.Entites.FindAsync(id);
         }
 
-        public void Add(T entity)
+        public async void Add(T entity)
         {
             try
             {
@@ -63,7 +63,7 @@ namespace Infrastructure.Repository
                 {
                     throw new ArgumentNullException("entity");
                 }
-                this.Entites.Add(entity);
+                await this.Entites.AddAsync(entity);
                 this._context.SaveChanges();
 
             }

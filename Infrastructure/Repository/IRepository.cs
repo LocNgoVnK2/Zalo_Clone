@@ -8,7 +8,7 @@ namespace Infrastructure.Repository
 {
     public interface IRepository<T>
     {
-        T GetById(object id);
+        Task<T> GetById(object id);
         IQueryable<T> GetAll();
         void Add(T entity);
         void Update(T entity);
