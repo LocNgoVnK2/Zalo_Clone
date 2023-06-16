@@ -19,8 +19,8 @@ namespace Infrastructure.Service
     }
     public class ReactionService : IReactionService
     {
-        private ReactionRepository _repo;
-        public ReactionService(ReactionRepository repo)
+        private IReactionRepository _repo;
+        public ReactionService(IReactionRepository repo)
         {
             this._repo = repo;
         }
@@ -42,12 +42,12 @@ namespace Infrastructure.Service
 
         public void RemoveReaction(Reaction reaction)
         {
-            throw new NotImplementedException();
+            
         }
 
         public void UpdateReaction(Reaction reaction)
         {
-            throw new NotImplementedException();
+            
         }
     }
 }

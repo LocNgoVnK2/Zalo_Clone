@@ -10,9 +10,9 @@ namespace Zalo_Clone.Controllers
     [Route("[controller]")]
     public class ReactionController : ControllerBase
     {
-        private readonly ReactionService _reactionService;
+        private readonly IReactionService _reactionService;
         private readonly IMapper mapper;
-        public ReactionController(ReactionService reactionService,IMapper mapper)
+        public ReactionController(IReactionService reactionService,IMapper mapper)
         {
             this._reactionService = reactionService;
             this.mapper = mapper;   
