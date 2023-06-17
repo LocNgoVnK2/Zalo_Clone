@@ -27,7 +27,7 @@ namespace Infrastructure.Repository
                 return _entities;
             }
         }
-        public void Delete(T entity)
+        public async Task<bool> Delete(T entity)
         {
             try
             {
@@ -36,12 +36,14 @@ namespace Infrastructure.Repository
                     throw new ArgumentNullException("entity");
                 }
                 this.Entites.Remove(entity);
-                this._context.SaveChanges();
+                await this._context.SaveChangesAsync();
+                return true;
 
             }
             catch (Exception ex)
             {
                 throw ex;
+                
             }
         }
 
@@ -50,12 +52,12 @@ namespace Infrastructure.Repository
             return this.Entites;
         }
 
-        public T GetById(object id)
+        public async Task<T> GetById(object id)
         {
-            return this.Entites.Find(id);
+            return await this.Entites.FindAsync(id);
         }
 
-        public void Add(T entity)
+        public async Task<bool> Add(T entity)
         {
             try
             {
@@ -63,9 +65,9 @@ namespace Infrastructure.Repository
                 {
                     throw new ArgumentNullException("entity");
                 }
-                this.Entites.Add(entity);
-                this._context.SaveChanges();
-
+                await this.Entites.AddAsync(entity);
+                await this._context.SaveChangesAsync();
+                return true;
             }
             catch (Exception ex)
             {
@@ -73,7 +75,7 @@ namespace Infrastructure.Repository
             }
         }
 
-        public void Update(T entity)
+        public async Task<bool> Update(T entity)
         {
             try
             {
@@ -82,8 +84,8 @@ namespace Infrastructure.Repository
                     throw new ArgumentNullException("entity");
                 }
                 this.Entites.Update(entity);
-                this._context.SaveChanges();
-
+                await this._context.SaveChangesAsync();
+                return true;
             }
             catch (Exception ex)
             {

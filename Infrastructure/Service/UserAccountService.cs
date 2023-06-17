@@ -17,7 +17,7 @@ namespace Infrastructure.Service
     public interface IUserAccountService
     {
 
-        UserAccount GetUserAccount(string email);
+        Task<UserAccount> GetUserAccount(string email);
         void InsertUserAccount(UserAccount userAccount);
         void UpdateUserAccount(UserAccount userAccount);
       
@@ -40,9 +40,9 @@ namespace Infrastructure.Service
             this.configuration = configuration;
         }
 
-        public UserAccount GetUserAccount(string email)
+        public async Task<UserAccount> GetUserAccount(string email)
         {
-            return userAccountRepository.GetById(email);
+            return await userAccountRepository.GetById(email);
         }
         public void InsertUserAccount(UserAccount userAccount)
         {
@@ -111,6 +111,5 @@ namespace Infrastructure.Service
 
                 return result;
         }
-
     }
 }
