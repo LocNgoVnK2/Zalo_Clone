@@ -88,3 +88,105 @@ E:\Project C#\ZaloClone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\runtimes\browser\
 E:\Project C#\ZaloClone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\runtimes\win\lib\netcoreapp3.0\System.Windows.Extensions.dll
 E:\Project C#\ZaloClone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Infrastructure.dll
 E:\Project C#\ZaloClone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Infrastructure.pdb
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\appsettings.Development.json
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\appsettings.json
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Zalo_Clone.exe
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Zalo_Clone.deps.json
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Zalo_Clone.runtimeconfig.json
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Zalo_Clone.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Zalo_Clone.pdb
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\AutoMapper.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Azure.Core.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Azure.Identity.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Humanizer.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.Bcl.AsyncInterfaces.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.Data.SqlClient.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Abstractions.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Design.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.Relational.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.EntityFrameworkCore.SqlServer.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.Extensions.Caching.Abstractions.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.Extensions.Caching.Memory.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.Extensions.Configuration.Abstractions.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.Extensions.DependencyInjection.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.Extensions.DependencyModel.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.Extensions.Logging.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.Extensions.Logging.Abstractions.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.Extensions.Options.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.Extensions.Primitives.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.Identity.Client.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.Identity.Client.Extensions.Msal.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.IdentityModel.Abstractions.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.IdentityModel.Logging.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.IdentityModel.Protocols.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.IdentityModel.Tokens.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.OpenApi.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.SqlServer.Server.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.Win32.SystemEvents.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Mono.TextTemplating.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\System.CodeDom.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\System.Configuration.ConfigurationManager.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\System.Drawing.Common.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\System.IdentityModel.Tokens.Jwt.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\System.Memory.Data.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\System.Runtime.Caching.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\System.Security.Cryptography.ProtectedData.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\System.Security.Permissions.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\System.Text.Encodings.Web.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\System.Text.Json.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\System.Windows.Extensions.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\runtimes\unix\lib\netcoreapp3.1\Microsoft.Data.SqlClient.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\runtimes\win\lib\netcoreapp3.1\Microsoft.Data.SqlClient.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\runtimes\win-arm\native\Microsoft.Data.SqlClient.SNI.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\runtimes\win-arm64\native\Microsoft.Data.SqlClient.SNI.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\runtimes\win\lib\netcoreapp3.0\Microsoft.Win32.SystemEvents.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\runtimes\unix\lib\netcoreapp3.0\System.Drawing.Common.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\runtimes\win\lib\netcoreapp3.0\System.Drawing.Common.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\runtimes\win\lib\netstandard2.0\System.Runtime.Caching.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\runtimes\browser\lib\net6.0\System.Text.Encodings.Web.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\runtimes\win\lib\netcoreapp3.0\System.Windows.Extensions.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Infrastructure.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Infrastructure.pdb
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\obj\Debug\net6.0\Zalo_Clone.csproj.AssemblyReference.cache
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\obj\Debug\net6.0\Zalo_Clone.GeneratedMSBuildEditorConfig.editorconfig
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\obj\Debug\net6.0\Zalo_Clone.AssemblyInfoInputs.cache
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\obj\Debug\net6.0\Zalo_Clone.AssemblyInfo.cs
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\obj\Debug\net6.0\Zalo_Clone.csproj.CoreCompileInputs.cache
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\obj\Debug\net6.0\Zalo_Clone.MvcApplicationPartsAssemblyInfo.cs
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\obj\Debug\net6.0\Zalo_Clone.MvcApplicationPartsAssemblyInfo.cache
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\obj\Debug\net6.0\staticwebassets\msbuild.Zalo_Clone.Microsoft.AspNetCore.StaticWebAssets.props
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\obj\Debug\net6.0\staticwebassets\msbuild.build.Zalo_Clone.props
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\obj\Debug\net6.0\staticwebassets\msbuild.buildMultiTargeting.Zalo_Clone.props
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\obj\Debug\net6.0\staticwebassets\msbuild.buildTransitive.Zalo_Clone.props
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\obj\Debug\net6.0\staticwebassets.pack.json
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\obj\Debug\net6.0\staticwebassets.build.json
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\obj\Debug\net6.0\staticwebassets.development.json
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\obj\Debug\net6.0\scopedcss\bundle\Zalo_Clone.styles.css
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\obj\Debug\net6.0\Zalo_Clone.csproj.CopyComplete
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\obj\Debug\net6.0\Zalo_Clone.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\obj\Debug\net6.0\refint\Zalo_Clone.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\obj\Debug\net6.0\Zalo_Clone.pdb
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\obj\Debug\net6.0\Zalo_Clone.genruntimeconfig.cache
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\obj\Debug\net6.0\ref\Zalo_Clone.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.AspNetCore.Cryptography.Internal.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.Extensions.Identity.Core.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.Extensions.Identity.Stores.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+E:\Project C#\ZaloClone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+E:\Project C#\ZaloClone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.AspNetCore.Cryptography.Internal.dll
+E:\Project C#\ZaloClone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+E:\Project C#\ZaloClone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+E:\Project C#\ZaloClone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.Extensions.Identity.Core.dll
+E:\Project C#\ZaloClone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.Extensions.Identity.Stores.dll
