@@ -10,6 +10,12 @@ namespace Zalo_Clone
         {
             CreateMap<ReactionModel, Reaction>();
             CreateMap<Reaction, ReactionModel>();
+
+            CreateMap<SignUpModel, UserAccount>();
+            CreateMap<UserAccount, SignUpModel>();
+
+            CreateMap<SignInModel, UserAccount>();
+            CreateMap<UserAccount, SignInModel>();
         }
     }
 }
