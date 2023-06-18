@@ -22,6 +22,10 @@ namespace Zalo_Clone
 
             CreateMap<SignInModel, UserAccount>();
             CreateMap<UserAccount, SignInModel>();
+
+            //Block
+            CreateMap<BlockList, BlockModel>();
+            CreateMap<BlockModel, BlockList>();
         }
     }
 }

@@ -35,7 +35,9 @@ builder.Services.AddScoped<IReactionService, ReactionService>();
 //UserData
 builder.Services.AddScoped<IUserDataRepository, UserDataRepository>();
 builder.Services.AddScoped<IUserDataService, UserDataService>();
-
+//block
+builder.Services.AddScoped<IBlockListRepository, BlockListRepository>();
+builder.Services.AddScoped<IBlockService, BlockService>();
 
 builder.Services.AddAuthentication(options =>
 {

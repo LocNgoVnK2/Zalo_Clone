@@ -20,6 +20,6 @@ namespace Infrastructure.Data
         public DbSet<UserData> userData { get; set; }
 
         public DbSet<UserAccount> UserAccounts { get; set; }
-
+        public DbSet<BlockList> Blocks { get; set; }
     }
 }
