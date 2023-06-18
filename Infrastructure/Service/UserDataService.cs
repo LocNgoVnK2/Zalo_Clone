@@ -1,5 +1,6 @@
 ﻿using Infrastructure.Entities;
 using Infrastructure.Repository;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,7 @@ namespace Infrastructure.Service
         Task<UserData> GetUserData(int id);
         Task<bool> AddUserData(UserData data);
         Task<bool> UpdateUserData(UserData data);
+        Task<List<UserData>> GetAllUserData();
     }
     public class UserDataService : IUserDataService
     {
@@ -26,6 +28,11 @@ namespace Infrastructure.Service
         public async Task<bool> AddUserData(UserData data)
         {
             return await _repo.Add(data);
+        }
+
+        public async Task<List<UserData>> GetAllUserData()
+        {
+            return await _repo.GetAll().ToListAsync();
         }
 
         public async Task<UserData> GetUserData(int id)
