@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33502.453
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zalo_Clone", "Zalo_Clone\Zalo_Clone.csproj", "{231DB27F-7D1F-48D6-BED5-D7F7E0FFBC9F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zalo_Clone", "Zalo_Clone\Zalo_Clone.csproj", "{231DB27F-7D1F-48D6-BED5-D7F7E0FFBC9F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{B1098025-8DBB-4FF3-BB18-04B6FA8C361E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{231DB27F-7D1F-48D6-BED5-D7F7E0FFBC9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{231DB27F-7D1F-48D6-BED5-D7F7E0FFBC9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{231DB27F-7D1F-48D6-BED5-D7F7E0FFBC9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1098025-8DBB-4FF3-BB18-04B6FA8C361E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1098025-8DBB-4FF3-BB18-04B6FA8C361E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1098025-8DBB-4FF3-BB18-04B6FA8C361E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1098025-8DBB-4FF3-BB18-04B6FA8C361E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
