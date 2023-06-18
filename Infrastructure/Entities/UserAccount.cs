@@ -13,13 +13,13 @@ namespace Infrastructure.Entities
     public class UserAccount : IdentityUser
     {
        
-        public string Email { get; set; }
+/*        public string Email { get; set; }
         public string NormalizedEmail { get; set; }
         public string Password { get; set; }
         public int Type { get; set; }
         public bool IsConfirmed { get; set; }
         public bool IsActivated { get; set; }
-        public string RestoreMail { get; set; }
+        public string RestoreMail { get; set; }*/
        
     }
 }
