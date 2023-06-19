@@ -13,7 +13,7 @@ namespace Infrastructure.Entities
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        public Int64 Id { get; set; }
         [Column("userSrc")]
         public string UserSrcId { get; set; }
         [Column("userDes")]

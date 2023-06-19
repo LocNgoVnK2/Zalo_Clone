@@ -27,7 +27,7 @@ namespace Infrastructure.Service
 
         public async Task<bool> Block(string userSrcId, string userDesId)
         {
-            IQueryable<BlockList> block = _repo.GetAll().Where(o => o.UserSrcId == userSrcId && o.UserDesId == userDesId);
+            IQueryable<BlockList> block = _repo.GetAll().Where(o => o.UserSrcId.Equals(userSrcId) && o.UserDesId.Equals(userDesId));
             if(block.Count() > 0)
             {
                 return false;

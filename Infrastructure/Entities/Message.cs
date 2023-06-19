@@ -14,11 +14,10 @@ namespace Infrastructure.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        [Column("userSrc")]
         public string Sender { get; set; }
-        [Column("userDes")]
-        public string UserDesId { get; set;}
-        public DateTime BlockDate { get; set; }
+        public DateTime SendTime { get; set; }
+        public int Status { get; set; }
+        public int? IdMessageSrc { get; set; }
 
 
     }

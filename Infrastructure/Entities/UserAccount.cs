@@ -9,10 +9,11 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Infrastructure.Entities
 {
-    //[Table("USER_ACCOUNT")]
-    public class UserAccount : IdentityUser
+    [Table("USER_ACCOUNT")]
+    public class UserAccount 
     {
-       
+        [Key]
+        public string Id { get; set; }
         public string? Email { get; set; }
         public string? NormalizedEmail { get; set; }
         public string? Password { get; set; }
