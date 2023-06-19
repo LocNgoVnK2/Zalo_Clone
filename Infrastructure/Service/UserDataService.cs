@@ -12,7 +12,7 @@ namespace Infrastructure.Service
 {
     public interface IUserDataService
     {
-        Task<UserData> GetUserData(int id);
+        Task<UserData> GetUserData(string id);
         Task<bool> AddUserData(UserData data);
         Task<bool> UpdateUserData(UserData data);
         Task<List<UserData>> GetAllUserData();
@@ -35,7 +35,7 @@ namespace Infrastructure.Service
             return await _repo.GetAll().ToListAsync();
         }
 
-        public async Task<UserData> GetUserData(int id)
+        public async Task<UserData> GetUserData(string id)
         {
             return await _repo.GetById(id);
         }

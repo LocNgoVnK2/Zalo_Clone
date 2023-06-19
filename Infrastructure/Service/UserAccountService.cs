@@ -20,8 +20,8 @@ namespace Infrastructure.Service
         Task<UserAccount> GetUserAccount(string email);
         void InsertUserAccount(UserAccount userAccount);
         void UpdateUserAccount(UserAccount userAccount);
-      
 
+        Task<string> GetIdByEmailAsync(string email);
         Task<string> SignInAsync(UserAccount request);
         Task<IdentityResult> SignUpAsync(UserAccount request);
     }
@@ -103,13 +103,20 @@ namespace Infrastructure.Service
                     IsConfirmed = false,
                     IsActivated = false,
                     RestoreMail = request.RestoreMail,
-                    Password = request.Password
+                    Password = request.Password,
+                    PhoneNumber = request.PhoneNumber
                 };
 
 
                 var result = await userManager.CreateAsync(user, request.Password);
 
                 return result;
+        }
+
+        public async Task<string> GetIdByEmailAsync(string email)
+        {
+            UserAccount user = await userManager.FindByEmailAsync(email);
+            return user.Id;
         }
     }
 }
