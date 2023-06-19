@@ -12,11 +12,13 @@ namespace Zalo_Clone.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IUserAccountService userAccountService;
+        private readonly IUserDataService userDataService;
         private readonly IMapper mapper;
-        public AccountController(IUserAccountService userAccountService, IMapper mapper)
+        public AccountController(IUserAccountService userAccountService, IMapper mapper, IUserDataService userDataService)
         {
             this.userAccountService = userAccountService;
             this.mapper = mapper;
+            this.userDataService = userDataService;
         }
 
         [HttpPost("signup")]
@@ -28,7 +30,12 @@ namespace Zalo_Clone.Controllers
                 var result = await userAccountService.SignUpAsync(request);
                 if (result.Succeeded)
                 {
-                    
+                    string uid = await userAccountService.GetIdByEmailAsync(request.Email);
+                    UserData uData = new UserData()
+                    {
+                        Id = uid
+                    };
+                    userDataService.AddUserData(uData);
                     return Ok("User registered successfully");
                 }
                 else

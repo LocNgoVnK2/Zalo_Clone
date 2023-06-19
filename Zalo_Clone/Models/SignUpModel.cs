@@ -8,9 +8,7 @@ namespace Zalo_Clone.Models
         [Required]
         [NotMapped]
         public string UserName { get; set; }
-        [Required]
-        [NotMapped]
-        public string NormalizedEmail { get; set; }
+ 
         [Required]
         public string Email { get; set; } = null!;
         [Required]
@@ -23,5 +21,7 @@ namespace Zalo_Clone.Models
         public bool IsActivated { get; set; }
         [Required]
         public string RestoreMail { get; set; } = null!;
+        [Required]
+        public string PhoneNunber { get; set; } = null!;
     }
 }
