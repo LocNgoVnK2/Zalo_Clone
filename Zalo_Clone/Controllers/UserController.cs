@@ -9,12 +9,12 @@ namespace Zalo_Clone.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController : ControllerBase
+    public class UserController : ControllerBase
     {
-        private readonly IUserAccountService userAccountService;
+        private readonly IUserService userAccountService;
         private readonly IUserDataService userDataService;
         private readonly IMapper mapper;
-        public AccountController(IUserAccountService userAccountService, IMapper mapper, IUserDataService userDataService)
+        public UserController(IUserService userAccountService, IMapper mapper, IUserDataService userDataService)
         {
             this.userAccountService = userAccountService;
             this.mapper = mapper;
@@ -22,20 +22,23 @@ namespace Zalo_Clone.Controllers
         }
 
         [HttpPost("signup")]
-        public async Task<IActionResult> SignUp(SignUpModel account)
+        public async Task<IActionResult> SignUp(SignUpModel model)
         {
-            UserAccount request = mapper.Map<UserAccount>(account);
+            var request = mapper.Map<User>(model);
             try
             {
-                var result = await userAccountService.SignUpAsync(request);
+                var result = await userAccountService.SignUpAsync(request, model.Password);
                 if (result.Succeeded)
                 {
                     string uid = await userAccountService.GetIdByEmailAsync(request.Email);
                     UserData uData = new UserData()
                     {
-                        Id = uid
+                        Id = uid,
+                        Gender = model.Gender,
+                        DateOfBirth = model.DateOfBirth
+                        
                     };
-                    userDataService.AddUserData(uData);
+                    await userDataService.AddUserData(uData);
                     return Ok("User registered successfully");
                 }
                 else
@@ -52,10 +55,10 @@ namespace Zalo_Clone.Controllers
         [HttpPost("signin")]
         public async Task<IActionResult> SignIn(SignInModel account)
         {
-            UserAccount request = mapper.Map<UserAccount>(account);
+            var request = mapper.Map<User>(account);
             try
             {
-                var token = await userAccountService.SignInAsync(request);
+                var token = await userAccountService.SignInAsync(request, account.Password);
                 if (token != null)
                 {
                     return Ok(new { Token = token });

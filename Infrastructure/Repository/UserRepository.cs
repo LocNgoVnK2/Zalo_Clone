@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repository
 {
-    public interface IUserAccountRepository : IRepository<UserAccount>
+    public interface IUserRepository : IRepository<User>
     {
 
     }
-    public class UserAccountRepository : Repository<UserAccount>, IUserAccountRepository
+    public class UserRepository : Repository<User>, IUserRepository
     {
-        public UserAccountRepository(ZaloDbContext context) : base(context)
+        public UserRepository(ZaloDbContext context) : base(context)
 
         {
         }

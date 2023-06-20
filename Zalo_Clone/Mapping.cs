@@ -17,15 +17,17 @@ namespace Zalo_Clone
             CreateMap<UserData, UserDataModel>();
 
 
-            CreateMap<SignUpModel, UserAccount>();
-            CreateMap<UserAccount, SignUpModel>();
+            CreateMap<SignUpModel, User>();
+            CreateMap<User, SignUpModel>();
 
-            CreateMap<SignInModel, UserAccount>();
-            CreateMap<UserAccount, SignInModel>();
+            CreateMap<SignInModel, User>();
+            CreateMap<User, SignInModel>();
 
             //Block
             CreateMap<BlockList, BlockModel>();
             CreateMap<BlockModel, BlockList>();
+            //User
+            
         }
     }
 }

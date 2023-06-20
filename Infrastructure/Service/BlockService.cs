@@ -32,10 +32,12 @@ namespace Infrastructure.Service
             {
                 return false;
             }
-            BlockList record = new BlockList();
-            record.BlockDate = DateTime.Now;
-            record.UserSrcId = userSrcId;
-            record.UserDesId = userDesId;
+            BlockList record = new BlockList()
+            {
+                BlockDate = DateTime.Now,
+                UserSrcId = userSrcId,
+                UserDesId = userDesId
+            };
             return await _repo.Add(record);
         }
 
