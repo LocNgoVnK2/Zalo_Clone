@@ -28,17 +28,17 @@ namespace Infrastructure.Service
     public class UserAccountService : IUserAccountService
     {
         private IUserAccountRepository userAccountRepository;
-        private UserManager<UserAccount> userManager;
-        private SignInManager<UserAccount> signInManager;
+/*        private UserManager<UserAccount> userManager;
+        private SignInManager<UserAccount> signInManager;*/
         private IConfiguration configuration;
 
-        public UserAccountService(IUserAccountRepository userAccountRepository, UserManager<UserAccount> userManager, SignInManager<UserAccount> signInManager,IConfiguration configuration)
+    /*    public UserAccountService(IUserAccountRepository userAccountRepository, UserManager<UserAccount> userManager, SignInManager<UserAccount> signInManager,IConfiguration configuration)
         {
             this.userAccountRepository = userAccountRepository;
-            this.userManager = userManager;
-            this.signInManager = signInManager;
+*//*            this.userManager = userManager;
+            this.signInManager = signInManager;*//*
             this.configuration = configuration;
-        }
+        }*/
 
         public async Task<UserAccount> GetUserAccount(string email)
         {
@@ -56,67 +56,70 @@ namespace Infrastructure.Service
 
         public async Task<string> SignInAsync(UserAccount request)
         {
-            var user = await userManager.FindByEmailAsync(request.Email);
-            if (user == null)
-            {
-                throw new Exception("Cannot find user");
-            }
+            /*    var user = await userManager.FindByEmailAsync(request.Email);
+                if (user == null)
+                {
+                    throw new Exception("Cannot find user");
+                }
 
-            var result = await signInManager.CheckPasswordSignInAsync(user, request.Password, lockoutOnFailure: false);
-            if (!result.Succeeded)
-            {
-                return null;
-            }
+                var result = await signInManager.CheckPasswordSignInAsync(user, request.Password, lockoutOnFailure: false);
+                if (!result.Succeeded)
+                {
+                    return null;
+                }
 
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Type.ToString())
-            };
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.Role, user.Type.ToString())
+                };
 
-            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]));
-            var credentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+                var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]));
+                var credentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
 
-            var tokenOptions = new JwtSecurityToken(
-                issuer: configuration["JWT:ValidIssuer"],
-                audience: configuration["JWT:ValidAudience"],
-                claims: claims,
-                expires: DateTime.UtcNow.AddHours(1),
-                signingCredentials: credentials
-            );
+                var tokenOptions = new JwtSecurityToken(
+                    issuer: configuration["JWT:ValidIssuer"],
+                    audience: configuration["JWT:ValidAudience"],
+                    claims: claims,
+                    expires: DateTime.UtcNow.AddHours(1),
+                    signingCredentials: credentials
+                );
 
-            var token = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+                var token = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
 
-            return token;
+                return token;*/
+            return null;
         }
 
 
         public async Task<IdentityResult> SignUpAsync(UserAccount request)
         {
-          
-                var user = new UserAccount
-                {
-                    UserName = request.UserName,
-                    NormalizedEmail = request.Email,
-                    Email = request.Email,
-                    Type = request.Type,
-                    IsConfirmed = false,
-                    IsActivated = false,
-                    RestoreMail = request.RestoreMail,
-                    Password = request.Password,
-                    PhoneNumber = request.PhoneNumber
-                };
+
+            /*  var user = new UserAccount
+              {
+                  UserName = request.UserName,
+                  NormalizedEmail = request.Email,
+                  Email = request.Email,
+                  Type = request.Type,
+                  IsConfirmed = false,
+                  IsActivated = false,
+                  RestoreMail = request.RestoreMail,
+                  Password = request.Password,
+                  PhoneNumber = request.PhoneNumber
+              };
 
 
-                var result = await userManager.CreateAsync(user, request.Password);
+              var result = await userManager.CreateAsync(user, request.Password);
 
-                return result;
+              return result;*/
+            return null;
         }
 
         public async Task<string> GetIdByEmailAsync(string email)
         {
-            UserAccount user = await userManager.FindByEmailAsync(email);
-            return user.Id;
+            /* UserAccount user = await userManager.FindByEmailAsync(email);
+             return user.Id;*/
+            return null;
         }
     }
 }
