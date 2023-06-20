@@ -27,7 +27,9 @@ namespace Zalo_Clone
             CreateMap<BlockList, BlockModel>();
             CreateMap<BlockModel, BlockList>();
             //User
-            
+            //Message
+            CreateMap<Message, MessageReceipentModel>();
+            CreateMap<MessageReceipentModel, Message > ();
         }
     }
 }

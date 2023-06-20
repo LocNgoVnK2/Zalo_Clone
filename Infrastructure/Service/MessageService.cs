@@ -12,35 +12,54 @@ namespace Infrastructure.Service
 {
     public interface IMessageService
     {
-        Task<bool> SendMessageToUser(string userSrcId, string userDesId);
+        Task<bool> SendMessageToUser(Message message, string userReceive, List<string>? attachments);
 
     }
-    public class MessageService : IUserDataService
+    public class MessageService : IMessageService
     {
-        private IMessageRepository _repo;
-        public MessageService(IMessageRepository repo)
+        private readonly IMessageRepository _messageRepo;
+        private readonly IMessageReceipentRepository _messageReceipentRepo;
+        private readonly IMessageAttachmentRepository _messageAttachmentRepo;
+        public MessageService(IMessageRepository messageRepo, IMessageReceipentRepository messageReceipentRepo, IMessageAttachmentRepository messageAttachmentRepo)
         {
-            this._repo = repo;
+            this._messageRepo = messageRepo;
+            this._messageReceipentRepo = messageReceipentRepo;
+            this._messageAttachmentRepo = messageAttachmentRepo;
         }
 
-        public async Task<bool> AddUserData(UserData data)
+        public async Task<bool> SendMessageToUser(Message message, string userReceive, List<string>? attachments)
         {
-            return await _repo.Add(data);
-        }
-
-        public async Task<List<UserData>> GetAllUserData()
-        {
-            return await _repo.GetAll().ToListAsync();
-        }
-
-        public async Task<UserData> GetUserData(string id)
-        {
-            return await _repo.GetById(id);
-        }
-
-        public async Task<bool> UpdateUserData(UserData data)
-        {
-            return await _repo.Update(data);
+            var transaction = await _messageRepo.BeginTransaction();
+        
+            bool result = await _messageRepo.Add(message);
+            var messageReceipent = new MessageReceipent()
+            {
+                Id = message.Id,
+                Receiver = userReceive
+            };
+            result = await _messageReceipentRepo.Add(messageReceipent);
+            if (attachments != null || attachments.Count > 0)
+            {
+                foreach (var attachmentString in attachments)
+                {
+                    var attachment = new MessageAttachment()
+                    {
+                        Id = message.Id,
+                        Attachment = Convert.FromBase64String(attachmentString)
+                    };
+                    result = await _messageAttachmentRepo.Add(attachment);
+                }
+            }
+            if (!result)
+            {
+                transaction.Rollback();
+                transaction.Dispose();
+                return false;
+            }
+        
+            transaction.Commit();
+            transaction.Dispose();
+            return result;
         }
     }
 }

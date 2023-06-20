@@ -24,6 +24,7 @@ namespace Infrastructure.Data
         public DbSet<BlockList> Blocks { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<MessageReceipent> MessageReceipents { get; set; }
+        public DbSet<MessageAttachment> MessageAttachments { get; set; }    
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

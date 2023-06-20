@@ -38,7 +38,11 @@ builder.Services.AddScoped<IUserDataService, UserDataService>();
 //block
 builder.Services.AddScoped<IBlockListRepository, BlockListRepository>();
 builder.Services.AddScoped<IBlockService, BlockService>();
-
+//Message
+builder.Services.AddScoped<IMessageService, MessageService>();
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+builder.Services.AddScoped<IMessageReceipentRepository, MessageReceipentRepository>();
+builder.Services.AddScoped<IMessageAttachmentRepository, MessageAttachmentRepository>();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
