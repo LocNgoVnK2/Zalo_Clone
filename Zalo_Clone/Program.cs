@@ -59,8 +59,8 @@ builder.Services.AddAuthentication(options =>
     };
 });
 // user account
-builder.Services.AddScoped<IUserAccountRepository, UserAccountRepository>();
-builder.Services.AddScoped<IUserAccountService, UserAccountService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
 #endregion
 var app = builder.Build();
 

@@ -6,22 +6,19 @@ namespace Zalo_Clone.Models
     public class SignUpModel
     {
         [Required]
-        [NotMapped]
         public string UserName { get; set; }
  
-        [Required]
-        public string Email { get; set; } = null!;
-        [Required]
-        public string Password { get; set; } = null!;
-        [Required]
+        public string Email { get; set; } 
+        public string Password { get; set; }
         public int Type { get; set; }
         [Required]
-        public bool IsConfirmed { get; set; }
-        [Required]
         public bool IsActivated { get; set; }
+        public string? RestoreMail { get; set; }
+        public string? PhoneNunber { get; set; }
+        [MaxLength(3)]
+        public string Gender { get; set; }
         [Required]
-        public string RestoreMail { get; set; } = null!;
-        [Required]
-        public string PhoneNunber { get; set; } = null!;
+        public DateTime DateOfBirth { get; set; }
+
     }
 }
