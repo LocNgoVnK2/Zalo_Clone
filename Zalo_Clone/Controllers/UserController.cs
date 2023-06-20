@@ -30,6 +30,7 @@ namespace Zalo_Clone.Controllers
                 var result = await userAccountService.SignUpAsync(request, model.Password);
                 if (result.Succeeded)
                 {
+                    
                     string uid = await userAccountService.GetIdByEmailAsync(request.Email);
                     UserData uData = new UserData()
                     {
@@ -39,6 +40,7 @@ namespace Zalo_Clone.Controllers
                         
                     };
                     await userDataService.AddUserData(uData);
+                    
                     return Ok("User registered successfully");
                 }
                 else
@@ -73,5 +75,6 @@ namespace Zalo_Clone.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+     
     }
 }

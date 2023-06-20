@@ -9,8 +9,10 @@ namespace Infrastructure.Entities
 {
     public class User : IdentityUser
     {
+        /*
         public bool IsActivated { get; set; }
         public string? RestoreMail { get; set; }
+        */
     }
     
 }

@@ -38,7 +38,12 @@ builder.Services.AddScoped<IUserDataService, UserDataService>();
 //block
 builder.Services.AddScoped<IBlockListRepository, BlockListRepository>();
 builder.Services.AddScoped<IBlockService, BlockService>();
-
+//friend request
+builder.Services.AddScoped<IFriendRequestRepository, FriendRequestRepository>();
+builder.Services.AddScoped<IFriendRequestService, FriendRequestService>();
+//friend list
+builder.Services.AddScoped<IFriendListRepository, FriendListRepository>();
+builder.Services.AddScoped<IFriendListService, FriendListService>();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

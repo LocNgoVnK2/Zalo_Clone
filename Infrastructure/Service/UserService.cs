@@ -99,8 +99,10 @@ namespace Infrastructure.Service
                   UserName = request.UserName,
                   NormalizedEmail = request.Email,
                   Email = request.Email,
+                  /*
                   IsActivated = false,
                   RestoreMail = request.RestoreMail,
+                  */
                   PhoneNumber = request.PhoneNumber
               };
 

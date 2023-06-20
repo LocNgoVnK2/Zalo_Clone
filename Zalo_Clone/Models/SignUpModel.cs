@@ -12,8 +12,7 @@ namespace Zalo_Clone.Models
         public string Password { get; set; }
         public int Type { get; set; }
         [Required]
-        public bool IsActivated { get; set; }
-        public string? RestoreMail { get; set; }
+
         public string? PhoneNunber { get; set; }
         [MaxLength(3)]
         public string Gender { get; set; }

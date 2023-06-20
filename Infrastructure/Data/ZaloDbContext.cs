@@ -22,13 +22,42 @@ namespace Infrastructure.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<BlockList> Blocks { get; set; }
+
+        public DbSet<FriendRequest> FriendRequests { get; set; }
+
+        public DbSet<FriendList> FriendLists { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<MessageReceipent> MessageReceipents { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<User>(b =>
+            modelBuilder.Entity<FriendRequest>(entity =>
+            {
+                entity.ToTable("FRIEND_REQUEST"); 
+
+                entity.HasKey(e => new { e.User1, e.User2 }); 
+
+                entity.Property(e => e.User1)
+                    .HasColumnName("user_1"); 
+
+                entity.Property(e => e.User2)
+                    .HasColumnName("user_2"); 
+            });
+            modelBuilder.Entity<FriendList>(entity =>
+            {
+                entity.ToTable("FRIEND");
+
+                entity.HasKey(e => new { e.User1, e.User2 }); 
+
+                entity.Property(e => e.User1)
+                    .HasColumnName("user_1");
+
+                entity.Property(e => e.User2)
+                    .HasColumnName("user_2"); 
+            });
+        
+        modelBuilder.Entity<User>(b =>
             {
                 b.ToTable(name: "APP_USER");
                 b.Property(p => p.Id).HasMaxLength(256);

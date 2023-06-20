@@ -10,13 +10,16 @@ using static System.Collections.Specialized.BitVector32;
 
 namespace Infrastructure.Service
 {
+    /*
     public interface IMessageService
     {
         Task<bool> SendMessageToUser(string userSrcId, string userDesId);
 
     }
-    public class MessageService : IUserDataService
+    */
+    public class MessageService// : IUserDataService
     {
+        /*
         private IMessageRepository _repo;
         public MessageService(IMessageRepository repo)
         {
@@ -42,5 +45,6 @@ namespace Infrastructure.Service
         {
             return await _repo.Update(data);
         }
+        */
     }
 }

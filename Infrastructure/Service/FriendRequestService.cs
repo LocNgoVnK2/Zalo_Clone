@@ -14,7 +14,7 @@ namespace Infrastructure.Service
         {
             Task<List<FriendRequest>> GetFriendRequestByIdForSender(string userID);
             Task<List<FriendRequest>> GetFriendRequestByIdForReceiver(string userID);
-            Task<bool> RemoveFriendRequest(long id);
+            Task<bool> RemoveFriendRequest(string userSrcId, string userDesId);
             Task<bool> CreateFriendRequest(string userSrcId, string userDesId);
             Task<bool> AcceptFriendRequest(string userSrcId, string userDesId);
             
@@ -93,9 +93,9 @@ namespace Infrastructure.Service
             return friendRequests.ToList();
         }
 
-        public async Task<bool> RemoveFriendRequest(long id)
+        public async Task<bool> RemoveFriendRequest(string userSrcId, string userDesId)
         {
-            FriendRequest friendRequest = await _repo.GetById(id);
+            FriendRequest friendRequest = await _repo.GetAll().FirstOrDefaultAsync(u=>u.User1.Equals(userSrcId)&& u.User2.Equals(userDesId));
             if (friendRequest != null)
             {
                 bool result = await _repo.Delete(friendRequest);

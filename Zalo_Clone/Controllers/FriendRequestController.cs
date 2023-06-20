@@ -20,7 +20,7 @@ namespace Zalo_Clone.Controllers
             this.friendListService = friendListService;
             this.mapper = mapper;
         }
-        [HttpPost]
+        [HttpPost("SendFriendRequest")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> SendFriendRequest(string userSenderId , string userReceiverId)
@@ -33,26 +33,68 @@ namespace Zalo_Clone.Controllers
             return BadRequest();
         }
 
-        [HttpDelete("{Id}")]
-        public async Task<IActionResult> DeniedFriendRequest(long Id)
+        [HttpDelete("DeniedFriendRequest")]
+        public async Task<IActionResult> DeniedFriendRequest(string userSenderId, string userReceiverId)
         {
-            bool result = await friendRequestService.RemoveFriendRequest(Id);
+            bool result = await friendRequestService.RemoveFriendRequest(userSenderId, userReceiverId);
             if (result)
             {
                 return Ok("Request successfully");
             }
             return BadRequest();
         }
-        /*
-        [HttpPost]
+        
+        [HttpPost("AcceptFriendRequest")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> AcceptFriendRequest(FriendRequestModel friendRequestModel)
+        public async Task<IActionResult> AcceptFriendRequest(string userSenderId, string userReceiverId)
         {
-           
+            try
+            {
+                bool result = await friendRequestService.AcceptFriendRequest(userSenderId, userReceiverId);
+                if (result)
+                {
+                    bool newFriend = await friendListService.AddFriend(userSenderId, userReceiverId);
+                    if (newFriend)
+                    {
+                        return Ok("Request successfully");
+                    }
+                }
+                return BadRequest();
 
-            return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
-        */
+        [HttpGet("GetFriendRequestsByIdOfReceiver")]
+        public async Task<IActionResult> GetFriendRequestsByIdOfReceiver(string userID)
+        {
+            try
+            {
+                var friendRequests = await friendRequestService.GetFriendRequestByIdForSender(userID);
+                
+                return Ok(friendRequests);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpGet("GetFriendRequestsByIdOfSender")]
+        public async Task<IActionResult> GetFriendRequestsByIdOfSender(string userID)
+        {
+            try
+            {
+                var friendRequests = await friendRequestService.GetFriendRequestByIdForReceiver(userID);
+                return Ok(friendRequests);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }
