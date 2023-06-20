@@ -43,6 +43,7 @@ namespace Zalo_Clone.Controllers
             }
             return BadRequest();
         }
+        /*
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -52,5 +53,6 @@ namespace Zalo_Clone.Controllers
 
             return BadRequest();
         }
+        */
     }
 }
