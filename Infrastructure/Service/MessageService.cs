@@ -10,13 +10,13 @@ using static System.Collections.Specialized.BitVector32;
 
 namespace Infrastructure.Service
 {
-    
+
     public interface IMessageService
     {
         Task<bool> SendMessageToUser(Message message, string userReceive, List<string>? attachments);
 
     }
-    
+
     public class MessageService : IMessageService
     {
         private readonly IMessageRepository _messageRepo;
@@ -32,7 +32,7 @@ namespace Infrastructure.Service
         public async Task<bool> SendMessageToUser(Message message, string userReceive, List<string>? attachments)
         {
             var transaction = await _messageRepo.BeginTransaction();
-        
+
             bool result = await _messageRepo.Add(message);
             var messageReceipent = new MessageReceipent()
             {
@@ -58,11 +58,11 @@ namespace Infrastructure.Service
                 transaction.Dispose();
                 return false;
             }
-        
+
             transaction.Commit();
             transaction.Dispose();
             return result;
         }
-        
+
     }
 }
