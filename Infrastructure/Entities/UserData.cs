@@ -12,12 +12,12 @@ namespace Infrastructure.Entities
     public class UserData
     {
         [Key]
-        public int Id { get; set; }
+        public string Id { get; set; }
 
-        public byte[] Avatar { get; set; }
+        public byte[]? Avatar { get; set; }
         public DateTime DateOfBirth { get; set; }
-        public string Gender { get; set; }
-        public byte[] Background { get; set; }
+        public string? Gender { get; set; }
+        public byte[]? Background { get; set; }
 
 
 
