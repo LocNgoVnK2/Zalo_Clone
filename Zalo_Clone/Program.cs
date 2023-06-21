@@ -44,6 +44,11 @@ builder.Services.AddScoped<IFriendRequestService, FriendRequestService>();
 //friend list
 builder.Services.AddScoped<IFriendListRepository, FriendListRepository>();
 builder.Services.AddScoped<IFriendListService, FriendListService>();
+//Message
+builder.Services.AddScoped<IMessageService, MessageService>();
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+builder.Services.AddScoped<IMessageReceipentRepository, MessageReceipentRepository>();
+builder.Services.AddScoped<IMessageAttachmentRepository, MessageAttachmentRepository>();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

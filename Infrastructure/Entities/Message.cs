@@ -8,16 +8,17 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Entities
 {
-    [Table("MESSAGE_BASE")]
+    [Table("MESSAGE")]
     public class Message
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        public Int64 Id { get; set; }
         public string Sender { get; set; }
         public DateTime SendTime { get; set; }
         public int Status { get; set; }
         public int? IdMessageSrc { get; set; }
+        public string? Content { get; set; }
 
 
     }
