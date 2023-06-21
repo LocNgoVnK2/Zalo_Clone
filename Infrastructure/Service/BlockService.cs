@@ -27,15 +27,17 @@ namespace Infrastructure.Service
 
         public async Task<bool> Block(string userSrcId, string userDesId)
         {
-            IQueryable<BlockList> block = _repo.GetAll().Where(o => o.UserSrcId == userSrcId && o.UserDesId == userDesId);
+            IQueryable<BlockList> block = _repo.GetAll().Where(o => o.UserSrcId.Equals(userSrcId) && o.UserDesId.Equals(userDesId));
             if(block.Count() > 0)
             {
                 return false;
             }
-            BlockList record = new BlockList();
-            record.BlockDate = DateTime.Now;
-            record.UserSrcId = userSrcId;
-            record.UserDesId = userDesId;
+            BlockList record = new BlockList()
+            {
+                BlockDate = DateTime.Now,
+                UserSrcId = userSrcId,
+                UserDesId = userDesId
+            };
             return await _repo.Add(record);
         }
 

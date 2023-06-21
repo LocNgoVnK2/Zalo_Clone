@@ -24,7 +24,7 @@ builder.Services.AddSingleton(new MapperConfiguration(mc =>
     mc.AddProfile(new Mapping());
 }).CreateMapper());
 
-builder.Services.AddIdentity<UserAccount, IdentityRole>().AddEntityFrameworkStores<ZaloDbContext>().AddDefaultTokenProviders();
+builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<ZaloDbContext>().AddDefaultTokenProviders();
 #region Services
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 //Reaction
@@ -38,7 +38,12 @@ builder.Services.AddScoped<IUserDataService, UserDataService>();
 //block
 builder.Services.AddScoped<IBlockListRepository, BlockListRepository>();
 builder.Services.AddScoped<IBlockService, BlockService>();
-
+//friend request
+builder.Services.AddScoped<IFriendRequestRepository, FriendRequestRepository>();
+builder.Services.AddScoped<IFriendRequestService, FriendRequestService>();
+//friend list
+builder.Services.AddScoped<IFriendListRepository, FriendListRepository>();
+builder.Services.AddScoped<IFriendListService, FriendListService>();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -59,8 +64,8 @@ builder.Services.AddAuthentication(options =>
     };
 });
 // user account
-builder.Services.AddScoped<IUserAccountRepository, UserAccountRepository>();
-builder.Services.AddScoped<IUserAccountService, UserAccountService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
 #endregion
 var app = builder.Build();
 
@@ -72,7 +77,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
