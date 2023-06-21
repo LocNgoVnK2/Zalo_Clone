@@ -7,7 +7,11 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Repository
-{
+{ 
+    public interface IMessageAttachmentRepository : IRepository<MessageAttachment>
+    {
+
+    }
     public interface IMessageReceipentRepository : IRepository<MessageReceipent>
     {
 
@@ -26,6 +30,13 @@ namespace Infrastructure.Repository
     public class MessageReceipentRepository : Repository<MessageReceipent>, IMessageReceipentRepository
     {
         public MessageReceipentRepository(ZaloDbContext context) : base(context)
+
+        {
+        }
+    }
+    public class MessageAttachmentRepository : Repository<MessageAttachment>, IMessageAttachmentRepository
+    {
+        public MessageAttachmentRepository(ZaloDbContext context) : base(context)
 
         {
         }

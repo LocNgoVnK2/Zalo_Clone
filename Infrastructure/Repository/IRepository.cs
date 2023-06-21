@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace Infrastructure.Repository
 {
@@ -13,5 +15,6 @@ namespace Infrastructure.Repository
         Task<bool> Add(T entity);
         Task<bool> Update(T entity);
         Task<bool> Delete(T entity);
+        Task<IDbContextTransaction> BeginTransaction();
     }
 }
