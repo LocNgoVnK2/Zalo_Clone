@@ -30,6 +30,12 @@ namespace Zalo_Clone
             //Message
             CreateMap<Message, MessageReceipentModel>();
             CreateMap<MessageReceipentModel, Message > ();
+
+            CreateMap<Message, MessageGroupModel>();
+            CreateMap<MessageGroupModel, Message>();
+
+            CreateMap<MessageReactDetail, MessageReactModel>();
+            CreateMap<MessageReactModel, MessageReactDetail>();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -9,13 +10,13 @@ using System.Threading.Tasks;
 namespace Infrastructure.Entities
 {
     [Table("BLOCK_LIST")]
+    [PrimaryKey(nameof(UserSrcId), nameof(UserDesId))]
     public class BlockList
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Int64 Id { get; set; }
+
         [Column("userSrc")]
         public string UserSrcId { get; set; }
+
         [Column("userDes")]
         public string UserDesId { get; set;}
         public DateTime BlockDate { get; set; }

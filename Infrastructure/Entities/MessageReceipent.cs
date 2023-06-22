@@ -12,7 +12,7 @@ namespace Infrastructure.Entities
     public class MessageReceipent
     {
         [Key]
-        public Int64 Id { get; set; }
+        public long Id { get; set; }
         public string Receiver { get; set; }
 
 

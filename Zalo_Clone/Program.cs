@@ -49,6 +49,8 @@ builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<IMessageReceipentRepository, MessageReceipentRepository>();
 builder.Services.AddScoped<IMessageAttachmentRepository, MessageAttachmentRepository>();
+builder.Services.AddScoped<IMessageGroupRepository, MessageGroupRepository>();
+builder.Services.AddScoped<IMessageReactDetailRepository, MessageReactDetailRepository>();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
