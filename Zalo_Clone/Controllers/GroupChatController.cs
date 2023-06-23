@@ -29,31 +29,21 @@ namespace Zalo_Clone.Controllers
             GroupChat groupChat = _mapper.Map<GroupChat>(model);
             try
             {
-                bool result = await _groupChatService.AddGroupChat(groupChat,model.imageByBase64);
-              
+                bool result = await _groupChatService.AddGroupChat(groupChat, model.imageByBase64);
+
                 if (result)
                 {
-                    GroupUser user = new GroupUser()
-                    {
-                        IdGroup = groupChat.Id,
-                        IdUser = groupChat.Leader,
-                        JoinDate = DateTime.Now,
-                        IdGroupRole = 3
-                    };
-
-                    bool result1 = await _groupUserService.AddGroupUser(user);
                     return Ok("Add group chat sussess");
                 }
                 else
                 {
                     return BadRequest("cannot create group chat");
                 }
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return new BadRequestObjectResult(ex.Message);
             }
-           
-           
         }
         [HttpGet("GetAllGroupChats")]
         public async Task<IActionResult> GetAllGroupChats()

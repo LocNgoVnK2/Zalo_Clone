@@ -49,19 +49,16 @@ namespace Zalo_Clone.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AcceptFriendRequest(string userSenderId, string userReceiverId)
         {
+            // update transation ở đây
             try
             {
                 bool result = await friendRequestService.AcceptFriendRequest(userSenderId, userReceiverId);
+                
                 if (result)
                 {
-                    bool newFriend = await friendListService.AddFriend(userSenderId, userReceiverId);
-                    if (newFriend)
-                    {
-                        return Ok("Request successfully");
-                    }
+                    return Ok("Request successfully"); 
                 }
                 return BadRequest();
-
             }
             catch (Exception ex)
             {

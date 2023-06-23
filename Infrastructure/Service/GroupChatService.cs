@@ -22,12 +22,15 @@ namespace Infrastructure.Service
     public class GroupChatService : IGroupChatService
     {
         private readonly IGroupChatRepository _groupChatRepository;
-        public GroupChatService(IGroupChatRepository groupChatRepository)
+        private readonly IGroupUserRepository _userRepository;
+        public GroupChatService(IGroupChatRepository groupChatRepository, IGroupUserRepository userRepository)
         {
             _groupChatRepository = groupChatRepository;
+            _userRepository = userRepository;   
         }
         public async Task<bool> AddGroupChat(GroupChat groupChat, string imageByBase64)
         {
+            var transaction = await _groupChatRepository.BeginTransaction();
             if (imageByBase64 != null)
             {
                 groupChat.Image = Convert.FromBase64String(imageByBase64);
@@ -37,6 +40,29 @@ namespace Infrastructure.Service
                 groupChat.Image = new byte[0];
             }
             bool result = await _groupChatRepository.Add(groupChat);
+
+            if (result)
+            {
+                GroupUser user = new GroupUser()
+                {
+                    IdGroup = groupChat.Id,
+                    IdUser = groupChat.Leader,
+                    JoinDate = DateTime.Now,
+                    IdGroupRole = 3
+                };
+
+                result = await _userRepository.Add(user);
+           
+            }
+            if (!result)
+            {
+                transaction.Rollback();
+                transaction.Dispose();
+                return false;
+            }
+
+            transaction.Commit();
+            transaction.Dispose();
             return result;
         }
 
