@@ -51,6 +51,14 @@ builder.Services.AddScoped<IMessageReceipentRepository, MessageReceipentReposito
 builder.Services.AddScoped<IMessageAttachmentRepository, MessageAttachmentRepository>();
 builder.Services.AddScoped<IMessageGroupRepository, MessageGroupRepository>();
 builder.Services.AddScoped<IMessageReactDetailRepository, MessageReactDetailRepository>();
+//Group 
+builder.Services.AddScoped<IGroupRoleRepository, GroupRoleRepository>();
+builder.Services.AddScoped<IGroupRoleService, GroupRoleService>();
+builder.Services.AddScoped<IGroupChatRepository, GroupChatRepository>();
+builder.Services.AddScoped<IGroupChatService, GroupChatService>();
+builder.Services.AddScoped<IGroupUserRepository, GroupUserRepository>();
+builder.Services.AddScoped<IGroupUserService, GroupUserService>();
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
