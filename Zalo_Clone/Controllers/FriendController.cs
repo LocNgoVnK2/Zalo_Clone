@@ -50,20 +50,15 @@ namespace Zalo_Clone.Controllers
             try
             {
                 bool result = await friendListService.UnFriend(userSenderId, userReceiverId);
+
                 if (result)
                 {
-                    
-                    bool resultDeleteFriendRequest = await friendRequestService.RemoveFriendRequest(userSenderId, userReceiverId);
-                    if (resultDeleteFriendRequest)
-                    {
                         return Ok("Delete success");
-                    }
-                    else
-                    {
-                        return BadRequest();
-                    }
                 }
-                return BadRequest();
+                else
+                {
+                        return BadRequest();
+                }
 
             }
             catch (Exception ex)

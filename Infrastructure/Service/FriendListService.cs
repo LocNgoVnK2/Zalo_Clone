@@ -18,15 +18,18 @@ namespace Infrastructure.Service
     }
     public class FriendListService : IFriendListService
     {
-        private IFriendListRepository _repo;
-        public FriendListService(IFriendListRepository repo)
+        private readonly IFriendListRepository _friendListRepository;
+        private readonly IFriendRequestRepository _friendRequestRepository;
+
+        public FriendListService(IFriendListRepository _friendListRepository,IFriendRequestRepository _friendRequestRepository)
         {
-            this._repo = repo;
+            this._friendListRepository = _friendListRepository;
+            this._friendRequestRepository = _friendRequestRepository;
         }
 
         public async Task<bool> AddFriend(string user1, string user2)
         {
-            bool areFriends = await _repo.GetAll()
+            bool areFriends = await _friendListRepository.GetAll()
                 .AnyAsync(f => (f.User1 == user1 && f.User2 == user2) || (f.User1 == user2 && f.User2 == user1));
 
             if (areFriends)
@@ -39,18 +42,37 @@ namespace Infrastructure.Service
                 User1 = user1,
                 User2 = user2
             };
-            return await _repo.Add(newFriend);
+            return await _friendListRepository.Add(newFriend);
         }
 
         public async Task<List<FriendList>> GetFriendListOfUser(string userID)
         {
-            var friendList= await _repo.GetAll().Where(f => f.User1.Equals(userID) || f.User2.Equals(userID)).ToListAsync();
+            var friendList= await _friendListRepository.GetAll().Where(f => f.User1.Equals(userID) || f.User2.Equals(userID)).ToListAsync();
             return friendList;
         }
         public async Task<bool> UnFriend(string userSrcId, string userDesId)
         {
-            FriendList friend = await _repo.GetAll().FirstOrDefaultAsync(f=>(f.User1.Equals(userSrcId)&& f.User2.Equals(userDesId))|| (f.User1.Equals(userDesId) && f.User2.Equals(userSrcId)));
-            return await _repo.Delete(friend);
+            var transaction = await _friendListRepository.BeginTransaction();
+            FriendList friend = await _friendListRepository.GetAll().FirstOrDefaultAsync(f=>(f.User1.Equals(userSrcId)&& f.User2.Equals(userDesId))|| (f.User1.Equals(userDesId) && f.User2.Equals(userSrcId)));
+          
+            bool result = await _friendListRepository.Delete(friend);
+            if (result)
+            {
+                FriendRequest friendRequest = await _friendRequestRepository.GetAll().FirstOrDefaultAsync(u => u.User1.Equals(userSrcId) && u.User2.Equals(userDesId));
+                result = await _friendRequestRepository.Delete(friendRequest);
+               
+            }
+
+            if (!result)
+            {
+                transaction.Rollback();
+                transaction.Dispose();
+                return false;
+            }
+
+            transaction.Commit();
+            transaction.Dispose();
+            return result;
         }
     }
 }

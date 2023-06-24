@@ -25,32 +25,38 @@ namespace Zalo_Clone.Controllers
         public async Task<IActionResult> SignUp(SignUpModel model)
         {
             var request = mapper.Map<User>(model);
-            try
+            var checkEmailExist = await userAccountService.GetIdByEmailAsync(request.Email);
+            if (checkEmailExist != null)
             {
-                var result = await userAccountService.SignUpAsync(request, model.Password);
-                if (result.Succeeded)
-                {
-                    
-                    string uid = await userAccountService.GetIdByEmailAsync(request.Email);
-                    UserData uData = new UserData()
-                    {
-                        Id = uid,
-                        Gender = model.Gender,
-                        DateOfBirth = model.DateOfBirth
-                        
-                    };
-                    await userDataService.AddUserData(uData);
-                    
-                    return Ok("User registered successfully");
-                }
-                else
-                {
-                    return BadRequest(result.Errors);
-                }
+                return BadRequest("Email exist");
             }
-            catch (Exception ex)
+            else
             {
-                return StatusCode(500, ex.Message);
+                try
+                {
+                    var result = await userAccountService.SignUpAsync(request, model.Password);
+                    if (result.Succeeded)
+                    {
+                        string uid = await userAccountService.GetIdByEmailAsync(request.Email);
+                        UserData uData = new UserData()
+                        {
+                            Id = uid,
+                            Gender = model.Gender,
+                            DateOfBirth = model.DateOfBirth
+
+                        };
+                        await userDataService.AddUserData(uData);
+                        return Ok("User registered successfully");
+                    }
+                    else
+                    {
+                        return BadRequest(result.Errors);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, ex.Message);
+                }
             }
         }
 

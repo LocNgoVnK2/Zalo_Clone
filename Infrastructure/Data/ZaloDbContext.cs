@@ -28,10 +28,28 @@ namespace Infrastructure.Data
         public DbSet<FriendList> FriendLists { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<MessageReceipent> MessageReceipents { get; set; }
-        public DbSet<MessageAttachment> MessageAttachments { get; set; }    
+        public DbSet<MessageAttachment> MessageAttachments { get; set; }
+
+        public DbSet<GroupRole> GroupRoles { get; set; }
+
+        public DbSet<GroupChat> GroupChats { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<GroupUser>(entity =>
+            {
+                entity.ToTable("GROUP_USER");
+
+                entity.HasKey(e => new { e.IdUser, e.IdGroup });
+
+                entity.Property(e => e.IdUser)
+                    .HasColumnName("idUser");
+
+                entity.Property(e => e.IdGroup)
+                    .HasColumnName("idGroup");
+            });
 
             modelBuilder.Entity<FriendRequest>(entity =>
             {
@@ -85,6 +103,16 @@ namespace Infrastructure.Data
             {
                 entity.ToTable("USER_TOKENS");
             });
+
+            modelBuilder.Entity<GroupRole>(entity =>
+            {
+                entity.ToTable("GROUP_ROLE");
+            });
+            modelBuilder.Entity<GroupChat>(entity =>
+            {
+                entity.ToTable("GROUP_CHAT");
+            });
+
         }
     }
 }

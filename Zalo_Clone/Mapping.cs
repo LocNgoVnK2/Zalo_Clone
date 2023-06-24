@@ -27,9 +27,20 @@ namespace Zalo_Clone
             CreateMap<BlockList, BlockModel>();
             CreateMap<BlockModel, BlockList>();
             //User
+
             //Message
             CreateMap<Message, MessageReceipentModel>();
             CreateMap<MessageReceipentModel, Message > ();
+            //GroupRole
+            CreateMap<GroupRole, GroupRoleModel>();
+            CreateMap<GroupRoleModel, GroupRole>();
+
+            CreateMap<GroupChat, GroupChatModel>();
+            CreateMap<GroupChatModel, GroupChat>();
+
+
+            CreateMap<GroupUser, GroupUserModel>();
+            CreateMap<GroupUserModel, GroupUser>();
         }
     }
 }
