@@ -15,7 +15,6 @@ namespace Infrastructure.Service
         Task<UserData> GetUserData(string id);
         Task<bool> AddUserData(UserData data);
         Task<bool> UpdateUserData(UserData data);
-        Task<List<UserData>> GetAllUserData();
     }
     public class UserDataService : IUserDataService
     {
@@ -28,11 +27,6 @@ namespace Infrastructure.Service
         public async Task<bool> AddUserData(UserData data)
         {
             return await _repo.Add(data);
-        }
-
-        public async Task<List<UserData>> GetAllUserData()
-        {
-            return await _repo.GetAll().ToListAsync();
         }
 
         public async Task<UserData> GetUserData(string id)

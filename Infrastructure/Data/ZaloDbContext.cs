@@ -34,6 +34,7 @@ namespace Infrastructure.Data
 
         public DbSet<GroupChat> GroupChats { get; set; }
 
+        public DbSet<MessageReactDetail> MessageReactDetails { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

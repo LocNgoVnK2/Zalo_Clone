@@ -9,17 +9,14 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Entities
 {
-    [Table("BLOCK_LIST")]
-    [PrimaryKey(nameof(UserSrcId), nameof(UserDesId))]
-    public class BlockList
+    [Table("MESSAGE_REACT_DETAIL")]
+    [PrimaryKey(nameof(ReactId),nameof(MessageId),nameof(UserReact))]
+    public class MessageReactDetail
     {
 
-        [Column("userSrc")]
-        public string UserSrcId { get; set; }
-
-        [Column("userDes")]
-        public string UserDesId { get; set;}
-        public DateTime BlockDate { get; set; }
+        public int ReactId { get; set; }
+        public long MessageId { get; set; }
+        public string UserReact { get; set; }
 
 
     }
