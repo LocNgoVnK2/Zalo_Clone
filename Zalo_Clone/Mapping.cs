@@ -41,6 +41,12 @@ namespace Zalo_Clone
 
             CreateMap<GroupUser, GroupUserModel>();
             CreateMap<GroupUserModel, GroupUser>();
+
+            CreateMap<Message, MessageGroupModel>();
+            CreateMap<MessageGroupModel, Message>();
+
+            CreateMap<MessageReactDetail, MessageReactModel>();
+            CreateMap<MessageReactModel, MessageReactDetail>();
         }
     }
 }

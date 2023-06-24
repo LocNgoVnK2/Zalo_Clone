@@ -49,6 +49,8 @@ builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<IMessageReceipentRepository, MessageReceipentRepository>();
 builder.Services.AddScoped<IMessageAttachmentRepository, MessageAttachmentRepository>();
+builder.Services.AddScoped<IMessageGroupRepository, MessageGroupRepository>();
+builder.Services.AddScoped<IMessageReactDetailRepository, MessageReactDetailRepository>();
 //Group 
 builder.Services.AddScoped<IGroupRoleRepository, GroupRoleRepository>();
 builder.Services.AddScoped<IGroupRoleService, GroupRoleService>();
@@ -70,10 +72,10 @@ builder.Services.AddAuthentication(options =>
     {
         ValidateIssuer = true,
         ValidateAudience = true,
-        ValidAudience = builder.Configuration["JWT:ValidAudience"] ,
+        ValidAudience = builder.Configuration["JWT:ValidAudience"],
         ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
-        IssuerSigningKey =new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
-        
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
+
     };
 });
 // user account

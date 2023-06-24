@@ -13,12 +13,13 @@ namespace Infrastructure.Entities
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Int64 Id { get; set; }
+        public long Id { get; set; }
         public string Sender { get; set; }
         public DateTime SendTime { get; set; }
         public int Status { get; set; }
         public int? IdMessageSrc { get; set; }
         public string? Content { get; set; }
+        public bool IsRecall { get; set; } = false;
 
 
     }

@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Entities
 {
-    [Table("MESSAGE_ATTACHMENT")]
-    public class MessageAttachment
+    [Table("MESSAGE_GROUP")]
+    public class MessageGroup
     {
         [Key]
         public long Id { get; set; }
-        public byte[]? Attachment { get; set; }
+        public string GroupReceive { get; set; }
 
 
     }
