@@ -1,6 +1,7 @@
 using AutoMapper;
 using Infrastructure.Entities;
 using Zalo_Clone.Models;
+using Zalo_Clone.ModelViews;
 
 namespace Zalo_Clone
 {
@@ -45,8 +46,19 @@ namespace Zalo_Clone
             CreateMap<Message, MessageGroupModel>();
             CreateMap<MessageGroupModel, Message>();
 
+            CreateMap<Message, MessageToDoListModel>();
+            CreateMap<MessageToDoListModel, Message>();
+
             CreateMap<MessageReactDetail, MessageReactModel>();
             CreateMap<MessageReactModel, MessageReactDetail>();
+
+            // ToDoList
+            CreateMap<ToDoList, ToDoListModel>();
+            CreateMap<ToDoListModel, ToDoList>();
+
+            CreateMap<ToDoUser, ToDoUserModel>();
+            CreateMap<ToDoUserModel, ToDoUser>();
+
         }
     }
 }

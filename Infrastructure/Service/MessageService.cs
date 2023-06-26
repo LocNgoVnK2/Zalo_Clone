@@ -15,6 +15,7 @@ namespace Infrastructure.Service
     {
         Task<bool> SendMessageToUser(Message message, string userReceive, List<string>? attachments);
         Task<bool> SendMessageToGroup(Message message, string groupReceive, List<string>? attachments);
+        Task<bool> SendMessageToDoList(Message message, long taskId, List<string>? attachments);
         Task<bool> ReactToMessage(MessageReactDetail messageReactDetail);
         Task<bool> RecallMessage(long idMessage);
         
@@ -31,6 +32,7 @@ namespace Infrastructure.Service
         private readonly IMessageReceipentRepository _messageReceipentRepo;
         private readonly IMessageAttachmentRepository _messageAttachmentRepo;
         private readonly IMessageGroupRepository _messageGroupRepo;
+        private readonly IMessageToDoListRepository _messageToDoListRepo;
         private readonly IMessageReactDetailRepository _messageReactDetailRepo;
         private readonly IReactionRepository _reactionRepo;
         public MessageService(IMessageRepository messageRepo,
@@ -38,7 +40,8 @@ namespace Infrastructure.Service
             IMessageAttachmentRepository messageAttachmentRepo,
             IMessageGroupRepository messageGroupRepo,
             IMessageReactDetailRepository messageReactDetailRepository,
-            IReactionRepository reactionRepository)
+            IReactionRepository reactionRepository,
+            IMessageToDoListRepository messageToDoListRepo)
         {
             this._messageRepo = messageRepo;
             this._messageReceipentRepo = messageReceipentRepo;
@@ -46,6 +49,7 @@ namespace Infrastructure.Service
             this._messageGroupRepo = messageGroupRepo;
             _messageReactDetailRepo = messageReactDetailRepository;
             _reactionRepo = reactionRepository;
+            _messageToDoListRepo = messageToDoListRepo;
         }
 
         public int CountAllReactionInMessage(long idMessage)
@@ -118,6 +122,43 @@ namespace Infrastructure.Service
 
         }
 
+        public async Task<bool> SendMessageToDoList(Message message, long taskId, List<string>? attachments)
+        {
+            var transaction = await _messageRepo.BeginTransaction();
+
+            bool result = await _messageRepo.Add(message);
+            var messageToDoList = new MessageToDoList()
+            {
+                Id = message.Id,
+                TaskId = taskId
+
+            };
+            result = await _messageToDoListRepo.Add(messageToDoList);
+            if (attachments != null || attachments.Count > 0)
+            {
+                foreach (var attachmentString in attachments)
+                {
+                    var attachment = new MessageAttachment()
+                    {
+                        Id = message.Id,
+                        Attachment = Convert.FromBase64String(attachmentString)
+                    };
+                    result = await _messageAttachmentRepo.Add(attachment);
+                }
+            }
+
+            if (!result)
+            {
+                transaction.Rollback();
+                transaction.Dispose();
+                return false;
+            }
+
+            transaction.Commit();
+            transaction.Dispose();
+            return result;
+        }
+
         public async Task<bool> SendMessageToGroup(Message message, string groupReceive, List<string>? attachments)
         {
             var transaction = await _messageRepo.BeginTransaction();
@@ -127,6 +168,7 @@ namespace Infrastructure.Service
             {
                 Id = message.Id,
                 GroupReceive = groupReceive
+               
             };
             result = await _messageGroupRepo.Add(messageGroup);
             if (attachments != null || attachments.Count > 0)
@@ -141,6 +183,7 @@ namespace Infrastructure.Service
                     result = await _messageAttachmentRepo.Add(attachment);
                 }
             }
+       
             if (!result)
             {
                 transaction.Rollback();
@@ -152,6 +195,7 @@ namespace Infrastructure.Service
             transaction.Dispose();
             return result;
         }
+
 
         public async Task<bool> SendMessageToUser(Message message, string userReceive, List<string>? attachments)
         {

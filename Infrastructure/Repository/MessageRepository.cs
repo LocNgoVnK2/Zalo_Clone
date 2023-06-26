@@ -24,6 +24,10 @@ namespace Infrastructure.Repository
     {
 
     }
+    public interface IMessageToDoListRepository : IRepository<MessageToDoList>
+    {
+
+    }
     public interface IMessageRepository : IRepository<Message>
     {
 
@@ -52,6 +56,13 @@ namespace Infrastructure.Repository
     public class MessageGroupRepository : Repository<MessageGroup>, IMessageGroupRepository
     {
         public MessageGroupRepository(ZaloDbContext context) : base(context)
+
+        {
+        }
+    }
+    public class MessageToDoListRepository : Repository<MessageToDoList>, IMessageToDoListRepository
+    {
+        public MessageToDoListRepository(ZaloDbContext context) : base(context)
 
         {
         }

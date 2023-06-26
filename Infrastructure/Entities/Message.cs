@@ -19,7 +19,7 @@ namespace Infrastructure.Entities
         public int Status { get; set; }
         public int? IdMessageSrc { get; set; }
         public string? Content { get; set; }
-        public bool IsRecall { get; set; } = false;
+        public bool? IsRecall { get; set; } = false;
 
 
     }
