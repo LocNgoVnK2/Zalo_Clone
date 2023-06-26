@@ -29,7 +29,9 @@ namespace Infrastructure.Data
         public DbSet<Message> Messages { get; set; }
         public DbSet<MessageReceipent> MessageReceipents { get; set; }
         public DbSet<MessageAttachment> MessageAttachments { get; set; }
-
+        public DbSet<MessageGroup> MessageGroups { get; set; }
+        public DbSet<MessageToDoList> MessagesToDoLists { get; set; }
+        public DbSet<ToDoList> ToDoLists { get; set; }
         public DbSet<GroupRole> GroupRoles { get; set; }
 
         public DbSet<GroupChat> GroupChats { get; set; }
@@ -38,6 +40,19 @@ namespace Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<ToDoUser>(entity =>
+            {
+                entity.ToTable("TODO_USER");
+
+                entity.HasKey(e => new { e.TaskId, e.UserDes });
+
+                entity.Property(e => e.TaskId)
+                    .HasColumnName("taskID");
+
+                entity.Property(e => e.UserDes)
+                    .HasColumnName("userDes");
+            });
 
             modelBuilder.Entity<GroupUser>(entity =>
             {
