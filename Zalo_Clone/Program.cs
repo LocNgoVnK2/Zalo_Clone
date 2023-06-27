@@ -64,6 +64,11 @@ builder.Services.AddScoped<IToDoListRepository, ToDoListRepository>();
 builder.Services.AddScoped<IToDoListService, ToDoListService>();
 builder.Services.AddScoped<IToDoUserRepository, ToDoUserRepository>();
 builder.Services.AddScoped<IToDoUserService, ToDoUserService>();
+// mute 
+builder.Services.AddScoped<IMuteService, MuteService>();
+builder.Services.AddScoped<IMuteGroupRepository, MuteGroupRepository>();
+builder.Services.AddScoped<IMuteUserRepository, MuteUserRepository>();
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
