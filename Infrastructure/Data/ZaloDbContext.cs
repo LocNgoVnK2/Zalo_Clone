@@ -41,10 +41,20 @@ namespace Infrastructure.Data
         public DbSet<MuteGroup> MuteGroups { get; set; }
 
         public DbSet<MuteUser> MuteUsers { get; set; }
+
+        public DbSet<Role> Roles { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+ 
 
+            modelBuilder.Entity<Role>(b =>
+            {
+                b.ToTable(name: "ROLE");
+                b.Property(p => p.Id).HasMaxLength(450);
+                b.Property(p => p.Id).HasColumnType("nvarchar");
+                b.HasDiscriminator(P => P.Id);
+            });
             modelBuilder.Entity<MuteUser>(entity =>
             {
                 entity.ToTable("MUTE_USER");
