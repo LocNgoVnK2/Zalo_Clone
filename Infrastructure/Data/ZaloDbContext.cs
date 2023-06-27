@@ -29,6 +29,7 @@ namespace Infrastructure.Data
         public DbSet<Message> Messages { get; set; }
         public DbSet<MessageReceipent> MessageReceipents { get; set; }
         public DbSet<MessageAttachment> MessageAttachments { get; set; }
+        public DbSet<MessageGroup> MessageGroups { get; set; }
 
         public DbSet<GroupRole> GroupRoles { get; set; }
 
@@ -38,7 +39,7 @@ namespace Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
+            
             modelBuilder.Entity<GroupUser>(entity =>
             {
                 entity.ToTable("GROUP_USER");

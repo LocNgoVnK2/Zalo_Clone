@@ -53,7 +53,7 @@ namespace Zalo_Clone.Controllers
         public async Task<IActionResult> SendMessageToGroup(MessageGroupModel model)
         {
             var message = mapper.Map<Message>(model);
-            bool result = await messageService.SendMessageToUser(message, model.GroupReceive, model.AttachmentByBase64);
+            bool result = await messageService.SendMessageToGroup(message, model.GroupReceive, model.AttachmentByBase64);
             if (result)
             {
                 return NoContent();
@@ -95,6 +95,60 @@ namespace Zalo_Clone.Controllers
         public async Task<int> GetTotalNumberReactionInMessage(long messageId)
         {
             int result = messageService.CountAllReactionInMessage(messageId);
+            return result;
+        }
+        [HttpGet("GetMessagesOfGroup")]
+        public async Task<List<MessageGroupModel>> GetMessagesOfGroup(string groupId)
+        {
+            var messages = await messageService.GetMessagesFromGroup(groupId);
+            List<MessageGroupModel> result = new List<MessageGroupModel>();
+            foreach(var m in messages)
+            {
+                long idMessage = m.Id;
+                MessageGroupModel messageGroupModel = mapper.Map<MessageGroupModel>(m);
+                messageGroupModel.AttachmentByBase64 = new List<string>();
+                List<MessageAttachment> attachmenets = await messageService.GetAttachmentsOfMessage(idMessage);
+                if (attachmenets is null)
+                {
+                    result.Add(messageGroupModel);
+                    continue;
+                }
+                    
+                foreach(MessageAttachment attachment in attachmenets)
+                {
+                    string attachmentByBase64 = Convert.ToBase64String(attachment.Attachment);
+                    messageGroupModel.AttachmentByBase64.Add(attachmentByBase64);
+                }
+                result.Add(messageGroupModel);
+            }
+            return result;
+        }
+        [HttpGet("GetMessagesFromContactOfUser")]
+        public async Task<List<MessageReceipentModel>> GetMessagesOfGroup(string userFirst,string userSec)
+        {
+            var messages = await messageService.GetMessagesOfUsersContact(userFirst, userSec);
+            var result = new List<MessageReceipentModel>();
+            foreach (var m in messages)
+            {
+                long idMessage = m.Id;
+
+                MessageReceipentModel messageReceipentModel = mapper.Map<MessageReceipentModel>(m);
+                messageReceipentModel.Receiver = messageReceipentModel.Sender.Equals(userFirst) ? userSec : userFirst;
+                messageReceipentModel.AttachmentByBase64 = new List<string>();
+                List<MessageAttachment> attachmenets = await messageService.GetAttachmentsOfMessage(idMessage);
+                if (attachmenets is null)
+                {
+                    result.Add(messageReceipentModel);
+                    continue;
+                }
+
+                foreach (MessageAttachment attachment in attachmenets)
+                {
+                    string attachmentByBase64 = Convert.ToBase64String(attachment.Attachment);
+                    messageReceipentModel.AttachmentByBase64.Add(attachmentByBase64);
+                }
+                result.Add(messageReceipentModel);
+            }
             return result;
         }
     }
