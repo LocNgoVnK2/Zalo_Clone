@@ -65,6 +65,10 @@ namespace Zalo_Clone
 
             CreateMap<MuteUser, MuteUserModel>();
             CreateMap<MuteUserModel, MuteUser>();
+
+            // userRole
+            CreateMap<Role, RoleModel>();
+            CreateMap<RoleModel, Role>();
         }
     }
 }

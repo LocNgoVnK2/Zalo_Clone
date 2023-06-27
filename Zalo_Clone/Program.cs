@@ -68,7 +68,9 @@ builder.Services.AddScoped<IToDoUserService, ToDoUserService>();
 builder.Services.AddScoped<IMuteService, MuteService>();
 builder.Services.AddScoped<IMuteGroupRepository, MuteGroupRepository>();
 builder.Services.AddScoped<IMuteUserRepository, MuteUserRepository>();
-
+// user role
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
