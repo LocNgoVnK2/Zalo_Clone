@@ -37,9 +37,40 @@ namespace Infrastructure.Data
         public DbSet<GroupChat> GroupChats { get; set; }
 
         public DbSet<MessageReactDetail> MessageReactDetails { get; set; }
+
+        public DbSet<MuteGroup> MuteGroups { get; set; }
+
+        public DbSet<MuteUser> MuteUsers { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<MuteUser>(entity =>
+            {
+                entity.ToTable("MUTE_USER");
+
+                entity.HasKey(e => new { e.User, e.Receiver });
+
+                entity.Property(e => e.User)
+                    .HasColumnName("user");
+
+                entity.Property(e => e.Receiver)
+                    .HasColumnName("receiver");
+            });
+
+
+            modelBuilder.Entity<MuteGroup>(entity =>
+            {
+                entity.ToTable("MUTE_GROUP");
+
+                entity.HasKey(e => new { e.User, e.GroupId });
+
+                entity.Property(e => e.User)
+                    .HasColumnName("user");
+
+                entity.Property(e => e.GroupId)
+                    .HasColumnName("group");
+            });
 
             modelBuilder.Entity<ToDoUser>(entity =>
             {

@@ -59,6 +59,12 @@ namespace Zalo_Clone
             CreateMap<ToDoUser, ToDoUserModel>();
             CreateMap<ToDoUserModel, ToDoUser>();
 
+            // Mute
+            CreateMap<MuteGroup, MuteGroupModel>();
+            CreateMap<MuteGroupModel, MuteGroup>();
+
+            CreateMap<MuteUser, MuteUserModel>();
+            CreateMap<MuteUserModel, MuteUser>();
         }
     }
 }
