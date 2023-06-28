@@ -35,10 +35,7 @@ namespace Infrastructure.Service
             {
                 groupChat.Image = Convert.FromBase64String(imageByBase64);
             }
-            else
-            {
-                groupChat.Image = new byte[0];
-            }
+     
             bool result = await _groupChatRepository.Add(groupChat);
 
             if (result)
@@ -47,6 +44,7 @@ namespace Infrastructure.Service
                 {
                     IdGroup = groupChat.Id,
                     IdUser = groupChat.Leader,
+                    
                     JoinDate = DateTime.Now,
                     IdGroupRole = 3
                 };

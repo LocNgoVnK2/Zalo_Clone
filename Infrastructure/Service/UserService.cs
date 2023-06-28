@@ -1,6 +1,7 @@
 ﻿using Infrastructure.Entities;
 using Infrastructure.Repository;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -42,7 +43,7 @@ namespace Infrastructure.Service
 
         public async Task<User> GetUser(string email)
         {
-            return await userAccountRepository.GetById(email);
+            return await userAccountRepository.GetAll().Where(X => X.Email.Equals(email)).FirstOrDefaultAsync();
         }
         public void InsertUser(User userAccount)
         {

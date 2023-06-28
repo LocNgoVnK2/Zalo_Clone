@@ -81,6 +81,28 @@ namespace Zalo_Clone.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-     
+
+        [HttpGet("GetUserByEmail")]
+        public async Task<IActionResult> GetUserByEmail(string email)
+        {
+            
+            try
+            {
+                var user = await userAccountService.GetUser(email);
+                if (user != null)
+                {
+                    return Ok(user.Id);
+                }
+                else
+                {
+                    return BadRequest("Invalid email or password");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
     }
 }

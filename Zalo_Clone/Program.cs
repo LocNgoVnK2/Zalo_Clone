@@ -49,6 +49,7 @@ builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<IMessageReceipentRepository, MessageReceipentRepository>();
 builder.Services.AddScoped<IMessageAttachmentRepository, MessageAttachmentRepository>();
+builder.Services.AddScoped<IMessageToDoListRepository, MessageToDoListRepository>();
 builder.Services.AddScoped<IMessageGroupRepository, MessageGroupRepository>();
 builder.Services.AddScoped<IMessageReactDetailRepository, MessageReactDetailRepository>();
 //Group 
@@ -58,7 +59,18 @@ builder.Services.AddScoped<IGroupChatRepository, GroupChatRepository>();
 builder.Services.AddScoped<IGroupChatService, GroupChatService>();
 builder.Services.AddScoped<IGroupUserRepository, GroupUserRepository>();
 builder.Services.AddScoped<IGroupUserService, GroupUserService>();
-
+//To do list
+builder.Services.AddScoped<IToDoListRepository, ToDoListRepository>();
+builder.Services.AddScoped<IToDoListService, ToDoListService>();
+builder.Services.AddScoped<IToDoUserRepository, ToDoUserRepository>();
+builder.Services.AddScoped<IToDoUserService, ToDoUserService>();
+// mute 
+builder.Services.AddScoped<IMuteService, MuteService>();
+builder.Services.AddScoped<IMuteGroupRepository, MuteGroupRepository>();
+builder.Services.AddScoped<IMuteUserRepository, MuteUserRepository>();
+// user role
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using Zalo_Clone.Models;
+using Zalo_Clone.ModelViews;
 
 namespace Zalo_Clone.Controllers
 {
@@ -53,13 +54,27 @@ namespace Zalo_Clone.Controllers
         public async Task<IActionResult> SendMessageToGroup(MessageGroupModel model)
         {
             var message = mapper.Map<Message>(model);
-            bool result = await messageService.SendMessageToGroup(message, model.GroupReceive, model.AttachmentByBase64);
+            bool result = await messageService.SendMessageToGroup(message, model.GroupReceive, model.AttachmentByBase64);//SendMessageToUser(message, model.GroupReceive, model.AttachmentByBase64);
             if (result)
             {
                 return NoContent();
             }
             return BadRequest();
         }
+        [HttpPost("SendMessageToDoList")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> SendMessageToDoList(MessageToDoListModel model)
+        {
+            var message = mapper.Map<Message>(model);
+            bool result = await messageService.SendMessageToDoList(message, model.TaskId, model.AttachmentByBase64);//SendMessageToUser(message, model.GroupReceive, model.AttachmentByBase64);
+            if (result)
+            {
+                return NoContent();
+            }
+            return BadRequest();
+        }
+
         [HttpPost("ReactToMessage")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

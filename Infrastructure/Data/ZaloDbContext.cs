@@ -30,16 +30,71 @@ namespace Infrastructure.Data
         public DbSet<MessageReceipent> MessageReceipents { get; set; }
         public DbSet<MessageAttachment> MessageAttachments { get; set; }
         public DbSet<MessageGroup> MessageGroups { get; set; }
-
+        public DbSet<MessageToDoList> MessagesToDoLists { get; set; }
+        public DbSet<ToDoList> ToDoLists { get; set; }
         public DbSet<GroupRole> GroupRoles { get; set; }
 
         public DbSet<GroupChat> GroupChats { get; set; }
 
         public DbSet<MessageReactDetail> MessageReactDetails { get; set; }
+
+        public DbSet<MuteGroup> MuteGroups { get; set; }
+
+        public DbSet<MuteUser> MuteUsers { get; set; }
+
+        public DbSet<Role> Roles { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            
+ 
+
+            modelBuilder.Entity<Role>(b =>
+            {
+                b.ToTable(name: "ROLE");
+                b.Property(p => p.Id).HasMaxLength(450);
+                b.Property(p => p.Id).HasColumnType("nvarchar");
+                b.HasDiscriminator(P => P.Id);
+            });
+            modelBuilder.Entity<MuteUser>(entity =>
+            {
+                entity.ToTable("MUTE_USER");
+
+                entity.HasKey(e => new { e.User, e.Receiver });
+
+                entity.Property(e => e.User)
+                    .HasColumnName("user");
+
+                entity.Property(e => e.Receiver)
+                    .HasColumnName("receiver");
+            });
+
+
+            modelBuilder.Entity<MuteGroup>(entity =>
+            {
+                entity.ToTable("MUTE_GROUP");
+
+                entity.HasKey(e => new { e.User, e.GroupId });
+
+                entity.Property(e => e.User)
+                    .HasColumnName("user");
+
+                entity.Property(e => e.GroupId)
+                    .HasColumnName("group");
+            });
+
+            modelBuilder.Entity<ToDoUser>(entity =>
+            {
+                entity.ToTable("TODO_USER");
+
+                entity.HasKey(e => new { e.TaskId, e.UserDes });
+
+                entity.Property(e => e.TaskId)
+                    .HasColumnName("taskID");
+
+                entity.Property(e => e.UserDes)
+                    .HasColumnName("userDes");
+            });
+
             modelBuilder.Entity<GroupUser>(entity =>
             {
                 entity.ToTable("GROUP_USER");

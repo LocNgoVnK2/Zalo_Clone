@@ -8,19 +8,19 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Entities
 {
-    [Table("MESSAGE")]
-    public class Message
+    [Table("TO_DO_LIST")]
+    public class ToDoList
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
-        public string Sender { get; set; }
-        public DateTime SendTime { get; set; }
-        public int Status { get; set; }
-        public int? IdMessageSrc { get; set; }
+        public string? UserSrc { get; set; }
         public string? Content { get; set; }
-        public bool? IsRecall { get; set; } = false;
-
+        public DateTime StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public string? Title { get; set; }
+        public int? RemindCount { get; set; }
+        public bool? IsDone { get; set; } = false;
 
     }
 }
