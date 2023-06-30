@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Data
 {
-    public class ZaloDbContext : IdentityDbContext<User>
+    public class ZaloDbContext : IdentityDbContext<User,Role,string>
     {
         public ZaloDbContext(DbContextOptions<ZaloDbContext> options) : base(options)
         {
@@ -42,19 +42,13 @@ namespace Infrastructure.Data
 
         public DbSet<MuteUser> MuteUsers { get; set; }
 
-        public DbSet<Role> Roles { get; set; }
+     //   public DbSet<Role> Roles { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
- 
 
-            modelBuilder.Entity<Role>(b =>
-            {
-                b.ToTable(name: "ROLE");
-                b.Property(p => p.Id).HasMaxLength(450);
-                b.Property(p => p.Id).HasColumnType("nvarchar");
-                b.HasDiscriminator(P => P.Id);
-            });
+
             modelBuilder.Entity<MuteUser>(entity =>
             {
                 entity.ToTable("MUTE_USER");
@@ -139,7 +133,27 @@ namespace Infrastructure.Data
                 b.Property(p => p.Id).HasMaxLength(256);
                 b.Property(p => p.Id).HasColumnType("varchar");
             });
-            modelBuilder.Entity<IdentityRole>(b => b.ToTable(name: "ROLE"));
+            modelBuilder.Entity<IdentityRole>(b => 
+            {
+                b.ToTable(name: "ROLE");
+                b.Property(p => p.Id).HasMaxLength(450);
+                b.Property(p => p.Name).HasMaxLength(256);
+                b.Property(p => p.NormalizedName).HasMaxLength(256);
+                b.Property(b => b.ConcurrencyStamp).IsConcurrencyToken();
+                
+            });
+            modelBuilder.Entity<Role>(b =>
+            {
+                b.ToTable(name: "ROLE");
+                b.Property(p => p.Id).HasMaxLength(450);
+                b.Property(p => p.Id).HasColumnType("nvarchar");
+                b.HasDiscriminator(P => P.Id);
+                b.Property(p => p.Name).HasMaxLength(256);
+                b.Property(p => p.NormalizedName).HasMaxLength(256);
+
+                b.Property(b => b.ConcurrencyStamp).IsConcurrencyToken();
+                b.HasOne<IdentityRole>().WithOne().HasForeignKey<Role>(x => x.Id);
+            });
             modelBuilder.Entity<IdentityUserRole<string>>(entity =>
             {
                 entity.ToTable("USER_ROLES");

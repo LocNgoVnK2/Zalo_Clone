@@ -138,8 +138,34 @@ namespace Zalo_Clone.Controllers
             }
             return result;
         }
+        [HttpGet("GetMessagesToDoList")]
+        public async Task<List<MessageToDoListModel>> GetMessagesOfToDoList(long todoId)
+        {
+            var messages = await messageService.GetMessagesFromToDoList(todoId);
+            List<MessageToDoListModel> result = new List<MessageToDoListModel>();
+            foreach (var m in messages)
+            {
+                long idMessage = m.Id;
+                MessageToDoListModel messageToDoModel = mapper.Map<MessageToDoListModel>(m);
+                messageToDoModel.AttachmentByBase64 = new List<string>();
+                List<MessageAttachment> attachmenets = await messageService.GetAttachmentsOfMessage(idMessage);
+                if (attachmenets is null)
+                {
+                    result.Add(messageToDoModel);
+                    continue;
+                }
+
+                foreach (MessageAttachment attachment in attachmenets)
+                {
+                    string attachmentByBase64 = Convert.ToBase64String(attachment.Attachment);
+                    messageToDoModel.AttachmentByBase64.Add(attachmentByBase64);
+                }
+                result.Add(messageToDoModel);
+            }
+            return result;
+        }
         [HttpGet("GetMessagesFromContactOfUser")]
-        public async Task<List<MessageReceipentModel>> GetMessagesOfGroup(string userFirst,string userSec)
+        public async Task<List<MessageReceipentModel>> GetMessagesOfContactUser(string userFirst,string userSec)
         {
             var messages = await messageService.GetMessagesOfUsersContact(userFirst, userSec);
             var result = new List<MessageReceipentModel>();

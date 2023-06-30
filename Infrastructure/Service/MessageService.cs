@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static System.Collections.Specialized.BitVector32;
 
@@ -27,6 +28,7 @@ namespace Infrastructure.Service
         Task<List<MessageAttachment>> GetAttachmentsOfMessage(long idMessage);
 
         Task<List<Message>> GetMessagesOfUsersContact(string userOne, string userTwo);
+        Task<List<Message>> GetMessagesFromToDoList(long todoId);
     }
 
     public class MessageService : IMessageService
@@ -268,5 +270,16 @@ namespace Infrastructure.Service
 
         }
 
+        public async Task<List<Message>> GetMessagesFromToDoList(long todoId)
+        {
+            var rs = await _messageToDoListRepo.GetAll().Where(x => x.TaskId.Equals(todoId)).Select(x => x.Id).ToListAsync();
+            List<Message> messages = new List<Message>();
+            foreach (var r in rs)
+            {
+                Message message = await _messageRepo.GetById(r);
+                messages.Add(message);
+            }
+            return messages;
+        }
     }
 }

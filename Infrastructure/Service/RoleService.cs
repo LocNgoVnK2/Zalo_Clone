@@ -1,5 +1,8 @@
-﻿using Infrastructure.Entities;
+﻿using Infrastructure.Data;
+using Infrastructure.Entities;
 using Infrastructure.Repository;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,44 +13,73 @@ namespace Infrastructure.Service
 {
     public interface IRoleService
     {
-        Task<Role> GetRole(int id);
+        Role GetRole(string id);
         IQueryable<Role> GetAllRoles();
-        Task<bool> AddRole(Role role);
+        Task<bool> AddRole(string name);
         Task<bool> RemoveRole(Role role);
         Task<bool> UpdateRole(Role role);
     }
     public class RoleService:IRoleService
     {
-        private readonly IRoleRepository _roleRepository;
 
-        public RoleService(IRoleRepository roleRepository)
+        private readonly RoleManager<Role> _roleManager;
+        private readonly IRoleRepository _roleRepository;
+        private readonly ZaloDbContext _dbContext;
+        public RoleService(RoleManager<Role> roleManager, ZaloDbContext context, IRoleRepository roleRepository)
         {
+            _roleManager = roleManager;
+            _dbContext = context;
             _roleRepository = roleRepository;
         }
 
-        public async Task<Role> GetRole(int id)
+        public Role GetRole(string id)
         {
-            return await _roleRepository.GetById(id);
+            var result = _roleManager.Roles.Where(t => t.Id.Equals(id)).Single();
+            return result;
         }
 
         public IQueryable<Role> GetAllRoles()
         {
-            return _roleRepository.GetAll();
+            var result = _roleManager.Roles;
+            if(result.Any())
+                return result;
+            return null;
         }
 
-        public async Task<bool> AddRole(Role role)
+        public async Task<bool> AddRole(string name)
         {
-            return await _roleRepository.Add(role);
+            var exist = await _roleManager.RoleExistsAsync(name);
+            if(!exist)
+            {
+                Role role = new Role();
+                role.Name = name;
+                await _roleManager.CreateAsync(role);
+                return true;
+            }
+            return false;
         }
 
         public async Task<bool> RemoveRole(Role role)
         {
-            return await _roleRepository.Delete(role);
+            var exist = await _roleManager.RoleExistsAsync(role.Name);
+            if (exist)
+            {
+                
+                await _roleManager.DeleteAsync(role);
+                return true;
+            }
+            return false;
         }
 
         public async Task<bool> UpdateRole(Role role)
         {
-            return await _roleRepository.Update(role);
+            var exist = await _roleManager.RoleExistsAsync(role.Name);
+            if (exist)
+            {
+                await _roleManager.UpdateAsync(role);
+                return true;
+            }
+            return false;
         }
     }
 }

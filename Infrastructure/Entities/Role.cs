@@ -12,7 +12,7 @@ namespace Infrastructure.Entities
     [Table("ROLE")]
     public class Role : IdentityRole
     {
-      
+        
      
     }
 }
