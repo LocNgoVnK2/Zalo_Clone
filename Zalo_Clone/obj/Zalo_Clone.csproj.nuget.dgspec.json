@@ -1,20 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Project C#\\ZaloClone\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone.csproj": {}
+    "D:\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone.csproj": {}
   },
   "projects": {
-    "E:\\Project C#\\ZaloClone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj": {
+    "D:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Project C#\\ZaloClone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj",
+        "projectUniqueName": "D:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj",
         "projectName": "Infrastructure",
-        "projectPath": "E:\\Project C#\\ZaloClone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj",
-        "packagesPath": "C:\\Users\\LENOVO\\.nuget\\packages\\",
-        "outputPath": "E:\\Project C#\\ZaloClone\\Zalo_Clone\\Infrastructure\\obj\\",
+        "projectPath": "D:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\a\\.nuget\\packages\\",
+        "outputPath": "D:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\LENOVO\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\a\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -44,14 +48,6 @@
               "target": "Package",
               "version": "[12.0.1, )"
             },
-            "Microsoft.AspNetCore.Identity": {
-              "target": "Package",
-              "version": "[2.2.0, )"
-            },
-            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
-              "target": "Package",
-              "version": "[6.0.18, )"
-            },
             "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
               "version": "[7.0.7, )"
@@ -79,21 +75,25 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.203\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.202\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "E:\\Project C#\\ZaloClone\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone.csproj": {
+    "D:\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Project C#\\ZaloClone\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone.csproj",
+        "projectUniqueName": "D:\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone.csproj",
         "projectName": "Zalo_Clone",
-        "projectPath": "E:\\Project C#\\ZaloClone\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone.csproj",
-        "packagesPath": "C:\\Users\\LENOVO\\.nuget\\packages\\",
-        "outputPath": "E:\\Project C#\\ZaloClone\\Zalo_Clone\\Zalo_Clone\\obj\\",
+        "projectPath": "D:\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone.csproj",
+        "packagesPath": "C:\\Users\\a\\.nuget\\packages\\",
+        "outputPath": "D:\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\LENOVO\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\a\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -107,8 +107,8 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "E:\\Project C#\\ZaloClone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj": {
-                "projectPath": "E:\\Project C#\\ZaloClone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj"
+              "D:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj": {
+                "projectPath": "D:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj"
               }
             }
           }
@@ -165,7 +165,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.203\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.202\\RuntimeIdentifierGraph.json"
         }
       }
     }

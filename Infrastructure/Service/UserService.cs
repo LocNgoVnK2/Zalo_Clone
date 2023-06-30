@@ -1,6 +1,6 @@
 ﻿using Infrastructure.Entities;
 using Infrastructure.Repository;
-using Microsoft.AspNetCore.Identity;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,21 +24,19 @@ namespace Infrastructure.Service
         void UpdateUser(User userAccount);
 
         Task<string> GetIdByEmailAsync(string email);
-        Task<string> SignInAsync(User request, string password);
-        Task<IdentityResult> SignUpAsync(User request, string password);
+        Task<string> SignInAsync(User request);
+        Task<bool> SignUpAsync(User request);
     }
     public class UserService : IUserService
     {
         private IUserRepository userAccountRepository;
-        private UserManager<User> userManager;
-        private SignInManager<User> signInManager;
+   
         private IConfiguration configuration;
 
-        public UserService(IUserRepository userAccountRepository, UserManager<User> userManager, SignInManager<User> signInManager,IConfiguration configuration)
+        public UserService(IUserRepository userAccountRepository,IConfiguration configuration)
         {
             this.userAccountRepository = userAccountRepository;
-            this.userManager = userManager;
-            this.signInManager = signInManager;
+      
             this.configuration = configuration;
         }
 
@@ -55,20 +54,13 @@ namespace Infrastructure.Service
         }
 
 
-        public async Task<string> SignInAsync(User request,string password)
+        public async Task<string> SignInAsync(User request)
         {
-            var user = await userManager.FindByEmailAsync(request.Email);
+            var user = userAccountRepository.GetAll().Where(x=>x.Email.Equals(request.Email) && x.Password.Equals(request.Password)).FirstOrDefault();
              if (user == null)
              {
                  throw new Exception("Cannot find user");
              }
-
-             var result = await signInManager.CheckPasswordSignInAsync(user, password, lockoutOnFailure: false);
-             if (!result.Succeeded)
-             {
-                 return null;
-             }
-
              var claims = new List<Claim>
              {
                  new Claim(ClaimTypes.Email, user.Email)
@@ -92,29 +84,44 @@ namespace Infrastructure.Service
         }
 
 
-        public async Task<IdentityResult> SignUpAsync(User request,string password)
+        public async Task<bool> SignUpAsync(User request)
         {
-
-             var user = new User
-              {
-                  UserName = request.UserName,
-                  NormalizedEmail = request.Email,
-                  Email = request.Email,
-                  IsActivated = false,
-                  RestoreMail = request.RestoreMail,
-                  PhoneNumber = request.PhoneNumber
-              };
-
-
-              var result = await userManager.CreateAsync(user,password);
-
-              return result;
+            try
+            {
+                request.Id = GenerateRandomId();
+                while (userAccountRepository.GetById(request.Id) == null)
+                {
+                    request.Id = GenerateRandomId();
+                }
+                var result = await userAccountRepository.Add(request);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to sign up.", ex);
+            }
+        }
+        private string GenerateRandomId()
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var random = new Random();
+            var id = new string(Enumerable.Repeat(chars, 64)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+            return id;
         }
 
         public async Task<string> GetIdByEmailAsync(string email)
         {
-            User user = await userManager.FindByEmailAsync(email);
-             return user.Id;
+            string userid = await userAccountRepository.GetAll().Where(x=>x.Email.Equals(email)).Select(s=>s.Id).FirstOrDefaultAsync();
+            if(userid == null)
+            {
+                return null;
+            }
+            else
+            {
+                return userid;
+            }
         }
+
     }
 }
