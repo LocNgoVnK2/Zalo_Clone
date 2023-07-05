@@ -20,10 +20,10 @@ namespace Zalo_Clone.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetRole(string id)
+        [HttpGet("{name}")]
+        public async Task<IActionResult> GetRole(string name)
         {
-            var role = _roleService.GetRole(id);
+            var role = _roleService.GetRole(name);
             if (role == null)
                 return NotFound();
 

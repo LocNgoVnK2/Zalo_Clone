@@ -1,7 +1,7 @@
 ﻿using Infrastructure.Data;
 using Infrastructure.Entities;
 using Infrastructure.Repository;
-
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +12,7 @@ namespace Infrastructure.Service
 {
     public interface IRoleService
     {
-        Task<Role> GetRole(string id);
+        Task<Role> GetRole(string name);
         IQueryable<Role> GetAllRoles();
         Task<bool> AddRole(string name);
         Task<bool> RemoveRole(Role role);
@@ -29,10 +29,17 @@ namespace Infrastructure.Service
        
             _roleRepository = roleRepository;
         }
-
-        public async Task<Role> GetRole(string id)
+        private string GenerateRandomId()
         {
-            var result = await _roleRepository.GetById(id);
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var random = new Random();
+            var id = new string(Enumerable.Repeat(chars, 64)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+            return id;
+        }
+        public async Task<Role?> GetRole(string name)
+        {
+            var result = await _roleRepository.GetAll().Where(x => x.Name.Equals(name)).FirstOrDefaultAsync();
             return result;
         }
 
@@ -43,11 +50,23 @@ namespace Infrastructure.Service
                 return roles;
             return null;
         }
-
         public async Task<bool> AddRole(string name)
         {
+            if (await GetRole(name) != null)
+            {
+                return false;
+            }
+            string id = "";
+            do
+            {
+                id = GenerateRandomId();
+                var roles = await GetAllRoles().Where(x => x.Id.Equals(id)).FirstOrDefaultAsync();
+                if (roles == null)
+                    break;
+            } while (true);
             Role role = new Role()
             {
+                Id = id,
                 Name = name
             };
             bool result = await _roleRepository.Add(role);
@@ -58,7 +77,6 @@ namespace Infrastructure.Service
         {
 
             bool result = await _roleRepository.Delete(role);
-           
             return result;
         }
 

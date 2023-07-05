@@ -180,8 +180,3 @@ D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\obj\Debug\net6.0\Zalo_Clone.genruntimeconfig
 D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\obj\Debug\net6.0\ref\Zalo_Clone.dll
 D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 E:\Project C#\ZaloClone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
-E:\Project C#\ZaloClone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.AspNetCore.Cryptography.Internal.dll
-E:\Project C#\ZaloClone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
-E:\Project C#\ZaloClone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
-E:\Project C#\ZaloClone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.Extensions.Identity.Core.dll
-E:\Project C#\ZaloClone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\Microsoft.Extensions.Identity.Stores.dll

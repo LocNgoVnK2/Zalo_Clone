@@ -23,7 +23,6 @@ builder.Services.AddSingleton(new MapperConfiguration(mc =>
 {
     mc.AddProfile(new Mapping());
 }).CreateMapper());
-
 #region Services
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 //Role

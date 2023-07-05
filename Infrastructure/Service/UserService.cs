@@ -10,6 +10,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -88,11 +89,20 @@ namespace Infrastructure.Service
         {
             try
             {
-                request.Id = GenerateRandomId();
-                while (userAccountRepository.GetById(request.Id) == null)
+                /*  request.Id = GenerateRandomId();
+                  while (userAccountRepository.GetById(request.Id) == null)
+                  {
+                      request.Id = GenerateRandomId();
+                  }*/
+                do
                 {
                     request.Id = GenerateRandomId();
-                }
+                } while (await userAccountRepository.GetById(request.Id) != null);
+                MD5 md5 = MD5.Create();
+
+                var bytesHash = md5.ComputeHash(Encoding.UTF8.GetBytes(request.Password));
+                var passHash = BitConverter.ToString(bytesHash).Replace("-", "");
+                request.Password = passHash;
                 var result = await userAccountRepository.Add(request);
                 return result;
             }
