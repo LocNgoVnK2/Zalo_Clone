@@ -20,10 +20,10 @@ namespace Zalo_Clone.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetRole(int id)
+        [HttpGet("{name}")]
+        public async Task<IActionResult> GetRole(string name)
         {
-            var role = await _roleService.GetRole(id);
+            var role = _roleService.GetRole(name);
             if (role == null)
                 return NotFound();
 
@@ -33,15 +33,14 @@ namespace Zalo_Clone.Controllers
         [HttpGet]
         public IActionResult GetAllRoles()
         {
-            var roles = _roleService.GetAllRoles();
+            var roles = _roleService.GetAllRoles().ToList();
             return Ok(roles);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddRole(RoleModel model)
+        public async Task<IActionResult> AddRole(string name)
         {
-            Role role = _mapper.Map<Role>(model);
-            var result = await _roleService.AddRole(role);
+            var result = await _roleService.AddRole(name);
             if (!result)
                 return BadRequest("Failed to add role.");
 

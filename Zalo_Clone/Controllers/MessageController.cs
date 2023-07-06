@@ -112,5 +112,85 @@ namespace Zalo_Clone.Controllers
             int result = messageService.CountAllReactionInMessage(messageId);
             return result;
         }
+        [HttpGet("GetMessagesOfGroup")]
+        public async Task<List<MessageGroupModel>> GetMessagesOfGroup(string groupId)
+        {
+            var messages = await messageService.GetMessagesFromGroup(groupId);
+            List<MessageGroupModel> result = new List<MessageGroupModel>();
+            foreach(var m in messages)
+            {
+                long idMessage = m.Id;
+                MessageGroupModel messageGroupModel = mapper.Map<MessageGroupModel>(m);
+                messageGroupModel.AttachmentByBase64 = new List<string>();
+                List<MessageAttachment> attachmenets = await messageService.GetAttachmentsOfMessage(idMessage);
+                if (attachmenets is null)
+                {
+                    result.Add(messageGroupModel);
+                    continue;
+                }
+                    
+                foreach(MessageAttachment attachment in attachmenets)
+                {
+                    string attachmentByBase64 = Convert.ToBase64String(attachment.Attachment);
+                    messageGroupModel.AttachmentByBase64.Add(attachmentByBase64);
+                }
+                result.Add(messageGroupModel);
+            }
+            return result;
+        }
+        [HttpGet("GetMessagesToDoList")]
+        public async Task<List<MessageToDoListModel>> GetMessagesOfToDoList(long todoId)
+        {
+            var messages = await messageService.GetMessagesFromToDoList(todoId);
+            List<MessageToDoListModel> result = new List<MessageToDoListModel>();
+            foreach (var m in messages)
+            {
+                long idMessage = m.Id;
+                MessageToDoListModel messageToDoModel = mapper.Map<MessageToDoListModel>(m);
+                messageToDoModel.AttachmentByBase64 = new List<string>();
+                List<MessageAttachment> attachmenets = await messageService.GetAttachmentsOfMessage(idMessage);
+                if (attachmenets is null)
+                {
+                    result.Add(messageToDoModel);
+                    continue;
+                }
+
+                foreach (MessageAttachment attachment in attachmenets)
+                {
+                    string attachmentByBase64 = Convert.ToBase64String(attachment.Attachment);
+                    messageToDoModel.AttachmentByBase64.Add(attachmentByBase64);
+                }
+                result.Add(messageToDoModel);
+            }
+            return result;
+        }
+        [HttpGet("GetMessagesFromContactOfUser")]
+        public async Task<List<MessageReceipentModel>> GetMessagesOfContactUser(string userFirst,string userSec)
+        {
+            var messages = await messageService.GetMessagesOfUsersContact(userFirst, userSec);
+            var result = new List<MessageReceipentModel>();
+            foreach (var m in messages)
+            {
+                long idMessage = m.Id;
+
+                MessageReceipentModel messageReceipentModel = mapper.Map<MessageReceipentModel>(m);
+                messageReceipentModel.Receiver = messageReceipentModel.Sender.Equals(userFirst) ? userSec : userFirst;
+                messageReceipentModel.AttachmentByBase64 = new List<string>();
+                List<MessageAttachment> attachmenets = await messageService.GetAttachmentsOfMessage(idMessage);
+                if (attachmenets is null)
+                {
+                    result.Add(messageReceipentModel);
+                    continue;
+                }
+
+                foreach (MessageAttachment attachment in attachmenets)
+                {
+                    string attachmentByBase64 = Convert.ToBase64String(attachment.Attachment);
+                    messageReceipentModel.AttachmentByBase64.Add(attachmentByBase64);
+                }
+                result.Add(messageReceipentModel);
+            }
+            return result;
+        }
     }
 }

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static System.Collections.Specialized.BitVector32;
 
@@ -23,7 +24,11 @@ namespace Infrastructure.Service
         int CountReactionInMessage(long idMessage, int idReaction);
         Task<List<Reaction>> GetReactionsInMessage(long idMessage);
         Task<List<Reaction>> GetTop3ReactionsInMessage(long idMessage);
+        Task<List<Message>> GetMessagesFromGroup(string groupId);
+        Task<List<MessageAttachment>> GetAttachmentsOfMessage(long idMessage);
 
+        Task<List<Message>> GetMessagesOfUsersContact(string userOne, string userTwo);
+        Task<List<Message>> GetMessagesFromToDoList(long todoId);
     }
 
     public class MessageService : IMessageService
@@ -62,6 +67,26 @@ namespace Infrastructure.Service
         {
             var rs = _messageReactDetailRepo.GetAll().Where(x=> x.MessageId.Equals(idMessage) && x.ReactId.Equals(idReaction)).Count();
             return rs;
+        }
+
+        public async Task<List<Message>> GetMessagesFromGroup(string groupId)
+        {
+            var rs = await _messageGroupRepo.GetAll().Where(x=>x.GroupReceive.Equals(groupId)).Select(x => x.Id).ToListAsync();
+            List<Message> messages = new List<Message>();
+            foreach (var r in rs)
+            {
+                Message message = await _messageRepo.GetById(r);
+                messages.Add(message);
+            }
+            return messages;
+        }
+
+        public async Task<List<MessageAttachment>?> GetAttachmentsOfMessage(long idMessage)
+        {
+            var rs = _messageAttachmentRepo.GetAll().Where(x => x.Id == idMessage);
+            if (!rs.Any())
+                return null;
+            return await rs.ToListAsync(); 
         }
 
         public async Task<List<Reaction>> GetReactionsInMessage(long idMessage)
@@ -232,5 +257,29 @@ namespace Infrastructure.Service
             return result;
         }
 
+        public async Task<List<Message>> GetMessagesOfUsersContact(string userOne, string userTwo)
+        {
+            var messages = _messageRepo.GetAll();
+            var messageReceipents = _messageReceipentRepo.GetAll();
+            var joinTable = messages.Join(messageReceipents, x => x.Id, y => y.Id, (messages, messageReceipents) => new { messages, messageReceipents })
+                .Where(x => ((x.messages.Sender.Equals(userOne) && x.messageReceipents.Receiver.Equals(userTwo)) || (x.messages.Sender.Equals(userTwo) && x.messageReceipents.Receiver.Equals(userOne))))
+                .Select(x => x.messages)
+                .ToListAsync();
+            return await joinTable;
+
+
+        }
+
+        public async Task<List<Message>> GetMessagesFromToDoList(long todoId)
+        {
+            var rs = await _messageToDoListRepo.GetAll().Where(x => x.TaskId.Equals(todoId)).Select(x => x.Id).ToListAsync();
+            List<Message> messages = new List<Message>();
+            foreach (var r in rs)
+            {
+                Message message = await _messageRepo.GetById(r);
+                messages.Add(message);
+            }
+            return messages;
+        }
     }
 }

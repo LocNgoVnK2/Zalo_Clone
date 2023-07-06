@@ -23,10 +23,10 @@ builder.Services.AddSingleton(new MapperConfiguration(mc =>
 {
     mc.AddProfile(new Mapping());
 }).CreateMapper());
-
-builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<ZaloDbContext>().AddDefaultTokenProviders();
 #region Services
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+//Role
+
 //Reaction
 
 builder.Services.AddScoped<IReactionRepository, ReactionRepository>();
