@@ -3810,24 +3810,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\a\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\LENOVO\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone.csproj",
+      "projectUniqueName": "e:\\Project C-sharp\\ZaloClone\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone.csproj",
       "projectName": "Zalo_Clone",
-      "projectPath": "D:\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone.csproj",
-      "packagesPath": "C:\\Users\\a\\.nuget\\packages\\",
-      "outputPath": "D:\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone\\obj\\",
+      "projectPath": "e:\\Project C-sharp\\ZaloClone\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone.csproj",
+      "packagesPath": "C:\\Users\\LENOVO\\.nuget\\packages\\",
+      "outputPath": "e:\\Project C-sharp\\ZaloClone\\Zalo_Clone\\Zalo_Clone\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\a\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Users\\LENOVO\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -3841,8 +3836,8 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "projectReferences": {
-            "D:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj": {
-              "projectPath": "D:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj"
+            "e:\\Project C-sharp\\ZaloClone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj": {
+              "projectPath": "e:\\Project C-sharp\\ZaloClone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj"
             }
           }
         }
@@ -3899,7 +3894,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.202\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.203\\RuntimeIdentifierGraph.json"
       }
     }
   }

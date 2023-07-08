@@ -1,47 +1,34 @@
 ﻿using Infrastructure.Entities;
 using Infrastructure.Repository;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Infrastructure.Service
 {
-    public class UserRoleService 
-    { }
-        /*
-        public interface IUserRoleService
+    public interface IUserRoleService
+    {
+        Task<Role> GetRoleOfUser(string userId);
+        Task<bool> AddRoleToUser(UserRole userRole);
+    }
+    public class UserRoleService : IUserRoleService
+    {
+        private readonly IUserRoleRepository _userRoleRepository;
+        private readonly IRoleRepository _roleRepository;
+        public UserRoleService(IUserRoleRepository _userRoleRepository, IRoleRepository _roleRepository)
         {
-            Task<Role> GetRoleOfUser(string userId);
-            Task<bool> AddRoleToUser(string userId, string roleName);
+            this._userRoleRepository = _userRoleRepository;
+            this._roleRepository = _roleRepository;
         }
-        public class UserRoleService : IUserRoleService
+
+        public async Task<Role> GetRoleOfUser(string userId)
         {
 
+            var role = await _userRoleRepository.GetById(userId);
+            return await _roleRepository.GetById(role.RoleId);
+        }
+        public async Task<bool> AddRoleToUser(UserRole userRole)
+        {
+            var result = await _userRoleRepository.Add(userRole);
+            return result;
+        }
 
-            public UserRoleService(UserManager<User> userManager)
-            {
-                _userManager = userManager;
-            }
-
-            public async Task<Role> GetRoleOfUser(string userId)
-            {
-                var user = await _userManager.FindByIdAsync(userId);
-                var roles = await _userManager.GetRolesAsync(user);
-                return roles.Select(x => new Role()).Single();
-            }
-            public async Task<bool> AddRoleToUser(string userId,string roleName)
-            {
-
-                    var user = await _userManager.FindByIdAsync(userId);
-                    var result = await _userManager.AddToRoleAsync(user, roleName);
-                    return true;
-
-
-
-            }
-        */
-    
+    }
 }
