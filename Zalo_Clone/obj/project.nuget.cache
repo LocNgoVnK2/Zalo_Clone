@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "e1qbSkxTVSwpcd2t9/ZDxMzYwnNQltBG7MUPgXAVjkozzrM5CBFPVzfapw9U0YnoqdwC5/ZlQW2PPDHZY7jX3g==",
+  "dgSpecHash": "2nR0kDH8ehei2TrLo2Q5h7DA4JG1gzajne3i+4jFdomQ5QSvG9xdlkE2duzcYAxErtrb1KbiwI0Y46vCouJeAw==",
   "success": true,
-  "projectFilePath": "D:\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone.csproj",
+  "projectFilePath": "d:\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\a\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\a\\.nuget\\packages\\azure.core\\1.24.0\\azure.core.1.24.0.nupkg.sha512",
