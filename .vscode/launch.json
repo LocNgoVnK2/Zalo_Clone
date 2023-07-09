@@ -1,5 +1,6 @@
 {
     "configurations": [
+        
         {
             "name": "C#: Zalo_Clone [Default Configuration]",
             "type": "dotnet",
