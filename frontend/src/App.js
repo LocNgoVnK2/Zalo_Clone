@@ -1,20 +1,21 @@
 import React, { Component } from 'react';
-
+import { Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import Login from './Components/Login';
+import Header from './Components/Header';
 
 class App extends Component {
-  handleSelect = (eventKey) =>{ alert(`selected ${eventKey}`)};
-
-
   render() {
     return (
-
-   <div>
-
-      <Login/>
-   </div>
-);
+     
+        <div>
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/home" element={<Header />} />
+          </Routes>
+        </div>
+      
+    );
   }
 }
 
