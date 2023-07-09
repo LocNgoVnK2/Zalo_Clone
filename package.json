@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "react-router-config": "^5.1.1"
+  }
+}
