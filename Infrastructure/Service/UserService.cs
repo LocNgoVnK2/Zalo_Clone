@@ -64,8 +64,9 @@ namespace Infrastructure.Service
              }
              var claims = new List<Claim>
              {
-                 new Claim(ClaimTypes.Email, user.Email)
+                 new Claim(ClaimTypes.Email, user.Email),
                 // new Claim(ClaimTypes.Role, user.Type.ToString()) //Nghiên cứu phân quyền sau
+                 new Claim(claims.Id,user.Id)
              };
 
              var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]));

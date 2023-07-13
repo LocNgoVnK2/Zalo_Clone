@@ -3,22 +3,29 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
+
 class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
       responseData: null,
-      error: null
+      error: null,
+      email: '',
+      password: ''
     }
+    this.handleEmailChange = this.handleEmailChange.bind(this);
+    this.handlePasswordChange = this.handlePasswordChange.bind(this);
   }
+  handleEmailChange(event){
+    this.setState({email: event.target.value});
+  }
+  handlePasswordChange(event){
+    this.setState({password: event.target.value });
+  }
+ 
   render() {
 
     return (
-      /*<div>
-      {this.state.error && <div>Error: {this.state.error}</div>}
-      <pre>{JSON.stringify(this.state.responseData, null, 2)}</pre>
-    </div>*/
-
       <div
         className="d-flex justify-content-center align-items-center"
         style={{
@@ -44,7 +51,10 @@ class Login extends Component {
                   Email
                 </Form.Label>
                 <Col sm="9">
-                  <Form.Control type="text" placeholder="email@example.com" />
+                  <Form.Control type="text" 
+                  placeholder="email@example.com"
+                  value={this.state.email}
+                  onChange={this.handleEmailChange} />
                 </Col>
               </Form.Group>
 
@@ -53,7 +63,10 @@ class Login extends Component {
                   Password
                 </Form.Label>
                 <Col sm="9">
-                  <Form.Control type="password" placeholder="Password" />
+                  <Form.Control type="password" 
+                  placeholder="Password"
+                  value={this.state.password}
+                  onChange={this.handlePasswordChange}  />
                 </Col>
               </Form.Group>
               <div className="d-grid">
