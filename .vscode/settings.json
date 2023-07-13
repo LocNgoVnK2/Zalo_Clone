@@ -1,3 +1,4 @@
 {
-    "dotnet.defaultSolution": "Zalo_Clone.sln"
+    "dotnet.defaultSolution": "Zalo_Clone.sln",
+    "iis.configDir": "${workspaceFolder}\\.vs\\Zalo_Clone\\config"
 }

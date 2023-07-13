@@ -69,6 +69,8 @@ namespace Zalo_Clone
             // userRole
             CreateMap<Role, RoleModel>();
             CreateMap<RoleModel, Role>();
+            CreateMap<UserRole, UserRoleModel>();
+            CreateMap<UserRoleModel, UserRole>();
         }
     }
 }

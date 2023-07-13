@@ -42,6 +42,7 @@ namespace Infrastructure.Data
         public DbSet<MuteUser> MuteUsers { get; set; }
 
         public DbSet<Role> Roles { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }
     
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        
+        {
+            "name": "C#: Zalo_Clone [Default Configuration]",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}\\Zalo_Clone\\Zalo_Clone.csproj"
+        }
+    ]
+}
