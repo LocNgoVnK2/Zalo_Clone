@@ -6,8 +6,9 @@ import Button from 'react-bootstrap/Button';
 import { loginApi } from '../Services/loginService';
 import jwt from 'jwt-decode';
 import jwtDecode from 'jwt-decode';
-import { Navigate } from 'react-router-dom';
-
+import { Navigate, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { Nav } from 'react-bootstrap';
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -34,21 +35,22 @@ class Login extends Component {
       return;
     }
     alert(this.state.email + "|" + this.state.password);
-    let res = await loginApi(this.state.email, this.state.password);
+    const res = await loginApi(this.state.email, this.state.password);
     if (res && res.token) {
       //const user = jwtDecode(res.token);
       //const email = user["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"];
       localStorage.setItem('token', res.token);
       alert("chạy được tới đây");
+      this.props.navigate("/home");
       
-      return window.location.replace("http://localhost:3000/home");
-
+   //   return window.location.replace("http://localhost:3000/home");
     } else {
       if (res && res.status === 400) {
         alert(res.data.error);
       } else {
         alert("API error: ");
       }
+      return false;
     }
 
   };
@@ -56,6 +58,7 @@ class Login extends Component {
   render() {
 
     return (
+
       <div
         className="d-flex justify-content-center align-items-center"
         style={{
@@ -111,8 +114,8 @@ class Login extends Component {
                 </Button>
               </div>
             </Form>
-            
-
+            <Link to="/home">Abc</Link>
+   
           </div>
 
         </div>
