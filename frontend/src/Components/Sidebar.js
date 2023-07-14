@@ -17,7 +17,7 @@ class Sidebar extends Component {
 
     return (
       <>
-       <SidebarMenu variant="pill" onSelect={this.props.changeState} activeKey="1"  className="sidebar-container">
+       <SidebarMenu variant="pills" onSelect={this.props.changeState} activeKey="1"  className="sidebar-container">
         <SidebarMenu.Body  className="sidebar-body">
           <div className="sidebar-tabs-top">
             <SidebarMenu.Nav className="sidebar-tabs sidebar-avatar">

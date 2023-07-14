@@ -90,5 +90,28 @@
  height: 100vh;
  background-color:red;
  resize: horizontal; 
- overflow: auto;
+}
+.contact-search{
+  background-color: green;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.contact-search-box{
+  width: 200px;
+  background-color: aqua;
+  height: 32px;
+  float: left;
+}
+.contact-search-button{
+  margin-left: 10px;
+  width: 73px;
+  background-color: white;
+  height: 32px;
+  float: left;
+}
+.conversation-list{
+  height: calc(100vh - 64px);
+  overflow-y: scroll;
 }
