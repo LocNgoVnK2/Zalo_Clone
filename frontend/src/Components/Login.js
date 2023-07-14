@@ -3,22 +3,59 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
+import { loginApi } from '../Services/loginService';
+import jwt from 'jwt-decode';
+import jwtDecode from 'jwt-decode';
+import { Navigate } from 'react-router-dom';
+
 class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
       responseData: null,
-      error: null
+      error: null,
+      email: '',
+      password: ''
     }
+    this.handleEmailChange = this.handleEmailChange.bind(this);
+    this.handlePasswordChange = this.handlePasswordChange.bind(this);
   }
+  handleEmailChange(event) {
+    this.setState({ email: event.target.value });
+  }
+  handlePasswordChange(event) {
+    this.setState({ password: event.target.value });
+  }
+
+  handleLogin = async () => {
+
+    if (!this.state.email || !this.state.password) {
+      alert("Hãy điền đủ các trường");
+      return;
+    }
+    alert(this.state.email + "|" + this.state.password);
+    let res = await loginApi(this.state.email, this.state.password);
+    if (res && res.token) {
+      //const user = jwtDecode(res.token);
+      //const email = user["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"];
+      localStorage.setItem('token', res.token);
+      alert("chạy được tới đây");
+      
+      return window.location.replace("http://localhost:3000/home");
+
+    } else {
+      if (res && res.status === 400) {
+        alert(res.data.error);
+      } else {
+        alert("API error: ");
+      }
+    }
+
+  };
+
   render() {
 
     return (
-      /*<div>
-      {this.state.error && <div>Error: {this.state.error}</div>}
-      <pre>{JSON.stringify(this.state.responseData, null, 2)}</pre>
-    </div>*/
-
       <div
         className="d-flex justify-content-center align-items-center"
         style={{
@@ -31,9 +68,9 @@ class Login extends Component {
       >
 
         <div className="d-flex flex-column justify-content-center align-items-center" style={{ height: '100vh' }}>
-          <h1 style={{ fontSize: '1.1em', marginTop: '0px', marginBottom: '100px',textAlign:"center" }}>
-          <img width="48" height="48" src="https://img.icons8.com/color/48/zalo.png" alt="zalo"/>
-            <br/>
+          <h1 style={{ fontSize: '1.1em', marginTop: '0px', marginBottom: '100px', textAlign: "center" }}>
+            <img width="48" height="48" src="https://img.icons8.com/color/48/zalo.png" alt="zalo" />
+            <br />
             Đăng nhập tài khoản Zalo  <br />
             để kết nối với ứng dụng Zalo Web
           </h1>
@@ -44,7 +81,10 @@ class Login extends Component {
                   Email
                 </Form.Label>
                 <Col sm="9">
-                  <Form.Control type="text" placeholder="email@example.com" />
+                  <Form.Control type="text"
+                    placeholder="email@example.com"
+                    value={this.state.email}
+                    onChange={this.handleEmailChange} />
                 </Col>
               </Form.Group>
 
@@ -53,22 +93,25 @@ class Login extends Component {
                   Password
                 </Form.Label>
                 <Col sm="9">
-                  <Form.Control type="password" placeholder="Password" />
+                  <Form.Control type="password"
+                    placeholder="Password"
+                    value={this.state.password}
+                    onChange={this.handlePasswordChange} />
                 </Col>
               </Form.Group>
               <div className="d-grid">
-                <Button variant="primary" type="submit">
+                <Button variant="primary" type="button" onClick={this.handleLogin}>
                   Submit
                 </Button>
               </div>
 
               <div className="text-center mt-3">
-                <Button variant="link">
+                <Button variant="link" >
                   Quên mật khẩu?
                 </Button>
               </div>
             </Form>
-
+            
 
           </div>
 

@@ -7,6 +7,8 @@ const instance = axios.create({
 instance.interceptors.response.use(function(response){
     return response.data;
 },function(error){
+    console.log(">> error :"+error.name+"|"+error.response);
+    
     return Promise.reject(error);
 });
 export default instance;
