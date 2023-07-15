@@ -34,8 +34,8 @@ namespace Zalo_Clone.Controllers
             {
                 try
                 {
-                    var result = await userAccountService.SignUpAsync(request, model.Password);
-                    if (result.Succeeded)
+                    bool result = await userAccountService.SignUpAsync(request);
+                    if (result)
                     {
                         string uid = await userAccountService.GetIdByEmailAsync(request.Email);
                         UserData uData = new UserData()
@@ -50,7 +50,7 @@ namespace Zalo_Clone.Controllers
                     }
                     else
                     {
-                        return BadRequest(result.Errors);
+                        return BadRequest();
                     }
                 }
                 catch (Exception ex)
@@ -66,14 +66,14 @@ namespace Zalo_Clone.Controllers
             var request = mapper.Map<User>(account);
             try
             {
-                var token = await userAccountService.SignInAsync(request, account.Password);
+                var token = await userAccountService.SignInAsync(request);
                 if (token != null)
                 {
                     return Ok(new { Token = token });
                 }
                 else
                 {
-                    return BadRequest("Invalid email or password");
+                    return NotFound();
                 }
             }
             catch (Exception ex)

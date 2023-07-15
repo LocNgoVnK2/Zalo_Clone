@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj": {}
+    "d:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj": {}
   },
   "projects": {
-    "D:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj": {
+    "d:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj",
+        "projectUniqueName": "d:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj",
         "projectName": "Infrastructure",
-        "projectPath": "D:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj",
+        "projectPath": "d:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj",
         "packagesPath": "C:\\Users\\a\\.nuget\\packages\\",
-        "outputPath": "D:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\obj\\",
+        "outputPath": "d:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -47,14 +47,6 @@
             "AutoMapper": {
               "target": "Package",
               "version": "[12.0.1, )"
-            },
-            "Microsoft.AspNetCore.Identity": {
-              "target": "Package",
-              "version": "[2.2.0, )"
-            },
-            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
-              "target": "Package",
-              "version": "[6.0.18, )"
             },
             "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",

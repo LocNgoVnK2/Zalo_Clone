@@ -23,10 +23,10 @@ builder.Services.AddSingleton(new MapperConfiguration(mc =>
 {
     mc.AddProfile(new Mapping());
 }).CreateMapper());
-
-builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<ZaloDbContext>().AddDefaultTokenProviders();
 #region Services
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+//Role
+
 //Reaction
 
 builder.Services.AddScoped<IReactionRepository, ReactionRepository>();
@@ -71,6 +71,10 @@ builder.Services.AddScoped<IMuteUserRepository, MuteUserRepository>();
 // user role
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+
+//UserRole
+builder.Services.AddScoped<IUserRoleService, UserRoleService>();
+builder.Services.AddScoped<IUserRoleRepository, UserRoleRepository>();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -102,6 +106,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseCors(builder => builder
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader());
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

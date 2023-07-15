@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -10,9 +10,10 @@ using System.Threading.Tasks;
 namespace Infrastructure.Entities
 {
     [Table("ROLE")]
-    public class Role : IdentityRole
+    public class Role 
     {
-      
+        public string Id { get; set; }  
+        public string Name { get; set; }
      
     }
 }
