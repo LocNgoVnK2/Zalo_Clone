@@ -73,7 +73,7 @@ namespace Zalo_Clone.Controllers
                 }
                 else
                 {
-                    return BadRequest("Invalid email or password");
+                    return NotFound();
                 }
             }
             catch (Exception ex)

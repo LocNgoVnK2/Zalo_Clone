@@ -28,29 +28,33 @@ class Login extends Component {
   }
 
   handleLogin = async () => {
-
     if (!this.state.email || !this.state.password) {
-      alert("Hãy điền đủ các trường");
+      alert("Please fill in all fields");
       return;
     }
-    alert(this.state.email + "|" + this.state.password);
-    let res = await loginApi(this.state.email, this.state.password);
-    if (res && res.token) {
-      //const user = jwtDecode(res.token);
-      //const email = user["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"];
-      localStorage.setItem('token', res.token);
-      alert("chạy được tới đây");
+    
+    
+    try {
+      let res = await loginApi(this.state.email, this.state.password);
       
-      return window.location.replace("http://localhost:3000/home");
-
-    } else {
-      if (res && res.status === 400) {
-        alert(res.data.error);
+      if (res && res.token) {
+        localStorage.setItem('token', res.token);
+        alert("Successfully logged in");
+        return window.location.replace("http://localhost:3000/home");
       } else {
-        alert("API error: ");
+        alert("Invalid account information");
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        alert(error.response.data.error);
+      } else if (error.response && error.response.status === 404) {
+        alert("Account not found");
+      } else if (error.response && error.response.status === 500) {
+        alert("Server error");
+      } else {
+        alert("An error occurred");
       }
     }
-
   };
 
   render() {

@@ -60,7 +60,7 @@ namespace Infrastructure.Service
             var user = userAccountRepository.GetAll().Where(x=>x.Email.Equals(request.Email) && x.Password.Equals(request.Password)).FirstOrDefault();
              if (user == null)
              {
-                 throw new Exception("Cannot find user");
+                 return null;
              }
              var claims = new List<Claim>
              {
