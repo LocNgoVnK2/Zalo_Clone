@@ -4,9 +4,7 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import { loginApi } from '../Services/loginService';
-import jwt from 'jwt-decode';
-import jwtDecode from 'jwt-decode';
-import { Navigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 class Login extends Component {
   constructor(props) {
@@ -32,17 +30,26 @@ class Login extends Component {
       alert("Please fill in all fields");
       return;
     }
-    
-    
+
+
+
     try {
       let res = await loginApi(this.state.email, this.state.password);
-      
       if (res && res.token) {
         localStorage.setItem('token', res.token);
-        alert("Successfully logged in");
-        return window.location.replace("http://localhost:3000/home");
-      } else {
-        alert("Invalid account information");
+        if (res && res.token) {
+          //const user = jwtDecode(res.token);
+          //const email = user["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"];
+          localStorage.setItem('token', res.token);
+          this.props.navigate("/home");
+        } else {
+          if (res && res.status === 400) {
+            alert(res.data.error);
+
+          } else {
+            alert("Invalid account information");
+          }
+        }
       }
     } catch (error) {
       if (error.response && error.response.status === 400) {
@@ -54,12 +61,14 @@ class Login extends Component {
       } else {
         alert("An error occurred");
       }
+      return false;
     }
   };
 
   render() {
 
     return (
+
       <div
         className="d-flex justify-content-center align-items-center"
         style={{
