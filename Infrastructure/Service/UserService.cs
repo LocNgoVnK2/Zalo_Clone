@@ -31,13 +31,13 @@ namespace Infrastructure.Service
     public class UserService : IUserService
     {
         private IUserRepository userAccountRepository;
-   
+
         private IConfiguration configuration;
 
-        public UserService(IUserRepository userAccountRepository,IConfiguration configuration)
+        public UserService(IUserRepository userAccountRepository, IConfiguration configuration)
         {
             this.userAccountRepository = userAccountRepository;
-      
+
             this.configuration = configuration;
         }
 
@@ -57,34 +57,43 @@ namespace Infrastructure.Service
 
         public async Task<string> SignInAsync(User request)
         {
-            var user = userAccountRepository.GetAll().Where(x=>x.Email.Equals(request.Email) && x.Password.Equals(request.Password)).FirstOrDefault();
-             if (user == null)
-             {
-                 return null;
-             }
-             var claims = new List<Claim>
+            
+            var user = userAccountRepository.GetAll().Where(x => x.Email.Equals(request.Email)).FirstOrDefault();
+            if (user == null)
+            {
+                return null;
+            }
+            
+            var md5 = MD5.Create();
+            var bytesHash = md5.ComputeHash(Encoding.UTF8.GetBytes(request.Password));
+            var passHash = BitConverter.ToString(bytesHash).Replace("-", "");
+            if (user.Password == passHash)
+            {
+                var claims = new List<Claim>
              {
                  new Claim(ClaimTypes.Email, user.Email)
                 // new Claim(ClaimTypes.Role, user.Type.ToString()) //Nghiên cứu phân quyền sau
                 
              };
 
-             var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]));
-             var credentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+                var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]));
+                var credentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
 
-             var tokenOptions = new JwtSecurityToken(
-                 issuer: configuration["JWT:ValidIssuer"],
-                 audience: configuration["JWT:ValidAudience"],
-                 claims: claims,
-                 expires: DateTime.UtcNow.AddHours(1),
-                 signingCredentials: credentials
-             );
+                var tokenOptions = new JwtSecurityToken(
+                    issuer: configuration["JWT:ValidIssuer"],
+                    audience: configuration["JWT:ValidAudience"],
+                    claims: claims,
+                    expires: DateTime.UtcNow.AddHours(1),
+                    signingCredentials: credentials
+                );
 
-             var token = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+                var token = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
 
-             return token;
+                return token;
+            }else{
+                 return null;
+            }
         }
-
 
         public async Task<bool> SignUpAsync(User request)
         {
@@ -123,8 +132,8 @@ namespace Infrastructure.Service
 
         public async Task<string> GetIdByEmailAsync(string email)
         {
-            string userid = await userAccountRepository.GetAll().Where(x=>x.Email.Equals(email)).Select(s=>s.Id).FirstOrDefaultAsync();
-            if(userid == null)
+            string userid = await userAccountRepository.GetAll().Where(x => x.Email.Equals(email)).Select(s => s.Id).FirstOrDefaultAsync();
+            if (userid == null)
             {
                 return null;
             }

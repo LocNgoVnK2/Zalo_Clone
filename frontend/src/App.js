@@ -3,6 +3,7 @@ import { Router, Routes, Route, useNavigate } from "react-router-dom";
 import "./App.scss";
 import Login from "./Components/Login";
 import Home from "./Components/Home";
+import Signup from "./Components/Signup";
 import Header from "./Components/Header";
 class App extends Component {
   render() {
@@ -12,6 +13,7 @@ class App extends Component {
           <Routes>
             <Route path="/" element={<Login navigate={this.props.navigate}/>} />
             <Route path="/home" element={<Home />} />
+            <Route path="/signup" element={<Signup navigate={this.props.navigate}/>}/>
           </Routes>
 
       </div>
