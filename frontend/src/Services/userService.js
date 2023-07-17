@@ -18,4 +18,7 @@ const loginApi = (email, password) => {
   
     return axios.post("/api/User/signup", data);
   };
-export{loginApi,signupApi};   
+  const getuserApi = (email) => {
+    return axios.get(`/api/User/GetUserByEmail?email=${email}`);
+  };
+export{loginApi,signupApi,getuserApi};   

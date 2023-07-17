@@ -5,7 +5,7 @@ import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import { loginApi } from '../Services/userService';
 import { Link } from 'react-router-dom';
-
+import { getuserApi } from '../Services/userService';
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -36,21 +36,26 @@ class Login extends Component {
     try {
       let res = await loginApi(this.state.email, this.state.password);
       if (res && res.token) {
-        localStorage.setItem('token', res.token);
-        if (res && res.token) {
-          //const user = jwtDecode(res.token);
-          //const email = user["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"];
+        //const user = jwtDecode(res.token);
+        //const email = user["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"];
+        let ures = await getuserApi(this.state.email);
+        if(ures.emailConfirmed===true){
           localStorage.setItem('token', res.token);
           this.props.navigate("/home");
-        } else {
-          if (res && res.status === 400) {
-            alert(res.data.error);
+        }else{
+          this.props.navigate("/signup/email_authentication");
+        }
 
-          } else {
-            alert("Invalid account information");
-          }
+        
+      } else {
+        if (res && res.status === 400) {
+          alert(res.data.error);
+
+        } else {
+          alert("Invalid account information");
         }
       }
+
     } catch (error) {
       if (error.response && error.response.status === 400) {
         alert(error.response.data.error);
@@ -81,7 +86,7 @@ class Login extends Component {
       >
 
         <div className="d-flex flex-column justify-content-center align-items-center" style={{ height: '100vh' }}>
-         
+
           <h1 style={{ fontSize: '1.1em', marginTop: '0px', marginBottom: '100px', textAlign: "center" }}>
             <img width="48" height="48" src="https://img.icons8.com/color/48/zalo.png" alt="zalo" />
             <br />

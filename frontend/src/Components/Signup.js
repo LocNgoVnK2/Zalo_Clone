@@ -16,15 +16,23 @@ class Signup extends Component {
             phonenumber: '',
             username: '',
             gender: '',
+            showAlert: false,
+
         }
         this.handleEmailChange = this.handleEmailChange.bind(this);
         this.handlePasswordChange = this.handlePasswordChange.bind(this);
         this.handleUserNameChange = this.handleUserNameChange.bind(this);
         this.handlePhoneNumberChange = this.handlePhoneNumberChange.bind(this);
         this.handleGenderChange = this.handleGenderChange.bind(this);
+
     }
+
+
     jumpToSignIn = () => {
         this.props.navigate("/");
+    }
+    jumpToEmailAuthentication = () => {
+        this.props.navigate("/signup/email_authentication");
     }
     handleEmailChange(event) {
         this.setState({ email: event.target.value });
@@ -49,7 +57,13 @@ class Signup extends Component {
         try {
             let res = await signupApi(this.state.email, this.state.password, this.state.username, this.state.phonenumber, this.state.gender);
             if (res) {
-                alert("Sign Up success");
+                
+                this.setState({ showAlert: true }, () => {
+                    setTimeout(() => {
+                        this.setState({ showAlert: false });
+                    }, 60000);
+
+                });
             } else {
                 if (res && res.status === 400) {
                     alert(res.data.error);
@@ -88,6 +102,9 @@ class Signup extends Component {
 
                 <div className="container">
                     <div className="row justify-content-center">
+                        {this.state.showAlert && (
+                            <AlertCustom message="Bạn đã đăng ký thành công. Cần chuyển sang trang xác thực và truy cập vào email để chấp nhận xác thực, sau 60s thông báo này và phím chuyển trang sẽ biến mất bạn cần đăng nhập vào để chuyến đến trang xác nhận." variant="warning" dismissTime={50000} />
+                        )}
                         <div className="col-lg-6 col-md-8 col-sm-12">
                             <h1 style={{ fontSize: '1.1em', marginTop: '0px', marginBottom: '100px', textAlign: "center" }}>
                                 <img width="48" height="48" src="https://img.icons8.com/color/48/zalo.png" alt="zalo" />
@@ -171,7 +188,7 @@ class Signup extends Component {
                                         </Col>
                                     </Form.Group>
                                     <div className="d-grid">
-                                        <Button variant="primary" type="button" onClick={this.handleSignup} >
+                                        <Button variant="primary" type="button" onClick={this.handleSignup}  >
                                             Đăng ký
                                         </Button>
                                     </div>
@@ -179,12 +196,17 @@ class Signup extends Component {
                                 </Form>
 
                             </div>
-                            <br/>
+                            <br />
                             <div className="d-flex justify-content-center">
                                 <Button variant="primary" type="button" onClick={this.jumpToSignIn}>
                                     Trở về
                                 </Button>
                             </div>
+                            {this.state.showAlert && (
+                                <Button variant="primary" type="button" onClick={this.jumpToEmailAuthentication}>
+                                    Sang trang xác thực email
+                                </Button>
+                            )}
                         </div>
                     </div>
                 </div>

@@ -27,6 +27,7 @@ namespace Infrastructure.Service
         Task<string> GetIdByEmailAsync(string email);
         Task<string> SignInAsync(User request);
         Task<bool> SignUpAsync(User request);
+        Task<bool> verifyEmailAsync(string email);
     }
     public class UserService : IUserService
     {
@@ -57,13 +58,13 @@ namespace Infrastructure.Service
 
         public async Task<string> SignInAsync(User request)
         {
-            
+
             var user = userAccountRepository.GetAll().Where(x => x.Email.Equals(request.Email)).FirstOrDefault();
             if (user == null)
             {
                 return null;
             }
-            
+
             var md5 = MD5.Create();
             var bytesHash = md5.ComputeHash(Encoding.UTF8.GetBytes(request.Password));
             var passHash = BitConverter.ToString(bytesHash).Replace("-", "");
@@ -90,8 +91,10 @@ namespace Infrastructure.Service
                 var token = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
 
                 return token;
-            }else{
-                 return null;
+            }
+            else
+            {
+                return null;
             }
         }
 
@@ -142,6 +145,22 @@ namespace Infrastructure.Service
                 return userid;
             }
         }
-
+        public async Task<bool> verifyEmailAsync(string email)
+        {
+            User user = await userAccountRepository.GetAll().Where(x => x.Email.Equals(email)).FirstOrDefaultAsync();
+            if (user != null)
+            {
+                user.EmailConfirmed = true;
+            }
+            try
+            {
+                bool result = await userAccountRepository.Update(user);
+                return result;
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Failed to sign up.", e);
+            }
+        }
     }
 }

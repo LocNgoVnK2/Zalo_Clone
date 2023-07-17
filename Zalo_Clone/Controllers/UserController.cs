@@ -91,11 +91,31 @@ namespace Zalo_Clone.Controllers
                 var user = await userAccountService.GetUser(email);
                 if (user != null)
                 {
-                    return Ok(user.Id);
+                    return Ok(user);
                 }
                 else
                 {
                     return BadRequest("Invalid email or password");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+    [HttpPost("verifyEmail")]
+        public async Task<IActionResult> verifyEmail(string email)
+        {
+            try
+            {
+                bool result = await userAccountService.verifyEmailAsync(email);
+                if (result == true)
+                {
+                    return Ok("verify Email success");
+                }
+                else
+                {
+                    return NotFound();
                 }
             }
             catch (Exception ex)
