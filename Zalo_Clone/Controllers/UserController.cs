@@ -3,6 +3,7 @@ using Infrastructure.Entities;
 using Infrastructure.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 using Zalo_Clone.Models;
 
 namespace Zalo_Clone.Controllers
@@ -13,12 +14,14 @@ namespace Zalo_Clone.Controllers
     {
         private readonly IUserService userAccountService;
         private readonly IUserDataService userDataService;
+        private readonly IEmailService emailService;
         private readonly IMapper mapper;
-        public UserController(IUserService userAccountService, IMapper mapper, IUserDataService userDataService)
+        public UserController(IUserService userAccountService, IMapper mapper, IUserDataService userDataService, IEmailService emailService)
         {
             this.userAccountService = userAccountService;
             this.mapper = mapper;
             this.userDataService = userDataService;
+            this.emailService = emailService;
         }
 
         [HttpPost("signup")]
@@ -118,10 +121,26 @@ namespace Zalo_Clone.Controllers
                     return NotFound();
                 }
             }
-            catch (Exception ex)
+            catch (Exception ex)    
             {
                 return StatusCode(500, ex.Message);
             }
+        }
+        [HttpPost("SendEmail")]
+        public async Task<IActionResult> SendEmail(string[] emailAddresses) {
+            string validationcode=null;
+            User user = null;
+            foreach (var emailAddress in emailAddresses)
+            {
+                 user = await userAccountService.GetUser(emailAddress);
+                validationcode = user.ValidationCode;
+            }
+            string subject = "Xin chào :"+ user.UserName;
+            string content = "Đây là email gửi tự động bởi hệ thống xác minh , Mã xác minh của bạn là : " + validationcode;
+            var message = new EmailMessage(emailAddresses, subject, content);
+            emailService.SendEmail(message);
+            return Ok();
+        
         }
 
     }

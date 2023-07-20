@@ -6,7 +6,10 @@ using Infrastructure.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+
 using Microsoft.IdentityModel.Tokens;
+using NETCore.MailKit.Core;
 using System.Text;
 using Zalo_Clone;
 
@@ -97,6 +100,16 @@ builder.Services.AddAuthentication(options =>
 // user account
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
+// add email config
+
+var configBuilder = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .Build();
+
+var emailConfiguration = builder.Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
+builder.Services.AddSingleton(emailConfiguration);
+builder.Services.AddScoped<Infrastructure.Service.IEmailService, Infrastructure.Service.EmailService>();
+
 #endregion
 var app = builder.Build();
 

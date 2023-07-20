@@ -102,11 +102,6 @@ namespace Infrastructure.Service
         {
             try
             {
-                /*  request.Id = GenerateRandomId();
-                  while (userAccountRepository.GetById(request.Id) == null)
-                  {
-                      request.Id = GenerateRandomId();
-                  }*/
                 do
                 {
                     request.Id = GenerateRandomId();
@@ -116,6 +111,9 @@ namespace Infrastructure.Service
                 var bytesHash = md5.ComputeHash(Encoding.UTF8.GetBytes(request.Password));
                 var passHash = BitConverter.ToString(bytesHash).Replace("-", "");
                 request.Password = passHash;
+
+                request.ValidationCode = GenerateRandomValidationCode();
+
                 var result = await userAccountRepository.Add(request);
                 return result;
             }
@@ -132,7 +130,14 @@ namespace Infrastructure.Service
                 .Select(s => s[random.Next(s.Length)]).ToArray());
             return id;
         }
-
+        private string GenerateRandomValidationCode()
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var random = new Random();
+            var validationCode = new string(Enumerable.Repeat(chars, 6)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+            return validationCode;
+        }
         public async Task<string> GetIdByEmailAsync(string email)
         {
             string userid = await userAccountRepository.GetAll().Where(x => x.Email.Equals(email)).Select(s => s.Id).FirstOrDefaultAsync();

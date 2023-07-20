@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "d:\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone.csproj": {}
+    "D:\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone.csproj": {}
   },
   "projects": {
-    "d:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj": {
+    "D:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "d:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj",
+        "projectUniqueName": "D:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj",
         "projectName": "Infrastructure",
-        "projectPath": "d:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj",
+        "projectPath": "D:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj",
         "packagesPath": "C:\\Users\\a\\.nuget\\packages\\",
-        "outputPath": "d:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\obj\\",
+        "outputPath": "D:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -57,6 +57,10 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[7.0.7, )"
+            },
+            "NETCore.MailKit": {
+              "target": "Package",
+              "version": "[2.1.0, )"
             }
           },
           "imports": [
@@ -79,14 +83,14 @@
         }
       }
     },
-    "d:\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone.csproj": {
+    "D:\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "d:\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone.csproj",
+        "projectUniqueName": "D:\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone.csproj",
         "projectName": "Zalo_Clone",
-        "projectPath": "d:\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone.csproj",
+        "projectPath": "D:\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone.csproj",
         "packagesPath": "C:\\Users\\a\\.nuget\\packages\\",
-        "outputPath": "d:\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone\\obj\\",
+        "outputPath": "D:\\Zalo_Clone\\Zalo_Clone\\Zalo_Clone\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -107,8 +111,8 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "d:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj": {
-                "projectPath": "d:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj"
+              "D:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj": {
+                "projectPath": "D:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj"
               }
             }
           }

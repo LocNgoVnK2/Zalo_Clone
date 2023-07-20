@@ -18,7 +18,7 @@ class EmailAuthentication extends Component {
       >
         <div className="container">
           <div className="row justify-content-center">
-              aaa
+              Vui lòng kiểm tra email để tiến hành đnăg nhập.
           </div>
         </div>
       </div>
