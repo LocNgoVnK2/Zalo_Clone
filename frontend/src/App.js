@@ -6,6 +6,7 @@ import Home from "./Components/Home";
 import Signup from "./Components/Signup";
 import Header from "./Components/Header";
 import EmailAuthentication from "./Components/EmailAuthentication";
+import { ContactUs } from "./Components/ContactUs";
 class App extends Component {
   render() {
     return (
@@ -16,6 +17,7 @@ class App extends Component {
             <Route path="/home" element={<Home />} />
             <Route path="/signup" element={<Signup navigate={this.props.navigate}/>}/>
             <Route path="/signup/email_authentication" element={<EmailAuthentication />} />
+            <Route path="/contact" element={<ContactUs />} /> {/* Thêm route mới */}
           </Routes>
 
       </div>

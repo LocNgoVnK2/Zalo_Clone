@@ -271,3 +271,7 @@ E:\Project C-sharp\ZaloClone\Zalo_Clone\Zalo_Clone\obj\Debug\net6.0\refint\Zalo_
 E:\Project C-sharp\ZaloClone\Zalo_Clone\Zalo_Clone\obj\Debug\net6.0\Zalo_Clone.pdb
 E:\Project C-sharp\ZaloClone\Zalo_Clone\Zalo_Clone\obj\Debug\net6.0\Zalo_Clone.genruntimeconfig.cache
 E:\Project C-sharp\ZaloClone\Zalo_Clone\Zalo_Clone\obj\Debug\net6.0\ref\Zalo_Clone.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\MailKit.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\MimeKit.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\NETCore.MailKit.dll
+D:\Zalo_Clone\Zalo_Clone\Zalo_Clone\bin\Debug\net6.0\BouncyCastle.Crypto.dll
