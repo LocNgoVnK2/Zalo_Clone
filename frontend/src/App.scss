@@ -1,4 +1,4 @@
-
+@import "../node_modules/bootstrap/dist/css/bootstrap.css";
 .App {
   text-align: center;
 }
@@ -88,29 +88,22 @@
 
  max-width: fit-content;
  height: 100vh;
- background-color:red;
+ background-color:white;
  resize: horizontal; 
 }
 .contact-search{
-  background-color: green;
+  background-color: white;
   height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .contact-search-box{
-  width: 200px;
-  background-color: aqua;
+  width: 190px;
   height: 32px;
   float: left;
 }
-.contact-search-button{
-  margin-left: 10px;
-  width: 73px;
-  background-color: white;
-  height: 32px;
-  float: left;
-}
+
 .conversation-list{
   height: calc(100vh - 64px);
   overflow-y: scroll;
