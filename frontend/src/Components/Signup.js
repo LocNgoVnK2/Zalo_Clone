@@ -3,7 +3,7 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
-import { signupApi } from "../Services/userService";
+import { sendMail, signupApi } from "../Services/userService";
 import AlertCustom from "./AlertCustom";
 class Signup extends Component {
     constructor(props) {
@@ -57,13 +57,15 @@ class Signup extends Component {
         try {
             let res = await signupApi(this.state.email, this.state.password, this.state.username, this.state.phonenumber, this.state.gender);
             if (res) {
-                
-                this.setState({ showAlert: true }, () => {
-                    setTimeout(() => {
-                        this.setState({ showAlert: false });
-                    }, 60000);
+                let sendmailRes = await sendMail(this.state.email);
+                if (sendmailRes) {
+                    this.setState({ showAlert: true }, () => {
+                        setTimeout(() => {
+                            this.setState({ showAlert: false });
+                        }, 60000);
 
-                });
+                    });
+                }
             } else {
                 if (res && res.status === 400) {
                     alert(res.data.error);

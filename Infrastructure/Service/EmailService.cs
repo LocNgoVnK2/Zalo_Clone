@@ -30,7 +30,7 @@ namespace Infrastructure.Service
         private MimeMessage CreateEmailMessage(EmailMessage emailMessage)
         {
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("email" ,_emailConfig.From));
+            message.From.Add(new MailboxAddress("Zalo Clone" ,_emailConfig.From));
             message.To.AddRange( emailMessage.To);
             message.Subject = emailMessage.Subject;
 

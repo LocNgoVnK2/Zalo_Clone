@@ -4,6 +4,7 @@ using Infrastructure.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using Zalo_Clone.Models;
 
 namespace Zalo_Clone.Controllers
@@ -85,7 +86,7 @@ namespace Zalo_Clone.Controllers
             }
         }
 
-        [HttpGet("GetUserByEmail")]
+    [HttpGet("GetUserByEmail")]
         public async Task<IActionResult> GetUserByEmail(string email)
         {
             
@@ -101,31 +102,12 @@ namespace Zalo_Clone.Controllers
                     return BadRequest("Invalid email or password");
                 }
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex){
                 return StatusCode(500, ex.Message);
             }
         }
-    [HttpPost("verifyEmail")]
-        public async Task<IActionResult> verifyEmail(string email)
-        {
-            try
-            {
-                bool result = await userAccountService.verifyEmailAsync(email);
-                if (result == true)
-                {
-                    return Ok("verify Email success");
-                }
-                else
-                {
-                    return NotFound();
-                }
-            }
-            catch (Exception ex)    
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
+    
+      
         [HttpPost("SendEmail")]
         public async Task<IActionResult> SendEmail(string[] emailAddresses) {
             string validationcode=null;
@@ -142,6 +124,29 @@ namespace Zalo_Clone.Controllers
             return Ok();
         
         }
+        [HttpPost("EnterValidationCode")]
+        public async Task<IActionResult> EnterValidationCode(string emailAddresses,string validationCode)
+        {
 
+            User user = await userAccountService.GetUser(emailAddresses);
+            if(user == null)
+            {
+                return BadRequest();
+            }
+            if(user.ValidationCode == validationCode)
+            {
+                bool result = await userAccountService.verifyEmailAsync(user.Email);
+                if (result)
+                {
+                    return Ok("Verify Email success");
+                }
+                else
+                {
+                    return StatusCode(500, "Failed to verify Email");
+                }
+            }
+            return Ok();
+
+        }
     }
 }

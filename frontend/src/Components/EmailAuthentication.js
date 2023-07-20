@@ -1,8 +1,29 @@
-
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
 import React, { Component } from "react";
-
+import Alert from 'react-bootstrap/Alert';
 
 class EmailAuthentication extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      input: '',
+      showError: false
+    };
+  }
+  handleSubmit = (e) => {
+    e.preventDefault();
+    if (this.state.input.trim() === '') {
+      this.setState({ showError: true });
+    } else {
+      // Handle form submission
+    }
+  }
+
+  handleChange = (e) => {
+    this.setState({ input: e.target.value, showError: false });
+  }
+
   render() {
     return (
 
@@ -18,7 +39,36 @@ class EmailAuthentication extends Component {
       >
         <div className="container">
           <div className="row justify-content-center">
-              Vui lòng kiểm tra email để tiến hành đnăg nhập.
+            <p className="row justify-content-center">
+              Vui lòng kiểm tra email để tiến hành đăng nhập.
+
+            </p>
+
+            <form onSubmit={this.handleSubmit}>
+
+              <InputGroup hasValidation>
+                <InputGroup.Text>Mã xác nhận</InputGroup.Text>
+                <Form.Control type="text" isInvalid={this.state.showError} onChange={this.handleChange} />
+
+
+              </InputGroup>
+              
+
+              <button type="submit" className="justify-content-center btn btn-primary mt-3">
+                Submit
+              </button>
+             
+            </form>
+            <div style={{ height: '2rem' }}>
+            
+            {this.state.showError && (
+                <div className="row justify-content-center mt-3">
+                  <div className="alert alert-warning" role="alert">
+                    Vui lòng nhập mã xác nhận tài khoản để tiếp tục
+                  </div>
+                </div>
+              )}
+              </div>
           </div>
         </div>
       </div>
