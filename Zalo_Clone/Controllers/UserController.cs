@@ -133,7 +133,7 @@ namespace Zalo_Clone.Controllers
             foreach (var emailAddress in emailAddresses)
             {
                  user = await userAccountService.GetUser(emailAddress);
-                validationcode = user.ValidationCode;
+             //   validationcode = user.ValidationCode;
             }
             string subject = "Xin chào :"+ user.UserName;
             string content = "Đây là email gửi tự động bởi hệ thống xác minh , Mã xác minh của bạn là : " + validationcode;

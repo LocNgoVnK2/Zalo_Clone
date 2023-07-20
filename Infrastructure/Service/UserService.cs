@@ -112,7 +112,7 @@ namespace Infrastructure.Service
                 var passHash = BitConverter.ToString(bytesHash).Replace("-", "");
                 request.Password = passHash;
 
-                request.ValidationCode = GenerateRandomValidationCode();
+            //    request.ValidationCode = GenerateRandomValidationCode();
 
                 var result = await userAccountRepository.Add(request);
                 return result;
