@@ -3,9 +3,9 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
-import { loginApi } from '../Services/loginService';
+import { loginApi } from '../Services/userService';
 import { Link } from 'react-router-dom';
-
+import { getuserApi } from '../Services/userService';
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -13,7 +13,8 @@ class Login extends Component {
       responseData: null,
       error: null,
       email: '',
-      password: ''
+      password: '',
+      showAlert: false // Thêm biến showAlert vào state
     }
     this.handleEmailChange = this.handleEmailChange.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
@@ -24,33 +25,37 @@ class Login extends Component {
   handlePasswordChange(event) {
     this.setState({ password: event.target.value });
   }
-
+  jumpToSignUp = () => {
+    this.props.navigate("/signup");
+  }
   handleLogin = async () => {
     if (!this.state.email || !this.state.password) {
       alert("Please fill in all fields");
       return;
     }
-
-
-
     try {
       let res = await loginApi(this.state.email, this.state.password);
       if (res && res.token) {
-        localStorage.setItem('token', res.token);
-        if (res && res.token) {
-          //const user = jwtDecode(res.token);
-          //const email = user["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"];
+        //const user = jwtDecode(res.token);
+        //const email = user["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"];
+        let ures = await getuserApi(this.state.email);
+        if(ures.emailConfirmed===true){
           localStorage.setItem('token', res.token);
           this.props.navigate("/home");
-        } else {
-          if (res && res.status === 400) {
-            alert(res.data.error);
+        }else{
+          this.props.navigate("/signup/email_authentication");
+        }
 
-          } else {
-            alert("Invalid account information");
-          }
+        
+      } else {
+        if (res && res.status === 400) {
+          alert(res.data.error);
+
+        } else {
+          alert("Invalid account information");
         }
       }
+
     } catch (error) {
       if (error.response && error.response.status === 400) {
         alert(error.response.data.error);
@@ -81,6 +86,7 @@ class Login extends Component {
       >
 
         <div className="d-flex flex-column justify-content-center align-items-center" style={{ height: '100vh' }}>
+
           <h1 style={{ fontSize: '1.1em', marginTop: '0px', marginBottom: '100px', textAlign: "center" }}>
             <img width="48" height="48" src="https://img.icons8.com/color/48/zalo.png" alt="zalo" />
             <br />
@@ -114,7 +120,7 @@ class Login extends Component {
               </Form.Group>
               <div className="d-grid">
                 <Button variant="primary" type="button" onClick={this.handleLogin}>
-                  Submit
+                  Đăng nhập
                 </Button>
               </div>
 
@@ -122,9 +128,14 @@ class Login extends Component {
                 <Button variant="link" >
                   Quên mật khẩu?
                 </Button>
+                <br />
+                Chưa có tài khoản
+                <Button variant="link" onClick={this.jumpToSignUp}>
+                  Đăng ký tại đây
+                </Button>
               </div>
             </Form>
-            
+
 
           </div>
 

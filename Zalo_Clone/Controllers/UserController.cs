@@ -3,6 +3,8 @@ using Infrastructure.Entities;
 using Infrastructure.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
+using System.Runtime.CompilerServices;
 using Zalo_Clone.Models;
 
 namespace Zalo_Clone.Controllers
@@ -13,12 +15,14 @@ namespace Zalo_Clone.Controllers
     {
         private readonly IUserService userAccountService;
         private readonly IUserDataService userDataService;
+        private readonly IEmailService emailService;
         private readonly IMapper mapper;
-        public UserController(IUserService userAccountService, IMapper mapper, IUserDataService userDataService)
+        public UserController(IUserService userAccountService, IMapper mapper, IUserDataService userDataService, IEmailService emailService)
         {
             this.userAccountService = userAccountService;
             this.mapper = mapper;
             this.userDataService = userDataService;
+            this.emailService = emailService;
         }
 
         [HttpPost("signup")]
@@ -82,7 +86,7 @@ namespace Zalo_Clone.Controllers
             }
         }
 
-        [HttpGet("GetUserByEmail")]
+    [HttpGet("GetUserByEmail")]
         public async Task<IActionResult> GetUserByEmail(string email)
         {
             
@@ -91,18 +95,58 @@ namespace Zalo_Clone.Controllers
                 var user = await userAccountService.GetUser(email);
                 if (user != null)
                 {
-                    return Ok(user.Id);
+                    return Ok(user);
                 }
                 else
                 {
                     return BadRequest("Invalid email or password");
                 }
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex){
                 return StatusCode(500, ex.Message);
             }
         }
+    
+      
+        [HttpPost("SendEmail")]
+        public async Task<IActionResult> SendEmail(string[] emailAddresses) {
+            string validationcode=null;
+            User user = null;
+            foreach (var emailAddress in emailAddresses)
+            {
+                 user = await userAccountService.GetUser(emailAddress);
+             //   validationcode = user.ValidationCode;
+            }
+            string subject = "Xin chào :"+ user.UserName;
+            string content = "Đây là email gửi tự động bởi hệ thống xác minh , Mã xác minh của bạn là : " + validationcode;
+            var message = new EmailMessage(emailAddresses, subject, content);
+            emailService.SendEmail(message);
+            return Ok();
+        
+        }
+        [HttpPost("EnterValidationCode")]
+        public async Task<IActionResult> EnterValidationCode(string emailAddresses,string validationCode)
+        {
 
+            User user = await userAccountService.GetUser(emailAddresses);
+            if(user == null)
+            {
+                return BadRequest();
+            }
+            if(user.ValidationCode == validationCode)
+            {
+                bool result = await userAccountService.verifyEmailAsync(user.Email);
+                if (result)
+                {
+                    return Ok("Verify Email success");
+                }
+                else
+                {
+                    return StatusCode(500, "Failed to verify Email");
+                }
+            }
+            return Ok();
+
+        }
     }
 }

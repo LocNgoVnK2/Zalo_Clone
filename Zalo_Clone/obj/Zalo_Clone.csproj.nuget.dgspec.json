@@ -57,6 +57,10 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[7.0.7, )"
+            },
+            "NETCore.MailKit": {
+              "target": "Package",
+              "version": "[2.1.0, )"
             }
           },
           "imports": [
