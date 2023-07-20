@@ -16,12 +16,14 @@ namespace Zalo_Clone.Controllers
         private readonly IUserDataService userDataService;
         private readonly IEmailService emailService;
         private readonly IMapper mapper;
-        public UserController(IUserService userAccountService, IMapper mapper, IUserDataService userDataService, IEmailService emailService)
+        private readonly IValidationByEmailService validationByEmailServices;
+        public UserController(IUserService userAccountService, IMapper mapper, IUserDataService userDataService, IEmailService emailService, IValidationByEmailService validationByEmailServices)
         {
             this.userAccountService = userAccountService;
             this.mapper = mapper;
             this.userDataService = userDataService;
             this.emailService = emailService;
+            this.validationByEmailServices = validationByEmailServices;
         }
 
         [HttpPost("signup")]
@@ -48,7 +50,8 @@ namespace Zalo_Clone.Controllers
                             DateOfBirth = model.DateOfBirth
 
                         };
-                        await userDataService.AddUserData(uData);
+                        result = await userDataService.AddUserData(uData);
+                        result = await validationByEmailServices.CreateValidationCode(request.Email, ValidationType.ValidatedEmail);
                         return Ok("User registered successfully");
                     }
                     else

@@ -1,6 +1,6 @@
 ﻿using Infrastructure.Entities;
 using Infrastructure.Repository;
-
+using Infrastructure.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -34,12 +34,14 @@ namespace Infrastructure.Service
         private IUserRepository userAccountRepository;
 
         private IConfiguration configuration;
+        private IUtils utils;
 
-        public UserService(IUserRepository userAccountRepository, IConfiguration configuration)
+        public UserService(IUserRepository userAccountRepository, IConfiguration configuration, IUtils utils)
         {
             this.userAccountRepository = userAccountRepository;
 
             this.configuration = configuration;
+            this.utils = utils;
         }
 
         public async Task<User> GetUser(string email)
@@ -104,7 +106,7 @@ namespace Infrastructure.Service
             {
                 do
                 {
-                    request.Id = GenerateRandomId();
+                    request.Id = utils.GenerateRandomString(64);
                 } while (await userAccountRepository.GetById(request.Id) != null);
                 MD5 md5 = MD5.Create();
 
@@ -122,22 +124,8 @@ namespace Infrastructure.Service
                 throw new Exception("Failed to sign up.", ex);
             }
         }
-        private string GenerateRandomId()
-        {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            var random = new Random();
-            var id = new string(Enumerable.Repeat(chars, 64)
-                .Select(s => s[random.Next(s.Length)]).ToArray());
-            return id;
-        }
-        private string GenerateRandomValidationCode()
-        {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            var random = new Random();
-            var validationCode = new string(Enumerable.Repeat(chars, 6)
-                .Select(s => s[random.Next(s.Length)]).ToArray());
-            return validationCode;
-        }
+       
+      
         public async Task<string> GetIdByEmailAsync(string email)
         {
             string userid = await userAccountRepository.GetAll().Where(x => x.Email.Equals(email)).Select(s => s.Id).FirstOrDefaultAsync();
