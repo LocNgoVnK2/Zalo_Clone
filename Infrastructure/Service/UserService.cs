@@ -110,7 +110,7 @@ namespace Infrastructure.Service
                 } while (await userAccountRepository.GetById(request.Id) != null);
                 MD5 md5 = MD5.Create();
 
-                var bytesHash = md5.ComputeHash(Encoding.UTF8.GetBytes(request.Password));
+                var bytesHash = md5.ComputeHash(Encoding.UTF8.GetBytes(request.Password!));
                 var passHash = BitConverter.ToString(bytesHash).Replace("-", "");
                 request.Password = passHash;
 
@@ -128,7 +128,7 @@ namespace Infrastructure.Service
       
         public async Task<string> GetIdByEmailAsync(string email)
         {
-            string userid = await userAccountRepository.GetAll().Where(x => x.Email.Equals(email)).Select(s => s.Id).FirstOrDefaultAsync();
+            string userid = await userAccountRepository.GetAll().Where(x => x.Email.Equals(email)).Select(s => s.Id).FirstOrDefaultAsync()!;
             if (userid == null)
             {
                 return null;

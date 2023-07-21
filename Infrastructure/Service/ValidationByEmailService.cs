@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -13,7 +14,7 @@ using static System.Collections.Specialized.BitVector32;
 
 namespace Infrastructure.Service
 {
-        [JsonConverter(typeof(JsonStringEnumConverter))]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum ValidationType
     {
         ValidatedEmail = 0,
@@ -31,7 +32,7 @@ namespace Infrastructure.Service
     }
     public interface IValidationByEmailService
     {
-        Task<bool> CreateValidationCode(string email, ValidationType type);
+        Task<string> CreateValidationCode(string email, ValidationType type);
         Task<ValidationRespond> ValidateCode(ValidationByEmail entity);
     }
     public class ValidationByEmailService : IValidationByEmailService
@@ -44,7 +45,7 @@ namespace Infrastructure.Service
             this.utils = utils;
         }
 
-        public async Task<bool> CreateValidationCode(string email, ValidationType type)
+        public async Task<string> CreateValidationCode(string email, ValidationType type)
         {
             var validationEntity = new ValidationByEmail
             {
@@ -54,7 +55,9 @@ namespace Infrastructure.Service
                 ValidationCode = utils.GenerateRandomString(6)
             };
             bool result = await _repo.Add(validationEntity);
-            return result;
+            if (result)
+                return validationEntity.ValidationCode;
+            return null;
 
         }
 
@@ -62,22 +65,26 @@ namespace Infrastructure.Service
         {
             var entites = _repo.GetAll();
             var result = await entites.FirstOrDefaultAsync(x => x.Email.Equals(entity.Email) && x.ValidationCode.Equals(entity.ValidationCode));
-            if(result == null){
+            if (result == null)
+            {
                 return ValidationRespond.WrongCode; //code không đúng
             }
-            if(result.ValidationType != entity.ValidationType){
+            if (result.ValidationType != entity.ValidationType)
+            {
                 return ValidationRespond.IncorrectType;
             }
-            if(result.IsActivated){
+            if (result.IsActivated)
+            {
                 return ValidationRespond.IsUsed; //Code đã sử dụng
             }
-            if(result.ExpiredTime < DateTime.Now){
+            if (result.ExpiredTime < DateTime.Now)
+            {
                 return ValidationRespond.IsExpired; //Code hết hạn
             }
             result.IsActivated = true;
             bool canUpdate = await _repo.Update(result);
-            if(canUpdate)
-                return ValidationRespond.Success;    
+            if (canUpdate)
+                return ValidationRespond.Success;
             return ValidationRespond.Exception;
         }
     }

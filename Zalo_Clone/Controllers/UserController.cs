@@ -51,7 +51,7 @@ namespace Zalo_Clone.Controllers
 
                         };
                         result = await userDataService.AddUserData(uData);
-                        result = await validationByEmailServices.CreateValidationCode(request.Email, ValidationType.ValidatedEmail);
+                       // result = await validationByEmailServices.CreateValidationCode(request.Email, ValidationType.ValidatedEmail);
                         return Ok("User registered successfully");
                     }
                     else
