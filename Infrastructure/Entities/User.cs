@@ -24,7 +24,7 @@ namespace Infrastructure.Entities
         public string? RestoreMail { get; set; }
 
         public string? PhoneNumber { get; set; }
-       // public string? ValidationCode { get; set; }
+        public string? ValidationCode { get; set; }
 
     }
     

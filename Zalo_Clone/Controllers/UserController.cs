@@ -118,7 +118,7 @@ namespace Zalo_Clone.Controllers
              //   validationcode = user.ValidationCode;
             }
             string subject = "Xin chào :"+ user.UserName;
-            string content = "Đây là email gửi tự động bởi hệ thống xác minh , Mã xác minh của bạn là : " + validationcode;
+            string content = "Đây là email gửi tự động bởi hệ thống xác minh https://github.com/LocNgoVnK2/Zalo_Clone , Mã xác minh của bạn là : " + validationcode;
             var message = new EmailMessage(emailAddresses, subject, content);
             emailService.SendEmail(message);
             return Ok();
