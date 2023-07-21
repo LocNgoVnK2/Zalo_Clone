@@ -1,4 +1,5 @@
 using System.Text;
+using Infrastructure.Entities;
 
 namespace Infrastructure.Utils
 {
@@ -7,6 +8,8 @@ namespace Infrastructure.Utils
         string GenerateRandomString(int length);
         string EncodeInformation(params string[] infos);
         string[] DecodeInformation(string code);
+        ValidationByEmail TokenToValidationByEmailEntity(string token);
+        string ValidationByEmailEntityToToken(ValidationByEmail entity);
     }
     public class Utils : IUtils
     {
@@ -40,6 +43,20 @@ namespace Infrastructure.Utils
                 .Select(s => s[random.Next(s.Length)]).ToArray());
             return id;
 
+        }
+
+        public ValidationByEmail TokenToValidationByEmailEntity(string token)
+        {
+            var information = DecodeInformation(token!);
+            return new ValidationByEmail(){
+                Email = information[0],
+                ValidationCode = information[1]
+            };
+        }
+
+        public string ValidationByEmailEntityToToken(ValidationByEmail entity)
+        {
+            return EncodeInformation(entity.Email,entity.ValidationCode);
         }
     }
 }

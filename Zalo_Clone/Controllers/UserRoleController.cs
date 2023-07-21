@@ -29,7 +29,7 @@ namespace Zalo_Clone.Controllers
             if (result)
             {
                 return Ok();
-            }
+            }   
             else
             {
                 return BadRequest();
