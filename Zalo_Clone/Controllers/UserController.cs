@@ -155,6 +155,7 @@ namespace Zalo_Clone.Controllers
             switch (respond)
             {
                 case ValidationRespond.Success:
+                    
                     bool result = await userAccountService.CompleteSignUp(entity.Email);
                     if (result)
                         return Ok("Validate email successfully");

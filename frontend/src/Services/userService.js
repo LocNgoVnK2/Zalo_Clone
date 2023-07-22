@@ -26,16 +26,13 @@ const loginApi = (email, password) => {
     return axios.post('/api/User/SendEmail', [email]);
   };
 
-  const enterValidationCodeApi = (email, validationCode) => {
-    const data = {
-      email: email,
-      validationCode: validationCode
-    };
   
-    return axios.post("​/api​/User​/EnterValidationCode", data);
-  };
 
   const getuserDataApi = (id) => {
     return axios.get(`/api/UserRole?userId?a=${id}`);
   };
-export{loginApi,signupApi,getuserApi,enterValidationCodeApi,sendMail,getuserDataApi};   
+  const ValidateSignUp = (token) => {
+
+    return axios.post(`/api/User/ValidateSignUp?token=${token}`);
+  };
+export{loginApi,signupApi,getuserApi,sendMail,getuserDataApi,ValidateSignUp};   

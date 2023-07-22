@@ -31,9 +31,7 @@ class Signup extends Component {
     jumpToSignIn = () => {
         this.props.navigate("/");
     }
-    jumpToEmailAuthentication = () => {
-        this.props.navigate("/signup/email_authentication");
-    }
+
     handleEmailChange(event) {
         this.setState({ email: event.target.value });
     }
@@ -56,34 +54,23 @@ class Signup extends Component {
         }
         try {
             let res = await signupApi(this.state.email, this.state.password, this.state.username, this.state.phonenumber, this.state.gender);
+            console.log(res);
+            alert(res);
             if (res) {
-                let sendmailRes = await sendMail(this.state.email);
-                if (sendmailRes) {
-                    this.setState({ showAlert: true }, () => {
-                        setTimeout(() => {
-                            this.setState({ showAlert: false });
-                        }, 60000);
 
-                    });
-                }
+                this.setState({ showAlert: true }, () => {
+                    setTimeout(() => {
+                        this.setState({ showAlert: false });
+                    }, 60000);
+                });
+
             } else {
-                if (res && res.status === 400) {
-                    alert(res.data.error);
-                } else {
-                    alert("Existed account");
-                }
-            }
 
+                alert(res.data.error);
+
+            }
         } catch (error) {
-            if (error.response && error.response.status === 400) {
-                alert(error.response.data.error);
-            } else if (error.response && error.response.status === 404) {
-                alert("Sign Up fail");
-            } else if (error.response && error.response.status === 500) {
-                alert("Server error");
-            } else {
-                alert("An error occurred");
-            }
+            alert("An error occurred");
             return false;
         }
     };
@@ -204,11 +191,7 @@ class Signup extends Component {
                                     Trở về
                                 </Button>
                             </div>
-                            {this.state.showAlert && (
-                                <Button variant="primary" type="button" onClick={this.jumpToEmailAuthentication}>
-                                    Sang trang xác thực email
-                                </Button>
-                            )}
+
                         </div>
                     </div>
                 </div>

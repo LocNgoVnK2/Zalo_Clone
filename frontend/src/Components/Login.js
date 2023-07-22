@@ -43,7 +43,7 @@ class Login extends Component {
           localStorage.setItem('token', res.token);
           this.props.navigate("/home");
         }else{
-          this.props.navigate("/signup/email_authentication");
+          alert("Invalid account information");
         }
 
         

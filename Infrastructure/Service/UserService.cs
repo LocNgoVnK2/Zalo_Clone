@@ -183,7 +183,7 @@ namespace Infrastructure.Service
             {
                 Id = appUser.Id,
                 Gender = user.Gender,
-                DateOfBirth = user.DateOfBirth
+                //DateOfBirth = user.DateOfBirth
             };
             bool result = await userAccountRepository.Add(appUser);
             result = await userDataRepository.Add(userData);

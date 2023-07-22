@@ -14,23 +14,23 @@ class Home extends Component {
        email:''
      }
     this.currentState = HomeState.None;
-    this.loadDataUser = this.loadDataUser.bind(this);
+
   }
   componentDidMount() {
-    this.loadDataUser();
-  }
-  loadDataUser=(e)=>{
-    const res = { token: localStorage.getItem('token') };
-    if (res.token) {
-      const user = jwtDecode(res.token);
+    const token = localStorage.getItem('token');
+    if (token) {
+      const user = jwtDecode(token);
       const emailU = user["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"];
-      this.setState({ email: emailU }, () => {
-        console.log(this.state.email); // Access the updated state here
-      });
+      this.setState({ email: emailU });
       
     }
-    
   }
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.email !== this.state.email) {
+      console.log(this.state.email);
+    }
+  }
+ 
   changeState = (state) => {
     // this.setState( { currentState: state } );
     this.currentState = state;
