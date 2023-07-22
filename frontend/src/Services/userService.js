@@ -34,4 +34,8 @@ const loginApi = (email, password) => {
   
     return axios.post("​/api​/User​/EnterValidationCode", data);
   };
-export{loginApi,signupApi,getuserApi,enterValidationCodeApi,sendMail};   
+
+  const getuserDataApi = (id) => {
+    return axios.get(`/api/UserRole?userId?a=${id}`);
+  };
+export{loginApi,signupApi,getuserApi,enterValidationCodeApi,sendMail,getuserDataApi};   

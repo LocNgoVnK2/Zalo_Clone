@@ -85,6 +85,10 @@ builder.Services.AddScoped<IValidationByEmailService, ValidationByEmailService>(
 
 //Utils
 builder.Services.AddScoped<IUtils, Utils>();
+
+//SignUpUser
+builder.Services.AddScoped<ISignUpUserRepository, SignUpUserRepository>();
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
