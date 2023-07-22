@@ -71,6 +71,10 @@ namespace Zalo_Clone
             CreateMap<RoleModel, Role>();
             CreateMap<UserRole, UserRoleModel>();
             CreateMap<UserRoleModel, UserRole>();
+
+            // validation
+            CreateMap<ValidationByEmailModel, ValidationByEmail>();
+              CreateMap<ValidationByEmail, ValidationByEmailModel>();
         }
     }
 }
