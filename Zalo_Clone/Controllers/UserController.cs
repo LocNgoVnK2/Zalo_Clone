@@ -62,7 +62,7 @@ namespace Zalo_Clone.Controllers
             emailService.SendEmail(message);
             return Ok("Sent email successfully, waiting for validation");
         }
-          [HttpPost("ValidateResetPassword")]
+        [HttpPost("ValidateResetPassword")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> ValidateResetPassword(string token)
@@ -74,9 +74,9 @@ namespace Zalo_Clone.Controllers
             {
                 case ValidationRespond.Success:
                     //do something
-                  
-                        return Ok("Validate email successfully");
-             
+
+                    return Ok("Validate email successfully");
+
 
                 case ValidationRespond.IncorrectType:
                     return BadRequest("Incorrect validation type");
@@ -144,6 +144,46 @@ namespace Zalo_Clone.Controllers
                 }
             }
         }
+        [HttpPost("ReSendToken")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> ReSendToken(string token)
+        {
+            var entity = utils.TokenToValidationByEmailEntity(token);
+            var emailExist = await userAccountService.GetUser(entity.Email);
+            if (emailExist != null)
+            {
+                try
+                {
+                    var validationCode = await validationByEmailServices.CreateValidationCode(emailExist.Email, ValidationType.ValidatedEmail);
+                    if (string.IsNullOrEmpty(validationCode))
+                    {
+                        return BadRequest("Can't create validation code");
+                    }
+                    var validationEntity = new ValidationByEmail()
+                    {
+                        Email = emailExist.Email,
+                        ValidationCode = validationCode
+                    };
+                    string newtoken = utils.ValidationByEmailEntityToToken(validationEntity);
+                    string subject = "Xin chào: " + emailExist.UserName +" | Email xác nhận lại ";
+                    string content = "Đây là email gửi tự động bởi hệ thống xác minh , vui lòng nhấn vào đường dẫn để xác minh email của bạn: " +
+                    "http://localhost:3000/validation?token=" + newtoken;
+                    var message = new EmailMessage(emailExist.Email, subject, content);
+                    emailService.SendEmail(message);
+                    return Ok("User registered successfully, waiting for validation");
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, ex.Message);
+                }
+            }
+            else
+            {
+                return BadRequest("Email does not exist");
+            }
+        }
         [HttpPost("ValidateSignUp")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -155,7 +195,7 @@ namespace Zalo_Clone.Controllers
             switch (respond)
             {
                 case ValidationRespond.Success:
-                    
+
                     bool result = await userAccountService.CompleteSignUp(entity.Email);
                     if (result)
                         return Ok("Validate email successfully");
@@ -195,7 +235,7 @@ namespace Zalo_Clone.Controllers
             }
         }
 
-    [HttpGet("GetUserByEmail")]
+        [HttpGet("GetUserByEmail")]
         public async Task<IActionResult> GetUserByEmail(string email)
         {
 
@@ -238,8 +278,8 @@ namespace Zalo_Clone.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-    
-      
+
+
         [HttpPost("SendEmail")]
         public async Task<IActionResult> SendEmail(string[] emailAddresses)
         {
@@ -259,31 +299,40 @@ namespace Zalo_Clone.Controllers
             return Ok();
 
         }
-        /*
-        [HttpPost("EnterValidationCode")]
-        public async Task<IActionResult> EnterValidationCode(string emailAddresses,string validationCode)
-        {
 
-            User user = await userAccountService.GetUser(emailAddresses);
-            if(user == null)
+        [HttpGet("GetUserInformation")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetUserInformation(string email)
+        {
+            try
             {
-                return BadRequest();
-            }
-            if(user.ValidationCode == validationCode)
-            {
-                bool result = await userAccountService.verifyEmailAsync(user.Email);
-                if (result)
+                var appUser = await userAccountService.GetUser(email);
+                var userData = await userDataService.GetUserData(appUser.Id);
+                if (appUser != null && userData != null)
                 {
-                    return Ok("Verify Email success");
+                    UserInformationModel user = new UserInformationModel();
+                    user.Id = appUser.Id;
+                    user.PhoneNumber = appUser.PhoneNumber;
+                    user.UserName = appUser.UserName;
+                    user.Email = appUser.Email;
+                    user.Avatar = userData.Avatar;
+                    user.Gender = userData.Gender;
+                    user.DateOfBirth = userData.DateOfBirth;
+                    user.Background = userData.Background;
+                    return Ok(user);
                 }
                 else
                 {
-                    return StatusCode(500, "Failed to verify Email");
+                    return BadRequest("Invalid email or password");
                 }
             }
-            return Ok();
 
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
-        */
     }
 }

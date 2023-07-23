@@ -19,7 +19,7 @@ const loginApi = (email, password) => {
     return axios.post("/api/User/signup", data);
   };
   const getuserApi = (email) => {
-    return axios.get(`/api/User/GetUserByEmail?email=${email}`);
+    return axios.get(`/api/User/GetUserInformation?email=${email}`);
   };
   const sendMail = (email) => {
 

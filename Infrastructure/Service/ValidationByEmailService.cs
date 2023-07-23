@@ -51,7 +51,7 @@ namespace Infrastructure.Service
             {
                 Email = email,
                 ValidationType = (int)type,
-                ExpiredTime = DateTime.Now.AddMinutes(5),
+                ExpiredTime = DateTime.Now.AddMinutes(2),
                 ValidationCode = utils.GenerateRandomString(6)
             };
             bool result = await _repo.Add(validationEntity);

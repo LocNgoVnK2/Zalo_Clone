@@ -3,6 +3,7 @@ import Sidebar from "./Sidebar";
 import ConversationList from "./ConversationList";
 import Header from "./Header";
 import jwtDecode from 'jwt-decode';
+import { getuserApi } from "../Services/userService";
 const HomeState = {
   None: "none",
   Message: "Message",
@@ -10,9 +11,9 @@ const HomeState = {
 class Home extends Component {
   constructor(props) {
     super(props);
-     this.state = {
-       email:''
-     }
+    this.state = {
+      email: ''
+    }
     this.currentState = HomeState.None;
 
   }
@@ -22,15 +23,22 @@ class Home extends Component {
       const user = jwtDecode(token);
       const emailU = user["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"];
       this.setState({ email: emailU });
-      
+
     }
   }
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.email !== this.state.email) {
-      console.log(this.state.email);
+    if (prevState.email !== this.state.email) { 
+      this.CallApiDataforUser(this.state.email);
     }
   }
- 
+
+  CallApiDataforUser = async (email) => {
+    let res = await getuserApi(email);
+    if (res) {
+      console.log(res.userName);
+    }
+  }
+
   changeState = (state) => {
     // this.setState( { currentState: state } );
     this.currentState = state;
@@ -39,9 +47,9 @@ class Home extends Component {
   render() {
     return (
       <div>
-        
+
         <Sidebar changeState={this.changeState} />
-        <ConversationList/>
+        <ConversationList />
       </div>
     );
   }
