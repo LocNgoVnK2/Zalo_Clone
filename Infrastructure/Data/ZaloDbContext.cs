@@ -45,6 +45,7 @@ namespace Infrastructure.Data
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<ValidationByEmail> validationByEmails { get; set; }
         public DbSet<SignUpUser> signUpUsers { get; set; }
+        public DbSet<UserContact> userContacts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

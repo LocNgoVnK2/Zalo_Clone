@@ -1,4 +1,5 @@
 using System.Text;
+using Infrastructure.Service;
 using Infrastructure.Entities;
 
 namespace Infrastructure.Utils
@@ -50,13 +51,15 @@ namespace Infrastructure.Utils
             var information = DecodeInformation(token!);
             return new ValidationByEmail(){
                 Email = information[0],
-                ValidationCode = information[1]
+                ValidationCode = information[1],
+                ValidationType = int.Parse(information[2])
+
             };
         }
 
         public string ValidationByEmailEntityToToken(ValidationByEmail entity)
         {
-            return EncodeInformation(entity.Email,entity.ValidationCode);
+            return EncodeInformation(entity.Email,entity.ValidationCode,entity.ValidationType.ToString());
         }
     }
 }

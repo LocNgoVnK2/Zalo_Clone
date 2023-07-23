@@ -88,7 +88,9 @@ builder.Services.AddScoped<IUtils, Utils>();
 
 //SignUpUser
 builder.Services.AddScoped<ISignUpUserRepository, SignUpUserRepository>();
-
+//UserContact
+builder.Services.AddScoped<IUserContactRepository, UserContactRepository>();
+builder.Services.AddScoped<IUserContactService, UserContactService>();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

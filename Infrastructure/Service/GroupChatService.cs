@@ -13,6 +13,7 @@ namespace Infrastructure.Service
     public interface IGroupChatService
     {
         Task<List<GroupChat>> GetAll();
+        Task<GroupChat> GetGroupChatById(string id);
         Task<bool> AddGroupChat(GroupChat groupChat,string imageByBase64);
         Task<bool> RemoveGroupChat(string id);
         Task<bool> UpdateLeader(string id, string newLeader);
@@ -67,6 +68,11 @@ namespace Infrastructure.Service
         public async Task<List<GroupChat>> GetAll()
         {
             return await _groupChatRepository.GetAll().ToListAsync();
+        }
+
+        public async Task<GroupChat> GetGroupChatById(string id)
+        {
+            return await _groupChatRepository.GetById(id);
         }
 
         public async Task<bool> RemoveGroupChat(string id)

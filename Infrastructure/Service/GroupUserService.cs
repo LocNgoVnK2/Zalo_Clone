@@ -16,6 +16,7 @@ namespace Infrastructure.Service
         Task<bool> AddGroupUser(GroupUser groupUser);
         Task<bool> RemoveGroupUser(string idGroup, string idUser);
         Task<bool> UpdateGroupUser(GroupUser groupUser);
+        Task<List<GroupUser>> GetAllGroupsOfUser(string userId);
     }
     public class GroupUserService : IGroupUserService
     {
@@ -28,6 +29,11 @@ namespace Infrastructure.Service
         {
             bool result = await repository.Add(groupUser);
             return result;
+        }
+
+        public async Task<List<GroupUser>> GetAllGroupsOfUser(string userId)
+        {
+            return await repository.GetAll().Where(x=>x.IdUser == userId).Select(x=>x).ToListAsync();
         }
 
         public async Task<List<GroupUser>> GetAllUserInGroup(string groupId)
