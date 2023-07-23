@@ -21,6 +21,7 @@ namespace Infrastructure.Service
     {
 
         Task<User> GetUser(string email);
+        Task<User> GetUserById(string id);
         void InsertUser(User userAccount);
         void UpdateUser(User userAccount);
 
@@ -189,6 +190,11 @@ namespace Infrastructure.Service
             result = await userDataRepository.Add(userData);
             result = await signUpUserRepository.Delete(user);
             return result;
+        }
+
+        public async Task<User> GetUserById(string id)
+        {
+            return await userAccountRepository.GetById(id);
         }
     }
 }
