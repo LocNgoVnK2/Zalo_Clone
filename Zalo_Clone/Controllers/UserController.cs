@@ -20,12 +20,20 @@ namespace Zalo_Clone.Controllers
         private readonly IMapper mapper;
         private readonly IValidationByEmailService validationByEmailServices;
         private readonly IUtils utils;
+        private readonly IUserContactService userContactService;
+        private readonly IGroupUserService  groupUserService;
+        private readonly IMessageService messageService;
+        private readonly IGroupChatService groupChatService;
         public UserController(IUserService userAccountService,
-         IMapper mapper, IUserDataService userDataService,
-          IEmailService emailService,
-           IValidationByEmailService validationByEmailServices,
-           IUtils utils
-            )
+        IMapper mapper, IUserDataService userDataService,
+        IEmailService emailService,
+        IValidationByEmailService validationByEmailServices,
+        IUtils utils,
+        IUserContactService userContactService,
+        IGroupUserService groupUserService,
+        IMessageService messageService,
+        IGroupChatService groupChatService
+        )
         {
             this.userAccountService = userAccountService;
             this.mapper = mapper;
@@ -33,8 +41,34 @@ namespace Zalo_Clone.Controllers
             this.emailService = emailService;
             this.validationByEmailServices = validationByEmailServices;
             this.utils = utils;
+            this.userContactService = userContactService;
+            this.groupUserService = groupUserService;
+            this.messageService = messageService;
+            this.groupChatService = groupChatService;
         }
-
+        [HttpGet("GetContactsOfUser")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetContactsOfUser(string userID)
+        {
+            var userContactModels = new List<UserContactModel>();
+            var contacts = await userContactService.GetContactsOfUserByTimeDesc(userID);
+            var groupContacts = await groupUserService.GetAllGroupsOfUser(userID);
+            foreach(var contact in contacts){
+                var message = await messageService.GetMessageById(contact.LastMessageId);
+                contact.LastMessageContent = message.Content;
+                contact.LastMessageTime = message.SendTime;
+            }
+            foreach(var groupContact in groupContacts){
+                var group = groupChatService.GetGroupChatById(groupContact.IdGroup!);
+                var contact = new UserContact(){
+                    GroupContactId = groupContact.IdGroup,
+                    
+                };
+            }
+            return Ok(contacts);
+            
+        }
         [HttpPost("ResetPassword")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -52,7 +86,8 @@ namespace Zalo_Clone.Controllers
             var validationEntity = new ValidationByEmail()
             {
                 Email = email,
-                ValidationCode = validationCode
+                ValidationCode = validationCode,
+                ValidationType = (int)ValidationType.ResetPassword
             };
             string token = utils.ValidationByEmailEntityToToken(validationEntity);
             string subject = "Xin chào: " + user.UserName;
@@ -123,7 +158,8 @@ namespace Zalo_Clone.Controllers
                         var validationEntity = new ValidationByEmail()
                         {
                             Email = request.Email,
-                            ValidationCode = validationCode
+                            ValidationCode = validationCode,
+                            ValidationType = (int)ValidationType.ValidatedEmail
                         };
                         string token = utils.ValidationByEmailEntityToToken(validationEntity);
                         string subject = "Xin chào: " + request.Username;

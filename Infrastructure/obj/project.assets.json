@@ -3775,11 +3775,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj",
+      "projectUniqueName": "d:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj",
       "projectName": "Infrastructure",
-      "projectPath": "D:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj",
+      "projectPath": "d:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj",
       "packagesPath": "C:\\Users\\a\\.nuget\\packages\\",
-      "outputPath": "D:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\obj\\",
+      "outputPath": "d:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
