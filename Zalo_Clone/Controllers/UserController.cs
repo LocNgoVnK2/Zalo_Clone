@@ -21,7 +21,7 @@ namespace Zalo_Clone.Controllers
         private readonly IValidationByEmailService validationByEmailServices;
         private readonly IUtils utils;
         private readonly IUserContactService userContactService;
-        private readonly IGroupUserService  groupUserService;
+        private readonly IGroupUserService groupUserService;
         private readonly IMessageService messageService;
         private readonly IGroupChatService groupChatService;
         public UserController(IUserService userAccountService,
@@ -54,20 +54,46 @@ namespace Zalo_Clone.Controllers
             var userContactModels = new List<UserContactModel>();
             var contacts = await userContactService.GetContactsOfUserByTimeDesc(userID);
             var groupContacts = await groupUserService.GetAllGroupsOfUser(userID);
-            foreach(var contact in contacts){
+            foreach (var contact in contacts)
+            {
                 var message = await messageService.GetMessageById(contact.LastMessageId);
                 contact.LastMessageContent = message.Content;
                 contact.LastMessageTime = message.SendTime;
             }
-            foreach(var groupContact in groupContacts){
-                var group = groupChatService.GetGroupChatById(groupContact.IdGroup!);
-                var contact = new UserContact(){
+            foreach (var groupContact in groupContacts)
+            {
+                var group = await groupChatService.GetGroupChatById(groupContact.IdGroup!);
+                var groupMessage = await messageService.GetMessagesFromGroup(groupContact.IdGroup!);
+                var lastMessageOfGroup = groupMessage.OrderByDescending(x => x.SendTime).FirstOrDefault();
+                var contact = new UserContact()
+                {
                     GroupContactId = groupContact.IdGroup,
-                    
+                    LastMessageContent = lastMessageOfGroup?.Content,
+                    LastMessageTime = lastMessageOfGroup?.SendTime
                 };
+                contacts.Add(contact);
             }
-            return Ok(contacts);
-            
+            contacts = contacts.OrderByDescending(x => x.LastMessageTime).ToList();
+            foreach (var contact in contacts)
+            {
+                var model = new UserContactModel()
+                {
+                    IsUserContact = contact.GroupContactId == null,
+                    LastMessageContent = contact.LastMessageContent
+                };  
+                if (!model.IsUserContact)
+                {
+                    model.GroupContactName = (await groupChatService.GetGroupChatById(contact.GroupContactId!)).Name;
+                }
+                else
+                {
+                    var contactId = contact.UserId.Equals(userID) ? contact.OtherUserId : contact.UserId;
+                    model.UserContactName = (await userAccountService.GetUserById(contactId!)).UserName;
+                }
+                userContactModels.Add(model);
+            }
+            return Ok(userContactModels);
+
         }
         [HttpPost("ResetPassword")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
