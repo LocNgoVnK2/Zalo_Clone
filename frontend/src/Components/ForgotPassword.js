@@ -3,58 +3,37 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
-import { loginApi } from '../Services/userService';
-import { Link } from 'react-router-dom';
-import { getuserApi } from '../Services/userService';
-class Login extends Component {
+import { SendTokenForForgotPassword } from '../Services/userService';
+import AlertCustom from './AlertCustom';
+class ForgotPassword extends Component {
   constructor(props) {
     super(props);
     this.state = {
       responseData: null,
       error: null,
       email: '',
-      password: '',
-      showAlert: false // Thêm biến showAlert vào state
+      showAlert: false
     }
     this.handleEmailChange = this.handleEmailChange.bind(this);
-    this.handlePasswordChange = this.handlePasswordChange.bind(this);
+
   }
   handleEmailChange(event) {
     this.setState({ email: event.target.value });
   }
-  handlePasswordChange(event) {
-    this.setState({ password: event.target.value });
+  jumpToSignIn = () => {
+    this.props.navigate("/");
   }
-  jumpToSignUp = () => {
-    this.props.navigate("/signup");
-  }
-  handleLogin = async () => {
-    if (!this.state.email || !this.state.password) {
-      alert("Please fill in all fields");
+  handleValidation = async () => {
+    if (!this.state.email) {
+      alert("Please enter your email here");
       return;
     }
     try {
-      let res = await loginApi(this.state.email, this.state.password);
-      if (res && res.token) {
-       
-        let ures = await getuserApi(this.state.email);
-        if(ures.emailConfirmed===true){
-          localStorage.setItem('token', res.token);
-          this.props.navigate("/home");
-        }else{
-          alert("Invalid account information");
-        }
-
-        
-      } else {
-        if (res && res.status === 400) {
-          alert(res.data.error);
-
-        } else {
-          alert("Invalid account information");
-        }
+      let res = await SendTokenForForgotPassword(this.state.email);
+      alert(res);
+      if (res) {
+        this.setState({ showAlert: true });
       }
-
     } catch (error) {
       if (error.response && error.response.status === 400) {
         alert(error.response.data.error);
@@ -67,8 +46,8 @@ class Login extends Component {
       }
       return false;
     }
-  };
 
+  }
   render() {
 
     return (
@@ -89,59 +68,47 @@ class Login extends Component {
           <h1 style={{ fontSize: '1.1em', marginTop: '0px', marginBottom: '100px', textAlign: "center" }}>
             <img width="48" height="48" src="https://img.icons8.com/color/48/zalo.png" alt="zalo" />
             <br />
-            Đăng nhập tài khoản Zalo  <br />
-            để kết nối với ứng dụng Zalo Web
+            Bạn đã quên mật khẩu? <br />
+            Hãy nhập gmail mà bạn đã quên mật khẩu để nhận mã xác thực
           </h1>
           <div className="d-flex justify-content-center align-items-center" style={{ backgroundColor: 'white', boxShadow: '5px 5px 10px rgba(0, 0, 0, 0.2)', borderRadius: '10px', padding: '50px' }}>
             <Form>
-              <Form.Group as={Row} className="mb-3" controlId="formPlaintextEmail">
-                <Form.Label column sm="3">
+              <Form.Group as={Row} className="mb-5" controlId="formPlaintextEmail">
+                <Form.Label column sm="3" >
                   Email
                 </Form.Label>
-                <Col sm="9">
+                <Col sm="12">
                   <Form.Control type="text"
                     placeholder="email@example.com"
                     value={this.state.email}
-                    onChange={this.handleEmailChange} />
-                </Col>
-              </Form.Group>
-
-              <Form.Group as={Row} className="mb-3" controlId="formPlaintextPassword">
-                <Form.Label column sm="3">
-                  Password
-                </Form.Label>
-                <Col sm="9">
-                  <Form.Control type="password"
-                    placeholder="Password"
-                    value={this.state.password}
-                    onChange={this.handlePasswordChange} />
+                    onChange={this.handleEmailChange}
+                  />
                 </Col>
               </Form.Group>
               <div className="d-grid">
-                <Button variant="primary" type="button" onClick={this.handleLogin}>
-                  Đăng nhập
+                <Button variant="primary" type="button" onClick={this.handleValidation}>
+                  Lấy mã xác nhận
+                </Button>
+              </div>
+              <br />
+              <div className="d-grid">
+                <Button variant="primary" type="button" onClick={this.jumpToSignIn}>
+                  Trở về đăng nhập
                 </Button>
               </div>
 
-              <div className="text-center mt-3">
-                <Button variant="link" >
-                  Quên mật khẩu?
-                </Button>
-                <br />
-                Chưa có tài khoản
-                <Button variant="link" onClick={this.jumpToSignUp}>
-                  Đăng ký tại đây
-                </Button>
-              </div>
             </Form>
 
 
           </div>
-
+          {this.state.showAlert && (
+            <AlertCustom message="Bạn đã đăng ký thành công. Cần chuyển sang trang xác thực và truy cập vào email để chấp nhận xác thực." variant="warning" dismissTime={50000} />
+          )}
         </div>
+
       </div>
     );
   }
 }
 
-export default Login;
+export default ForgotPassword;

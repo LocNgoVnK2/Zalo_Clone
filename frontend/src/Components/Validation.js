@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ValidateSignUp } from "../Services/userService";
 import { useRef } from "react";
 import { useState } from "react";
+import { RenewToken } from "../Services/userService";
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
@@ -22,12 +23,17 @@ const Validation = () => {
 
       const validateToken = async () => {
         try {
-          await ValidateSignUp(token);
+          let res = await ValidateSignUp(token);
           navigate("/");
         } catch (error) {
-          alert("o day");
-          // call api here
-          setGetNewTokenPage(true);
+          if (error.response && error.response.status === 400) {
+            setGetNewTokenPage(true);
+            await RenewToken(token);
+            
+          } else {
+            alert(" loi j do o day");
+            
+          }
         }
       };
 

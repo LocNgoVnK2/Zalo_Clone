@@ -28,6 +28,9 @@ class Login extends Component {
   jumpToSignUp = () => {
     this.props.navigate("/signup");
   }
+  jumpToForgotPassword= () => {
+    this.props.navigate("/forgotPassword");
+  }
   handleLogin = async () => {
     if (!this.state.email || !this.state.password) {
       alert("Please fill in all fields");
@@ -36,16 +39,8 @@ class Login extends Component {
     try {
       let res = await loginApi(this.state.email, this.state.password);
       if (res && res.token) {
-       
-        let ures = await getuserApi(this.state.email);
-        if(ures.emailConfirmed===true){
-          localStorage.setItem('token', res.token);
-          this.props.navigate("/home");
-        }else{
-          alert("Invalid account information");
-        }
-
-        
+        localStorage.setItem('token', res.token);
+        this.props.navigate("/home");
       } else {
         if (res && res.status === 400) {
           alert(res.data.error);
@@ -124,7 +119,7 @@ class Login extends Component {
               </div>
 
               <div className="text-center mt-3">
-                <Button variant="link" >
+                <Button variant="link" onClick={this.jumpToForgotPassword} >
                   Quên mật khẩu?
                 </Button>
                 <br />

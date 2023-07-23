@@ -187,7 +187,7 @@ namespace Zalo_Clone.Controllers
         public async Task<IActionResult> ReSendToken(string token)
         {
             var entity = utils.TokenToValidationByEmailEntity(token);
-            var emailExist = await userAccountService.GetUser(entity.Email);
+            var emailExist = await userAccountService.GetSignUpUserByEmail(entity.Email);
             if (emailExist != null)
             {
                 try
@@ -200,10 +200,11 @@ namespace Zalo_Clone.Controllers
                     var validationEntity = new ValidationByEmail()
                     {
                         Email = emailExist.Email,
-                        ValidationCode = validationCode
+                        ValidationCode = validationCode,
+                         ValidationType = (int)ValidationType.ValidatedEmail
                     };
                     string newtoken = utils.ValidationByEmailEntityToToken(validationEntity);
-                    string subject = "Xin chào: " + emailExist.UserName +" | Email xác nhận lại ";
+                    string subject = "Xin chào: " + emailExist.Username +" | Email xác nhận lại ";
                     string content = "Đây là email gửi tự động bởi hệ thống xác minh , vui lòng nhấn vào đường dẫn để xác minh email của bạn: " +
                     "http://localhost:3000/validation?token=" + newtoken;
                     var message = new EmailMessage(emailExist.Email, subject, content);
