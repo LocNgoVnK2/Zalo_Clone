@@ -7,7 +7,9 @@ import Signup from "./Components/Signup";
 import Header from "./Components/Header";
 import Validation from "./Components/Validation"; 
 import ForgotPassword from "./Components/ForgotPassword";
-
+import RenewPassword from "./Components/RenewPassword"; 
+import UpdatePassword from "./Components/UpdatePassword";
+import NoPage from "./Components/NoPage";
 class App extends Component {
   render() {
     return (
@@ -19,6 +21,9 @@ class App extends Component {
             <Route path="/signup" element={<Signup navigate={this.props.navigate}/>}/>
             <Route path="/validation" element={<Validation />} />
             <Route path="/forgotPassword" element={<ForgotPassword navigate={this.props.navigate} />} />
+            <Route path="/renewPassword" element={<RenewPassword />} />
+            <Route path="/updatePassword" element={<UpdatePassword navigate={this.props.navigate}/>} />
+            <Route path="/404" element={<NoPage />} />
           </Routes>
 
       </div>

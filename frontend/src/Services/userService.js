@@ -39,5 +39,17 @@ const loginApi = (email, password) => {
 
     return axios.post(`/api/User/ResetPassword?email=${email}`);
   };
+  const RenewTokenResetPassword = (token) => {
 
-export{loginApi,signupApi,getuserApi,getuserDataApi,ValidateSignUp,RenewToken,SendTokenForForgotPassword};   
+    return axios.post(`/api/User/ReSendTokenResetPassword?token=${token}`);
+  };
+  const ValidateResetPassword = (token) => {
+
+    return axios.post(`/api/User/ValidateResetPassword?token=${token}`);
+  };
+  const UpdatePasswordApi = (token,password) => {
+
+    return axios.post(`/api/User/UpdatePassword?token=${token}&password=${password}`);
+  };
+  
+export{loginApi,signupApi,getuserApi,getuserDataApi,ValidateSignUp,RenewToken,SendTokenForForgotPassword,RenewTokenResetPassword,ValidateResetPassword,UpdatePasswordApi};   

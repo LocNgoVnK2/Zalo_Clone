@@ -12,7 +12,8 @@ class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: ''
+      email: '',
+      id:''
     }
     this.currentState = HomeState.None;
 
@@ -35,8 +36,13 @@ class Home extends Component {
   CallApiDataforUser = async (email) => {
     let res = await getuserApi(email);
     if (res) {
-      console.log(res.userName);
+      this.setState({ id: res.id });
     }
+   
+  }
+  testFunction = () => {
+    const idValue = this.state.id;
+    console.log(idValue);
   }
 
   changeState = (state) => {
@@ -47,7 +53,7 @@ class Home extends Component {
   render() {
     return (
       <div>
-
+        <button onClick={this.testFunction()}></button>
         <Sidebar changeState={this.changeState} />
         <ConversationList />
       </div>

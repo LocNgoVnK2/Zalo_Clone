@@ -22,7 +22,7 @@ namespace Infrastructure.Service
 
         Task<User> GetUser(string email);
         void InsertUser(User userAccount);
-        void UpdateUser(User userAccount);
+        Task<bool> UpdateUser(User userAccount);
 
         Task<string> GetIdByEmailAsync(string email);
         Task<string> SignInAsync(User request);
@@ -31,6 +31,7 @@ namespace Infrastructure.Service
 
         Task<SignUpUser> GetSignUpUserByEmail(string email);
         Task<bool> CompleteSignUp(string email);
+          Task<bool> UpdatePassword(User request);
     }
     public class UserService : IUserService
     {
@@ -62,9 +63,9 @@ namespace Infrastructure.Service
         {
             userAccountRepository.Add(userAccount);
         }
-        public void UpdateUser(User userAccount)
+        public Task<bool> UpdateUser(User userAccount)
         {
-            userAccountRepository.Update(userAccount);
+            return userAccountRepository.Update(userAccount);
         }
 
 
@@ -126,7 +127,22 @@ namespace Infrastructure.Service
                 throw new Exception("Failed to sign up.", ex);
             }
         }
-
+        public async Task<bool> UpdatePassword(User request)
+        {
+            try
+            {
+                MD5 md5 = MD5.Create();
+                var bytesHash = md5.ComputeHash(Encoding.UTF8.GetBytes(request.Password!));
+                var passHash = BitConverter.ToString(bytesHash).Replace("-", "");
+                request.Password = passHash;
+                bool result = await userAccountRepository.Update(request);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to sign up.", ex);
+            }
+        }
 
         public async Task<string> GetIdByEmailAsync(string email)
         {
