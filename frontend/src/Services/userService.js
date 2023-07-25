@@ -19,19 +19,37 @@ const loginApi = (email, password) => {
     return axios.post("/api/User/signup", data);
   };
   const getuserApi = (email) => {
-    return axios.get(`/api/User/GetUserByEmail?email=${email}`);
-  };
-  const sendMail = (email) => {
-
-    return axios.post('/api/User/SendEmail', [email]);
+    return axios.get(`/api/User/GetUserInformation?email=${email}`);
   };
 
-  const enterValidationCodeApi = (email, validationCode) => {
-    const data = {
-      email: email,
-      validationCode: validationCode
-    };
+
+  const getuserDataApi = (id) => {
+    return axios.get(`/api/UserRole?userId?a=${id}`);
+  };
+  const ValidateSignUp = (token) => {
+
+    return axios.post(`/api/User/ValidateSignUp?token=${token}`);
+  };
+  const RenewToken = (token) => {
+
+    return axios.post(`/api/User/ReSendToken?token=${token}`);
+  };
+
+  const SendTokenForForgotPassword = (email) => {
+
+    return axios.post(`/api/User/ResetPassword?email=${email}`);
+  };
+  const RenewTokenResetPassword = (token) => {
+
+    return axios.post(`/api/User/ReSendTokenResetPassword?token=${token}`);
+  };
+  const ValidateResetPassword = (token) => {
+
+    return axios.post(`/api/User/ValidateResetPassword?token=${token}`);
+  };
+  const UpdatePasswordApi = (token,password) => {
+
+    return axios.post(`/api/User/UpdatePassword?token=${token}&password=${password}`);
+  };
   
-    return axios.post("​/api​/User​/EnterValidationCode", data);
-  };
-export{loginApi,signupApi,getuserApi,enterValidationCodeApi,sendMail};   
+export{loginApi,signupApi,getuserApi,getuserDataApi,ValidateSignUp,RenewToken,SendTokenForForgotPassword,RenewTokenResetPassword,ValidateResetPassword,UpdatePasswordApi};   

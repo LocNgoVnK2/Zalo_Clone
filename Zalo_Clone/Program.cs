@@ -3,6 +3,7 @@ using Infrastructure.Data;
 using Infrastructure.Entities;
 using Infrastructure.Repository;
 using Infrastructure.Service;
+using Infrastructure.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -78,6 +79,18 @@ builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 //UserRole
 builder.Services.AddScoped<IUserRoleService, UserRoleService>();
 builder.Services.AddScoped<IUserRoleRepository, UserRoleRepository>();
+//Validation
+builder.Services.AddScoped<IValidationByEmailRepository, ValidationByEmailRepository>();
+builder.Services.AddScoped<IValidationByEmailService, ValidationByEmailService>();
+
+//Utils
+builder.Services.AddScoped<IUtils, Utils>();
+
+//SignUpUser
+builder.Services.AddScoped<ISignUpUserRepository, SignUpUserRepository>();
+//UserContact
+builder.Services.AddScoped<IUserContactRepository, UserContactRepository>();
+builder.Services.AddScoped<IUserContactService, UserContactService>();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

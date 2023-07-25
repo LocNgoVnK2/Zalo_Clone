@@ -13,7 +13,7 @@ namespace Infrastructure.Data
     {
         public ZaloDbContext(DbContextOptions<ZaloDbContext> options) : base(options)
         {
-            
+
         }
         public DbSet<Reaction> reactions { get; set; }
 
@@ -43,7 +43,10 @@ namespace Infrastructure.Data
 
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
-    
+        public DbSet<ValidationByEmail> validationByEmails { get; set; }
+        public DbSet<SignUpUser> signUpUsers { get; set; }
+        public DbSet<UserContact> userContacts { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -104,30 +107,30 @@ namespace Infrastructure.Data
 
             modelBuilder.Entity<FriendRequest>(entity =>
             {
-                entity.ToTable("FRIEND_REQUEST"); 
+                entity.ToTable("FRIEND_REQUEST");
 
-                entity.HasKey(e => new { e.User1, e.User2 }); 
-
-                entity.Property(e => e.User1)
-                    .HasColumnName("user_1"); 
-
-                entity.Property(e => e.User2)
-                    .HasColumnName("user_2"); 
-            });
-            modelBuilder.Entity<FriendList>(entity =>
-            {
-                entity.ToTable("FRIEND");
-
-                entity.HasKey(e => new { e.User1, e.User2 }); 
+                entity.HasKey(e => new { e.User1, e.User2 });
 
                 entity.Property(e => e.User1)
                     .HasColumnName("user_1");
 
                 entity.Property(e => e.User2)
-                    .HasColumnName("user_2"); 
+                    .HasColumnName("user_2");
             });
-        
-       
+            modelBuilder.Entity<FriendList>(entity =>
+            {
+                entity.ToTable("FRIEND");
+
+                entity.HasKey(e => new { e.User1, e.User2 });
+
+                entity.Property(e => e.User1)
+                    .HasColumnName("user_1");
+
+                entity.Property(e => e.User2)
+                    .HasColumnName("user_2");
+            });
+
+
 
 
 

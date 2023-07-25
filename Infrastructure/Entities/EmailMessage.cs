@@ -17,5 +17,13 @@ namespace Infrastructure.Entities
             Subject = subject;
             Content = content;
         }
+            public EmailMessage(string to, string subject, string content) {
+            To = new List<MailboxAddress>
+            {
+                new MailboxAddress("Zalo Clone", to)
+            };
+            Subject = subject;
+            Content = content;
+        }
     }
 }

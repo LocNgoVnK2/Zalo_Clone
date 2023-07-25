@@ -16,7 +16,7 @@ namespace Zalo_Clone.Models
         [MaxLength(5)]
         public string? Gender { get; set; }
 
-        public DateTime DateOfBirth { get; set; }
+        //public DateTime DateOfBirth { get; set; }
 
    
 

@@ -1,6 +1,7 @@
 ﻿using Infrastructure.Entities;
 using Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Math.EC.Rfc7748;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace Infrastructure.Service
         Task<bool> SendMessageToDoList(Message message, long taskId, List<string>? attachments);
         Task<bool> ReactToMessage(MessageReactDetail messageReactDetail);
         Task<bool> RecallMessage(long idMessage);
-        
+
         int CountAllReactionInMessage(long idMessage);
         int CountReactionInMessage(long idMessage, int idReaction);
         Task<List<Reaction>> GetReactionsInMessage(long idMessage);
@@ -29,6 +30,8 @@ namespace Infrastructure.Service
 
         Task<List<Message>> GetMessagesOfUsersContact(string userOne, string userTwo);
         Task<List<Message>> GetMessagesFromToDoList(long todoId);
+        Task<Message> GetMessageById(long id);
+
     }
 
     public class MessageService : IMessageService
@@ -40,13 +43,15 @@ namespace Infrastructure.Service
         private readonly IMessageToDoListRepository _messageToDoListRepo;
         private readonly IMessageReactDetailRepository _messageReactDetailRepo;
         private readonly IReactionRepository _reactionRepo;
+        private readonly IUserContactRepository userContactRepository;
         public MessageService(IMessageRepository messageRepo,
             IMessageReceipentRepository messageReceipentRepo,
             IMessageAttachmentRepository messageAttachmentRepo,
             IMessageGroupRepository messageGroupRepo,
             IMessageReactDetailRepository messageReactDetailRepository,
             IReactionRepository reactionRepository,
-            IMessageToDoListRepository messageToDoListRepo)
+            IMessageToDoListRepository messageToDoListRepo,
+            IUserContactRepository userContactRepository)
         {
             this._messageRepo = messageRepo;
             this._messageReceipentRepo = messageReceipentRepo;
@@ -55,6 +60,7 @@ namespace Infrastructure.Service
             _messageReactDetailRepo = messageReactDetailRepository;
             _reactionRepo = reactionRepository;
             _messageToDoListRepo = messageToDoListRepo;
+            this.userContactRepository = userContactRepository;
         }
 
         public int CountAllReactionInMessage(long idMessage)
@@ -65,13 +71,13 @@ namespace Infrastructure.Service
 
         public int CountReactionInMessage(long idMessage, int idReaction)
         {
-            var rs = _messageReactDetailRepo.GetAll().Where(x=> x.MessageId.Equals(idMessage) && x.ReactId.Equals(idReaction)).Count();
+            var rs = _messageReactDetailRepo.GetAll().Where(x => x.MessageId.Equals(idMessage) && x.ReactId.Equals(idReaction)).Count();
             return rs;
         }
 
         public async Task<List<Message>> GetMessagesFromGroup(string groupId)
         {
-            var rs = await _messageGroupRepo.GetAll().Where(x=>x.GroupReceive.Equals(groupId)).Select(x => x.Id).ToListAsync();
+            var rs = await _messageGroupRepo.GetAll().Where(x => x.GroupReceive.Equals(groupId)).Select(x => x.Id).ToListAsync();
             List<Message> messages = new List<Message>();
             foreach (var r in rs)
             {
@@ -86,7 +92,7 @@ namespace Infrastructure.Service
             var rs = _messageAttachmentRepo.GetAll().Where(x => x.Id == idMessage);
             if (!rs.Any())
                 return null;
-            return await rs.ToListAsync(); 
+            return await rs.ToListAsync();
         }
 
         public async Task<List<Reaction>> GetReactionsInMessage(long idMessage)
@@ -99,7 +105,7 @@ namespace Infrastructure.Service
                 result.Add(reaction);
             }
             return result;
-        } 
+        }
 
         public async Task<List<Reaction>> GetTop3ReactionsInMessage(long idMessage)
         {
@@ -113,22 +119,22 @@ namespace Infrastructure.Service
                 result.Add(reaction);
             }
             return result;
-         }
+        }
 
 
         public async Task<bool> ReactToMessage(MessageReactDetail messageReactDetail)
         {
             var transaction = await _messageRepo.BeginTransaction();
-            if(! await _messageReactDetailRepo.Add(messageReactDetail))
+            if (!await _messageReactDetailRepo.Add(messageReactDetail))
             {
                 transaction.Rollback();
                 transaction.Dispose();
                 return false;
             }
             transaction.Commit();
-            transaction.Dispose() ;
+            transaction.Dispose();
             return true;
-            
+
         }
 
         public async Task<bool> RecallMessage(long idMessage)
@@ -136,14 +142,14 @@ namespace Infrastructure.Service
             var message = await _messageRepo.GetById(idMessage);
             message.IsRecall = true;
             var transaction = await _messageRepo.BeginTransaction();
-            if(! await _messageRepo.Update(message))
+            if (!await _messageRepo.Update(message))
             {
                 transaction.Rollback();
                 transaction?.Dispose();
                 return false;
             }
-            transaction.Commit() ;
-            transaction.Dispose() ; return true;
+            transaction.Commit();
+            transaction.Dispose(); return true;
 
         }
 
@@ -193,7 +199,7 @@ namespace Infrastructure.Service
             {
                 Id = message.Id,
                 GroupReceive = groupReceive
-               
+
             };
             result = await _messageGroupRepo.Add(messageGroup);
             if (attachments != null || attachments.Count > 0)
@@ -208,7 +214,7 @@ namespace Infrastructure.Service
                     result = await _messageAttachmentRepo.Add(attachment);
                 }
             }
-       
+
             if (!result)
             {
                 transaction.Rollback();
@@ -245,6 +251,18 @@ namespace Infrastructure.Service
                     result = await _messageAttachmentRepo.Add(attachment);
                 }
             }
+            var contact = userContactRepository.GetAll().FirstOrDefault(x => (x.UserId.Equals(message.Sender) && x.OtherUserId.Equals(userReceive)) || x.UserId.Equals(userReceive) && x.OtherUserId.Equals(message.Sender));
+            if (contact == null)
+                result = await userContactRepository.Add(new UserContact()
+                {
+                    UserId = message.Sender,
+                    OtherUserId = userReceive,
+                    LastMessageId = message.Id
+                });
+            else{
+                contact.LastMessageId = message.Id;
+                result = await userContactRepository.Update(contact);
+            }
             if (!result)
             {
                 transaction.Rollback();
@@ -280,6 +298,11 @@ namespace Infrastructure.Service
                 messages.Add(message);
             }
             return messages;
+        }
+
+        public async Task<Message> GetMessageById(long id)
+        {
+            return await _messageRepo.GetById(id);
         }
     }
 }

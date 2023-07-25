@@ -1,6 +1,6 @@
 ﻿using Infrastructure.Entities;
 using Infrastructure.Repository;
-
+using Infrastructure.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -22,37 +22,50 @@ namespace Infrastructure.Service
 
         Task<User> GetUser(string email);
         void InsertUser(User userAccount);
-        void UpdateUser(User userAccount);
+        Task<bool> UpdateUser(User userAccount);
 
         Task<string> GetIdByEmailAsync(string email);
         Task<string> SignInAsync(User request);
-        Task<bool> SignUpAsync(User request);
+        Task<bool> SignUpAsync(SignUpUser request);
         Task<bool> verifyEmailAsync(string email);
+
+        Task<SignUpUser> GetSignUpUserByEmail(string email);
+        Task<bool> CompleteSignUp(string email);
+          Task<bool> UpdatePassword(User request);
     }
     public class UserService : IUserService
     {
         private IUserRepository userAccountRepository;
 
         private IConfiguration configuration;
-
-        public UserService(IUserRepository userAccountRepository, IConfiguration configuration)
+        private IUtils utils;
+        private ISignUpUserRepository signUpUserRepository;
+        private IUserDataRepository userDataRepository;
+        public UserService(IUserRepository userAccountRepository,
+        IConfiguration configuration,
+        IUtils utils,
+        ISignUpUserRepository signUpUserRepository,
+        IUserDataRepository userDataRepository)
         {
             this.userAccountRepository = userAccountRepository;
 
             this.configuration = configuration;
+            this.utils = utils;
+            this.signUpUserRepository = signUpUserRepository;
+            this.userDataRepository = userDataRepository;
         }
 
         public async Task<User> GetUser(string email)
         {
-            return await userAccountRepository.GetAll().Where(X => X.Email.Equals(email)).FirstOrDefaultAsync();
+            return await userAccountRepository.GetAll().FirstOrDefaultAsync(X => X.Email.Equals(email))!;
         }
         public void InsertUser(User userAccount)
         {
             userAccountRepository.Add(userAccount);
         }
-        public void UpdateUser(User userAccount)
+        public Task<bool> UpdateUser(User userAccount)
         {
-            userAccountRepository.Update(userAccount);
+            return userAccountRepository.Update(userAccount);
         }
 
 
@@ -98,23 +111,15 @@ namespace Infrastructure.Service
             }
         }
 
-        public async Task<bool> SignUpAsync(User request)
+        public async Task<bool> SignUpAsync(SignUpUser request)
         {
             try
             {
-                do
-                {
-                    request.Id = GenerateRandomId();
-                } while (await userAccountRepository.GetById(request.Id) != null);
                 MD5 md5 = MD5.Create();
-
-                var bytesHash = md5.ComputeHash(Encoding.UTF8.GetBytes(request.Password));
+                var bytesHash = md5.ComputeHash(Encoding.UTF8.GetBytes(request.Password!));
                 var passHash = BitConverter.ToString(bytesHash).Replace("-", "");
                 request.Password = passHash;
-
-            //    request.ValidationCode = GenerateRandomValidationCode();
-
-                var result = await userAccountRepository.Add(request);
+                var result = await signUpUserRepository.Add(request);
                 return result;
             }
             catch (Exception ex)
@@ -122,25 +127,26 @@ namespace Infrastructure.Service
                 throw new Exception("Failed to sign up.", ex);
             }
         }
-        private string GenerateRandomId()
+        public async Task<bool> UpdatePassword(User request)
         {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            var random = new Random();
-            var id = new string(Enumerable.Repeat(chars, 64)
-                .Select(s => s[random.Next(s.Length)]).ToArray());
-            return id;
+            try
+            {
+                MD5 md5 = MD5.Create();
+                var bytesHash = md5.ComputeHash(Encoding.UTF8.GetBytes(request.Password!));
+                var passHash = BitConverter.ToString(bytesHash).Replace("-", "");
+                request.Password = passHash;
+                bool result = await userAccountRepository.Update(request);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to sign up.", ex);
+            }
         }
-        private string GenerateRandomValidationCode()
-        {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            var random = new Random();
-            var validationCode = new string(Enumerable.Repeat(chars, 6)
-                .Select(s => s[random.Next(s.Length)]).ToArray());
-            return validationCode;
-        }
+
         public async Task<string> GetIdByEmailAsync(string email)
         {
-            string userid = await userAccountRepository.GetAll().Where(x => x.Email.Equals(email)).Select(s => s.Id).FirstOrDefaultAsync();
+            string userid = await userAccountRepository.GetAll().Where(x => x.Email.Equals(email)).Select(s => s.Id).FirstOrDefaultAsync()!;
             if (userid == null)
             {
                 return null;
@@ -166,6 +172,39 @@ namespace Infrastructure.Service
             {
                 throw new Exception("Failed to sign up.", e);
             }
+        }
+
+        public async Task<SignUpUser> GetSignUpUserByEmail(string email)
+        {
+            return await signUpUserRepository.GetById(email);
+        }
+
+        public async Task<bool> CompleteSignUp(string email)
+        {
+            var user = await GetSignUpUserByEmail(email);
+            if (user == null)
+                return false;
+            var appUser = new User()
+            {
+                Email = user.Email,
+                UserName = user.Username,
+                Password = user.Password,
+                PhoneNumber = user.PhoneNumber
+            };
+            do
+            {
+                appUser.Id = utils.GenerateRandomString(64);
+            } while (await userAccountRepository.GetById(appUser.Id) != null);
+            var userData = new UserData()
+            {
+                Id = appUser.Id,
+                Gender = user.Gender,
+                //DateOfBirth = user.DateOfBirth
+            };
+            bool result = await userAccountRepository.Add(appUser);
+            result = await userDataRepository.Add(userData);
+            result = await signUpUserRepository.Delete(user);
+            return result;
         }
     }
 }

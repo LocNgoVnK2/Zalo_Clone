@@ -24,6 +24,9 @@ namespace Zalo_Clone
             CreateMap<SignInModel, User>();
             CreateMap<User, SignInModel>();
 
+            CreateMap<SignUpModel, SignUpUser>();
+            CreateMap<SignUpUser, SignUpModel>();
+
             //Block
             CreateMap<BlockList, BlockModel>();
             CreateMap<BlockModel, BlockList>();
@@ -71,6 +74,10 @@ namespace Zalo_Clone
             CreateMap<RoleModel, Role>();
             CreateMap<UserRole, UserRoleModel>();
             CreateMap<UserRoleModel, UserRole>();
+
+            // validation
+            CreateMap<ValidationByEmailModel, ValidationByEmail>();
+              CreateMap<ValidationByEmail, ValidationByEmailModel>();
         }
     }
 }

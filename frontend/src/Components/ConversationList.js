@@ -8,12 +8,14 @@ import Form from 'react-bootstrap/Form';
 import SearchIcon from "./assets/icon/searchIcon.png";
 import AddUserIcon from "./assets/icon/addUserIcon.png";
 class ConversationList extends Component {
-
+  constructor(props) {
+    super(props);
+  }
 
   render() {
     let rows = [];
     for(let i = 0;i < 50;i++){
-      rows.push(<ListGroupItem action>
+      rows.push(<ListGroupItem  key={i} action>
         <div className="float-start">
           <img src={Test} className="rounded-circle" width="48 px" height="48 px" alt=""/>
         </div>
