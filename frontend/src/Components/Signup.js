@@ -54,8 +54,8 @@ class Signup extends Component {
         }
         try {
             let res = await signupApi(this.state.email, this.state.password, this.state.username, this.state.phonenumber, this.state.gender);
-            console.log(res);
-            alert(res);
+            
+            
             if (res) {
 
                 this.setState({ showAlert: true }, () => {

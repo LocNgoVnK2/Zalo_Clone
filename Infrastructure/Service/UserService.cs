@@ -22,8 +22,8 @@ namespace Infrastructure.Service
 
         Task<User> GetUser(string email);
         Task<User> GetUserById(string id);
-        void InsertUser(User userAccount);
-        void UpdateUser(User userAccount);
+        Task<bool> InsertUser(User userAccount);
+        Task<bool> UpdateUser(User userAccount);
 
         Task<string> GetIdByEmailAsync(string email);
         Task<string> SignInAsync(User request);
@@ -36,38 +36,48 @@ namespace Infrastructure.Service
     public class UserService : IUserService
     {
         private IUserRepository userAccountRepository;
-
-        private IConfiguration configuration;
+        private readonly IContactRepository contactRepository;
+        private IConfiguration configuration;   
         private IUtils utils;
         private ISignUpUserRepository signUpUserRepository;
-        private IUserDataRepository userDataRepository;
+
         public UserService(IUserRepository userAccountRepository,
         IConfiguration configuration,
         IUtils utils,
         ISignUpUserRepository signUpUserRepository,
-        IUserDataRepository userDataRepository)
+        IContactRepository contactRepository
+        )
         {
             this.userAccountRepository = userAccountRepository;
-
+            this.contactRepository = contactRepository;
             this.configuration = configuration;
             this.utils = utils;
             this.signUpUserRepository = signUpUserRepository;
-            this.userDataRepository = userDataRepository;
         }
 
         public async Task<User> GetUser(string email)
         {
             return await userAccountRepository.GetAll().FirstOrDefaultAsync(X => X.Email.Equals(email))!;
         }
-        public void InsertUser(User userAccount)
+        public async Task<bool> InsertUser(User userAccount)
         {
-            userAccountRepository.Add(userAccount);
+            bool result = await contactRepository.Add(new Contact(){
+                Id = userAccount.Id!,
+                ContactName = userAccount.UserName
+            });
+            result = await userAccountRepository.Add(userAccount);
+            return result;
         }
-        public void UpdateUser(User userAccount)
+        public async Task<bool> UpdateUser(User userAccount)
         {
-            userAccountRepository.Update(userAccount);
+            var contact = await contactRepository.GetById(userAccount.Id);
+            contact.ContactName = userAccount.UserName;
+            bool result = await contactRepository.Update(contact);
+            result = await userAccountRepository.Update(userAccount);
+            return result;
+            
         }
-
+        
 
         public async Task<string> SignInAsync(User request)
         {
@@ -174,20 +184,19 @@ namespace Infrastructure.Service
                 Email = user.Email,
                 UserName = user.Username,
                 Password = user.Password,
-                PhoneNumber = user.PhoneNumber
+                PhoneNumber = user.PhoneNumber,
+                Gender = user.Gender,
+                DateOfBirth = (DateTime)user.DateOfBirth!
             };
             do
             {
                 appUser.Id = utils.GenerateRandomString(64);
             } while (await userAccountRepository.GetById(appUser.Id) != null);
-            var userData = new UserData()
-            {
+            bool result = await contactRepository.Add(new Contact(){
                 Id = appUser.Id,
-                Gender = user.Gender,
-                //DateOfBirth = user.DateOfBirth
-            };
-            bool result = await userAccountRepository.Add(appUser);
-            result = await userDataRepository.Add(userData);
+                ContactName = user.Username
+            });
+            result = await userAccountRepository.Add(appUser);
             result = await signUpUserRepository.Delete(user);
             return result;
         }

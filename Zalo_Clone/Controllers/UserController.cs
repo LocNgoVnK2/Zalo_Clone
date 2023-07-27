@@ -15,7 +15,6 @@ namespace Zalo_Clone.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService userAccountService;
-        private readonly IUserDataService userDataService;
         private readonly IEmailService emailService;
         private readonly IMapper mapper;
         private readonly IValidationByEmailService validationByEmailServices;
@@ -24,20 +23,21 @@ namespace Zalo_Clone.Controllers
         private readonly IGroupUserService groupUserService;
         private readonly IMessageService messageService;
         private readonly IGroupChatService groupChatService;
+        private readonly IContactService contactService;
         public UserController(IUserService userAccountService,
-        IMapper mapper, IUserDataService userDataService,
+        IMapper mapper,
         IEmailService emailService,
         IValidationByEmailService validationByEmailServices,
         IUtils utils,
         IUserContactService userContactService,
         IGroupUserService groupUserService,
         IMessageService messageService,
-        IGroupChatService groupChatService
+        IGroupChatService groupChatService,
+        IContactService contactService
         )
         {
             this.userAccountService = userAccountService;
             this.mapper = mapper;
-            this.userDataService = userDataService;
             this.emailService = emailService;
             this.validationByEmailServices = validationByEmailServices;
             this.utils = utils;
@@ -45,6 +45,7 @@ namespace Zalo_Clone.Controllers
             this.groupUserService = groupUserService;
             this.messageService = messageService;
             this.groupChatService = groupChatService;
+            this.contactService = contactService;
         }
         [HttpGet("GetContactsOfUser")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -53,43 +54,18 @@ namespace Zalo_Clone.Controllers
         {
             var userContactModels = new List<UserContactModel>();
             var contacts = await userContactService.GetContactsOfUserByTimeDesc(userID);
-            var groupContacts = await groupUserService.GetAllGroupsOfUser(userID);
             foreach (var contact in contacts)
             {
-                var message = await messageService.GetMessageById(contact.LastMessageId);
-                contact.LastMessageContent = message.Content;
-                contact.LastMessageTime = message.SendTime;
+                var lastMessage = (await messageService.GetMessagesOfUsersContact(userID, contact.ContactId))?.LastOrDefault();
+                contact.LastMessage = lastMessage;
+                
             }
-            foreach (var groupContact in groupContacts)
-            {
-                var group = await groupChatService.GetGroupChatById(groupContact.IdGroup!);
-                var groupMessage = await messageService.GetMessagesFromGroup(groupContact.IdGroup!);
-                var lastMessageOfGroup = groupMessage.OrderByDescending(x => x.SendTime).FirstOrDefault();
-                var contact = new UserContact()
-                {
-                    GroupContactId = groupContact.IdGroup,
-                    LastMessageContent = lastMessageOfGroup?.Content,
-                    LastMessageTime = lastMessageOfGroup?.SendTime
-                };
-                contacts.Add(contact);
-            }
-            contacts = contacts.OrderByDescending(x => x.LastMessageTime).ToList();
+            contacts = contacts.OrderByDescending(x => x.LastMessage?.SendTime).ToList();
             foreach (var contact in contacts)
             {
-                var model = new UserContactModel()
-                {
-                    IsUserContact = contact.GroupContactId == null,
-                    LastMessageContent = contact.LastMessageContent
-                };  
-                if (!model.IsUserContact)
-                {
-                    model.GroupContactName = (await groupChatService.GetGroupChatById(contact.GroupContactId!)).Name;
-                }
-                else
-                {
-                    var contactId = contact.UserId.Equals(userID) ? contact.OtherUserId : contact.UserId;
-                    model.UserContactName = (await userAccountService.GetUserById(contactId!)).UserName;
-                }
+                var contactData = await contactService.GetContactData(contact.ContactId);
+                var model = mapper.Map<UserContactModel>(contactData);
+                model.LastMessageContent = contact.LastMessage?.Content;
                 userContactModels.Add(model);
             }
             return Ok(userContactModels);
@@ -204,6 +180,47 @@ namespace Zalo_Clone.Controllers
                 {
                     return StatusCode(500, ex.Message);
                 }
+            }
+        }
+        [HttpPost("ReSendToken")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> ReSendToken(string token)
+        {
+            var entity = utils.TokenToValidationByEmailEntity(token);
+            var emailExist = await userAccountService.GetSignUpUserByEmail(entity.Email);
+            if (emailExist != null)
+            {
+                try
+                {
+                    var validationCode = await validationByEmailServices.CreateValidationCode(emailExist.Email, ValidationType.ValidatedEmail);
+                    if (string.IsNullOrEmpty(validationCode))
+                    {
+                        return BadRequest("Can't create validation code");
+                    }
+                    var validationEntity = new ValidationByEmail()
+                    {
+                        Email = emailExist.Email,
+                        ValidationCode = validationCode,
+                        ValidationType = (int)ValidationType.ValidatedEmail
+                    };
+                    string newtoken = utils.ValidationByEmailEntityToToken(validationEntity);
+                    string subject = "Xin chào: " + emailExist.Username + " | Email xác nhận lại ";
+                    string content = "Đây là email gửi tự động bởi hệ thống xác minh , vui lòng nhấn vào đường dẫn để xác minh email của bạn: " +
+                    "http://localhost:3000/validation?token=" + newtoken;
+                    var message = new EmailMessage(emailExist.Email, subject, content);
+                    emailService.SendEmail(message);
+                    return Ok("User registered successfully, waiting for validation");
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, ex.Message);
+                }
+            }
+            else
+            {
+                return BadRequest("Email does not exist");
             }
         }
         [HttpPost("ValidateSignUp")]
@@ -321,31 +338,37 @@ namespace Zalo_Clone.Controllers
             return Ok();
 
         }
-        /*
-        [HttpPost("EnterValidationCode")]
-        public async Task<IActionResult> EnterValidationCode(string emailAddresses,string validationCode)
-        {
 
-            User user = await userAccountService.GetUser(emailAddresses);
-            if(user == null)
+        [HttpGet("GetUserInformation")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetUserInformation(string email)
+        {
+            try
             {
-                return BadRequest();
-            }
-            if(user.ValidationCode == validationCode)
-            {
-                bool result = await userAccountService.verifyEmailAsync(user.Email);
-                if (result)
+                var appUser = await userAccountService.GetUser(email);
+                var userData = await contactService.GetContactData(appUser.Id);
+                if (appUser != null && userData != null)
                 {
-                    return Ok("Verify Email success");
+                    UserInformationModel user = new();
+                    user.Id = appUser.Id;
+                    user.PhoneNumber = appUser.PhoneNumber;
+                    user.UserName = appUser.UserName;
+                    user.Email = appUser.Email;
+                    user.Avatar = userData.Avatar;
+                    return Ok(user);
                 }
                 else
                 {
-                    return StatusCode(500, "Failed to verify Email");
+                    return BadRequest("Invalid email or password");
                 }
             }
-            return Ok();
 
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
-        */
     }
 }

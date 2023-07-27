@@ -36,9 +36,9 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IReactionRepository, ReactionRepository>();
 builder.Services.AddScoped<IReactionService, ReactionService>();
 
-//UserData
-builder.Services.AddScoped<IUserDataRepository, UserDataRepository>();
-builder.Services.AddScoped<IUserDataService, UserDataService>();
+//Contact
+builder.Services.AddScoped<IContactRepository, ContactRepository>();
+builder.Services.AddScoped<IContactService, ContactService>();
 //block
 builder.Services.AddScoped<IBlockListRepository, BlockListRepository>();
 builder.Services.AddScoped<IBlockService, BlockService>();
@@ -51,10 +51,9 @@ builder.Services.AddScoped<IFriendListService, FriendListService>();
 //Message
 builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
-builder.Services.AddScoped<IMessageReceipentRepository, MessageReceipentRepository>();
+builder.Services.AddScoped<IMessageContactRepository, MessageContactRepository>();
 builder.Services.AddScoped<IMessageAttachmentRepository, MessageAttachmentRepository>();
 builder.Services.AddScoped<IMessageToDoListRepository, MessageToDoListRepository>();
-builder.Services.AddScoped<IMessageGroupRepository, MessageGroupRepository>();
 builder.Services.AddScoped<IMessageReactDetailRepository, MessageReactDetailRepository>();
 //Group 
 builder.Services.AddScoped<IGroupRoleRepository, GroupRoleRepository>();

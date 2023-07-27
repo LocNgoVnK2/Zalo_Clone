@@ -2,11 +2,10 @@
 {
     public class UserContactModel
     {
-        public string? UserContactName { get; set; }
+       public string Id { get; set; }
+        public string ContactName { get; set; }
+        public byte[]? Avatar { get; set; }
         public string? LastMessageContent { get; set; }
 
-   
-        public string? GroupContactName { get; set; }
-        public bool IsUserContact { get; set; }
     }
 }

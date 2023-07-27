@@ -10,31 +10,31 @@ using static System.Collections.Specialized.BitVector32;
 
 namespace Infrastructure.Service
 {
-    public interface IUserDataService
+    public interface IContactService
     {
-        Task<UserData> GetUserData(string id);
-        Task<bool> AddUserData(UserData data);
-        Task<bool> UpdateUserData(UserData data);
+        Task<Contact> GetContactData(string id);
+        Task<bool> AddContact(Contact data);
+        Task<bool> UpdateContact(Contact data);
     }
-    public class UserDataService : IUserDataService
+    public class ContactService : IContactService
     {
-        private IUserDataRepository _repo;
-        public UserDataService(IUserDataRepository repo)
+        private IContactRepository _repo;
+        public ContactService(IContactRepository repo)
         {
             this._repo = repo;
         }
 
-        public async Task<bool> AddUserData(UserData data)
+        public async Task<bool> AddContact(Contact data)
         {
             return await _repo.Add(data);
         }
 
-        public async Task<UserData> GetUserData(string id)
+        public async Task<Contact> GetContactData(string id)
         {
             return await _repo.GetById(id);
         }
 
-        public async Task<bool> UpdateUserData(UserData data)
+        public async Task<bool> UpdateContact(Contact data)
         {
             return await _repo.Update(data);
         }

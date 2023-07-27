@@ -19,14 +19,9 @@ const loginApi = (email, password) => {
     return axios.post("/api/User/signup", data);
   };
   const getuserApi = (email) => {
-    return axios.get(`/api/User/GetUserByEmail?email=${email}`);
-  };
-  const sendMail = (email) => {
-
-    return axios.post('/api/User/SendEmail', [email]);
+    return axios.get(`/api/User/GetUserInformation?email=${email}`);
   };
 
-  
 
   const getuserDataApi = (id) => {
     return axios.get(`/api/UserRole?userId?a=${id}`);
@@ -35,4 +30,26 @@ const loginApi = (email, password) => {
 
     return axios.post(`/api/User/ValidateSignUp?token=${token}`);
   };
-export{loginApi,signupApi,getuserApi,sendMail,getuserDataApi,ValidateSignUp};   
+  const RenewToken = (token) => {
+
+    return axios.post(`/api/User/ReSendToken?token=${token}`);
+  };
+
+  const SendTokenForForgotPassword = (email) => {
+
+    return axios.post(`/api/User/ResetPassword?email=${email}`);
+  };
+  const GetUserContacts = (id) =>
+  {
+    return axios.get(`/api/User/GetContactsOfUser?userID=${id}`)
+  }
+
+export{loginApi,
+  signupApi,
+  getuserApi,
+  getuserDataApi,
+  ValidateSignUp,
+  RenewToken,
+  SendTokenForForgotPassword,
+  GetUserContacts
+};   

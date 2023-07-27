@@ -13,10 +13,9 @@ namespace Zalo_Clone
             CreateMap<ReactionModel, Reaction>();
             CreateMap<Reaction, ReactionModel>();
 
-            //UserData
-            CreateMap<UserDataModel, UserData>();
-            CreateMap<UserData, UserDataModel>();
-
+            //Contact
+            CreateMap<Contact, UserContactModel>();
+            CreateMap<UserContactModel, Contact>();
 
             CreateMap<SignUpModel, User>();
             CreateMap<User, SignUpModel>();
@@ -33,8 +32,8 @@ namespace Zalo_Clone
             //User
 
             //Message
-            CreateMap<Message, MessageReceipentModel>();
-            CreateMap<MessageReceipentModel, Message > ();
+            CreateMap<Message, MessageContactModel>();
+            CreateMap<MessageContactModel, Message>();
             //GroupRole
             CreateMap<GroupRole, GroupRoleModel>();
             CreateMap<GroupRoleModel, GroupRole>();
@@ -46,8 +45,8 @@ namespace Zalo_Clone
             CreateMap<GroupUser, GroupUserModel>();
             CreateMap<GroupUserModel, GroupUser>();
 
-            CreateMap<Message, MessageGroupModel>();
-            CreateMap<MessageGroupModel, Message>();
+            CreateMap<Message, MessageContactModel>();
+            CreateMap<MessageContactModel, Message>();
 
             CreateMap<Message, MessageToDoListModel>();
             CreateMap<MessageToDoListModel, Message>();
@@ -77,7 +76,7 @@ namespace Zalo_Clone
 
             // validation
             CreateMap<ValidationByEmailModel, ValidationByEmail>();
-              CreateMap<ValidationByEmail, ValidationByEmailModel>();
+            CreateMap<ValidationByEmail, ValidationByEmailModel>();
         }
     }
 }

@@ -15,8 +15,7 @@ namespace Infrastructure.Service
 
     public interface IMessageService
     {
-        Task<bool> SendMessageToUser(Message message, string userReceive, List<string>? attachments);
-        Task<bool> SendMessageToGroup(Message message, string groupReceive, List<string>? attachments);
+        Task<bool> SendMessageToContact(Message message, string contactId, List<string>? attachments);
         Task<bool> SendMessageToDoList(Message message, long taskId, List<string>? attachments);
         Task<bool> ReactToMessage(MessageReactDetail messageReactDetail);
         Task<bool> RecallMessage(long idMessage);
@@ -25,10 +24,10 @@ namespace Infrastructure.Service
         int CountReactionInMessage(long idMessage, int idReaction);
         Task<List<Reaction>> GetReactionsInMessage(long idMessage);
         Task<List<Reaction>> GetTop3ReactionsInMessage(long idMessage);
-        Task<List<Message>> GetMessagesFromGroup(string groupId);
+        Task<List<Message>> GetMessagesOfGroup(string groupId);
         Task<List<MessageAttachment>> GetAttachmentsOfMessage(long idMessage);
 
-        Task<List<Message>> GetMessagesOfUsersContact(string userOne, string userTwo);
+        Task<List<Message>> GetMessagesOfUsersContact(string userId, string contactId);
         Task<List<Message>> GetMessagesFromToDoList(long todoId);
         Task<Message> GetMessageById(long id);
 
@@ -37,30 +36,31 @@ namespace Infrastructure.Service
     public class MessageService : IMessageService
     {
         private readonly IMessageRepository _messageRepo;
-        private readonly IMessageReceipentRepository _messageReceipentRepo;
+        private readonly IMessageContactRepository _messageContactRepo;
         private readonly IMessageAttachmentRepository _messageAttachmentRepo;
-        private readonly IMessageGroupRepository _messageGroupRepo;
         private readonly IMessageToDoListRepository _messageToDoListRepo;
         private readonly IMessageReactDetailRepository _messageReactDetailRepo;
         private readonly IReactionRepository _reactionRepo;
         private readonly IUserContactRepository userContactRepository;
+        private readonly IGroupChatRepository groupChatRepository;
         public MessageService(IMessageRepository messageRepo,
-            IMessageReceipentRepository messageReceipentRepo,
+            IMessageContactRepository messageContactRepository,
             IMessageAttachmentRepository messageAttachmentRepo,
-            IMessageGroupRepository messageGroupRepo,
             IMessageReactDetailRepository messageReactDetailRepository,
             IReactionRepository reactionRepository,
             IMessageToDoListRepository messageToDoListRepo,
-            IUserContactRepository userContactRepository)
+            IUserContactRepository userContactRepository,
+            IGroupChatRepository groupChatRepository
+            )
         {
             this._messageRepo = messageRepo;
-            this._messageReceipentRepo = messageReceipentRepo;
             this._messageAttachmentRepo = messageAttachmentRepo;
-            this._messageGroupRepo = messageGroupRepo;
+            this._messageContactRepo = messageContactRepository;
             _messageReactDetailRepo = messageReactDetailRepository;
             _reactionRepo = reactionRepository;
             _messageToDoListRepo = messageToDoListRepo;
             this.userContactRepository = userContactRepository;
+            this.groupChatRepository = groupChatRepository;
         }
 
         public int CountAllReactionInMessage(long idMessage)
@@ -75,17 +75,6 @@ namespace Infrastructure.Service
             return rs;
         }
 
-        public async Task<List<Message>> GetMessagesFromGroup(string groupId)
-        {
-            var rs = await _messageGroupRepo.GetAll().Where(x => x.GroupReceive.Equals(groupId)).Select(x => x.Id).ToListAsync();
-            List<Message> messages = new List<Message>();
-            foreach (var r in rs)
-            {
-                Message message = await _messageRepo.GetById(r);
-                messages.Add(message);
-            }
-            return messages;
-        }
 
         public async Task<List<MessageAttachment>?> GetAttachmentsOfMessage(long idMessage)
         {
@@ -190,97 +179,27 @@ namespace Infrastructure.Service
             return result;
         }
 
-        public async Task<bool> SendMessageToGroup(Message message, string groupReceive, List<string>? attachments)
+
+
+
+
+        public async Task<List<Message>> GetMessagesOfUsersContact(string userId, string contactId)
         {
-            var transaction = await _messageRepo.BeginTransaction();
+            var isContact = userContactRepository.GetAll().Where(x => (x.UserId.Equals(userId) && x.ContactId.Equals(contactId))
+            || (x.UserId.Equals(contactId) && x.ContactId.Equals(userId))).FirstOrDefault() != null;
+            if (!isContact)
+                return null;
 
-            bool result = await _messageRepo.Add(message);
-            var messageGroup = new MessageGroup()
+            var isGroupContact = (await groupChatRepository.GetById(contactId)) != null;
+            if (isGroupContact)
             {
-                Id = message.Id,
-                GroupReceive = groupReceive
-
-            };
-            result = await _messageGroupRepo.Add(messageGroup);
-            if (attachments != null || attachments.Count > 0)
-            {
-                foreach (var attachmentString in attachments)
-                {
-                    var attachment = new MessageAttachment()
-                    {
-                        Id = message.Id,
-                        Attachment = Convert.FromBase64String(attachmentString)
-                    };
-                    result = await _messageAttachmentRepo.Add(attachment);
-                }
+                return await GetMessagesOfGroup(contactId);
             }
-
-            if (!result)
-            {
-                transaction.Rollback();
-                transaction.Dispose();
-                return false;
-            }
-
-            transaction.Commit();
-            transaction.Dispose();
-            return result;
-        }
-
-
-        public async Task<bool> SendMessageToUser(Message message, string userReceive, List<string>? attachments)
-        {
-            var transaction = await _messageRepo.BeginTransaction();
-
-            bool result = await _messageRepo.Add(message);
-            var messageReceipent = new MessageReceipent()
-            {
-                Id = message.Id,
-                Receiver = userReceive
-            };
-            result = await _messageReceipentRepo.Add(messageReceipent);
-            if (attachments != null || attachments.Count > 0)
-            {
-                foreach (var attachmentString in attachments)
-                {
-                    var attachment = new MessageAttachment()
-                    {
-                        Id = message.Id,
-                        Attachment = Convert.FromBase64String(attachmentString)
-                    };
-                    result = await _messageAttachmentRepo.Add(attachment);
-                }
-            }
-            var contact = userContactRepository.GetAll().FirstOrDefault(x => (x.UserId.Equals(message.Sender) && x.OtherUserId.Equals(userReceive)) || x.UserId.Equals(userReceive) && x.OtherUserId.Equals(message.Sender));
-            if (contact == null)
-                result = await userContactRepository.Add(new UserContact()
-                {
-                    UserId = message.Sender,
-                    OtherUserId = userReceive,
-                    LastMessageId = message.Id
-                });
-            else{
-                contact.LastMessageId = message.Id;
-                result = await userContactRepository.Update(contact);
-            }
-            if (!result)
-            {
-                transaction.Rollback();
-                transaction.Dispose();
-                return false;
-            }
-
-            transaction.Commit();
-            transaction.Dispose();
-            return result;
-        }
-
-        public async Task<List<Message>> GetMessagesOfUsersContact(string userOne, string userTwo)
-        {
             var messages = _messageRepo.GetAll();
-            var messageReceipents = _messageReceipentRepo.GetAll();
-            var joinTable = messages.Join(messageReceipents, x => x.Id, y => y.Id, (messages, messageReceipents) => new { messages, messageReceipents })
-                .Where(x => ((x.messages.Sender.Equals(userOne) && x.messageReceipents.Receiver.Equals(userTwo)) || (x.messages.Sender.Equals(userTwo) && x.messageReceipents.Receiver.Equals(userOne))))
+            var messageContacts = _messageContactRepo.GetAll();
+            var joinTable = messages.Join(messageContacts, x => x.Id, y => y.MessageId, (messages, messageContacts) => new { messages, messageContacts })
+                .Where(x => (x.messages.Sender.Equals(userId) && x.messageContacts.ContactId.Equals(contactId))
+                || (x.messages.Sender.Equals(contactId) && x.messageContacts.ContactId.Equals(userId)))
                 .Select(x => x.messages)
                 .ToListAsync();
             return await joinTable;
@@ -303,6 +222,59 @@ namespace Infrastructure.Service
         public async Task<Message> GetMessageById(long id)
         {
             return await _messageRepo.GetById(id);
+        }
+
+        public async Task<bool> SendMessageToContact(Message message, string contactId, List<string>? attachments)
+        {
+            var transaction = await _messageRepo.BeginTransaction();
+
+            bool result = await _messageRepo.Add(message);
+            var messageContact = new MessageContact()
+            {
+                MessageId = message.Id,
+                ContactId = contactId
+            };
+            result = await _messageContactRepo.Add(messageContact);
+            if (attachments != null || attachments?.Count > 0)
+            {
+                foreach (var attachmentString in attachments)
+                {
+                    var attachment = new MessageAttachment()
+                    {
+                        Id = message.Id,
+                        Attachment = Convert.FromBase64String(attachmentString)
+                    };
+                    result = await _messageAttachmentRepo.Add(attachment);
+                }
+            }
+            var contact = userContactRepository.GetAll().FirstOrDefault(x => (x.UserId.Equals(message.Sender) && x.ContactId.Equals(contactId)) || x.UserId.Equals(contactId) && x.ContactId.Equals(message.Sender));
+            if (contact == null)
+                result = await userContactRepository.Add(new UserContact()
+                {
+                    UserId = message.Sender,
+                    ContactId = contactId
+
+                });
+            if (!result)
+            {
+                transaction.Rollback();
+                transaction.Dispose();
+                return false;
+            }
+
+            transaction.Commit();
+            transaction.Dispose();
+            return result;
+        }
+
+        public async Task<List<Message>> GetMessagesOfGroup(string groupId)
+        {
+            var groupMessageId = _messageContactRepo.GetAll().Where(x => x.ContactId.Equals(groupId)).Select(x => x.MessageId);
+            var messages = _messageRepo.GetAll();
+            var joinTable = await messages.Join(groupMessageId, x => x.Id, y => y, (messages, groupMessageId) => new { messages, groupMessageId })
+            .Select(x => x.messages).ToListAsync();
+            return joinTable;
+
         }
     }
 }
