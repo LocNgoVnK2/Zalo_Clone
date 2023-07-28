@@ -17,7 +17,6 @@ namespace Infrastructure.Data
         }
         public DbSet<Reaction> reactions { get; set; }
 
-        public DbSet<UserData> userData { get; set; }
 
         public DbSet<User> Users { get; set; }
         public DbSet<BlockList> Blocks { get; set; }
@@ -26,9 +25,9 @@ namespace Infrastructure.Data
 
         public DbSet<FriendList> FriendLists { get; set; }
         public DbSet<Message> Messages { get; set; }
-        public DbSet<MessageReceipent> MessageReceipents { get; set; }
+        public DbSet<MessageContact> MessageContacts { get; set; }
         public DbSet<MessageAttachment> MessageAttachments { get; set; }
-        public DbSet<MessageGroup> MessageGroups { get; set; }
+
         public DbSet<MessageToDoList> MessagesToDoLists { get; set; }
         public DbSet<ToDoList> ToDoLists { get; set; }
         public DbSet<GroupRole> GroupRoles { get; set; }
@@ -46,6 +45,7 @@ namespace Infrastructure.Data
         public DbSet<ValidationByEmail> validationByEmails { get; set; }
         public DbSet<SignUpUser> signUpUsers { get; set; }
         public DbSet<UserContact> userContacts { get; set; }
+        public DbSet<Contact> contacts {  get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

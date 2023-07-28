@@ -39,6 +39,7 @@ const loginApi = (email, password) => {
 
     return axios.post(`/api/User/ResetPassword?email=${email}`);
   };
+<<<<<<< HEAD
   const RenewTokenResetPassword = (token) => {
 
     return axios.post(`/api/User/ReSendTokenResetPassword?token=${token}`);
@@ -53,3 +54,19 @@ const loginApi = (email, password) => {
   };
   
 export{loginApi,signupApi,getuserApi,getuserDataApi,ValidateSignUp,RenewToken,SendTokenForForgotPassword,RenewTokenResetPassword,ValidateResetPassword,UpdatePasswordApi};   
+=======
+  const GetUserContacts = (id) =>
+  {
+    return axios.get(`/api/User/GetContactsOfUser?userID=${id}`)
+  }
+
+export{loginApi,
+  signupApi,
+  getuserApi,
+  getuserDataApi,
+  ValidateSignUp,
+  RenewToken,
+  SendTokenForForgotPassword,
+  GetUserContacts
+};   
+>>>>>>> 08d86bfed6a37a9de387120e536c05346b4cbe0a

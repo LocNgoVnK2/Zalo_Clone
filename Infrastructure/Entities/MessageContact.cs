@@ -5,15 +5,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Entities
 {
-    [Table("MESSAGE_GROUP")]
-    public class MessageGroup
+    [Table("MESSAGE_CONTACT")]
+    [PrimaryKey(nameof(MessageId), nameof(ContactId))]
+    public class MessageContact
     {
         [Key]
-        public long Id { get; set; }
-        public string GroupReceive { get; set; }
+        public long MessageId { get; set; }
+        public string ContactId { get; set; }
 
 
     }

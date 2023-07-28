@@ -16,11 +16,7 @@ namespace Infrastructure.Repository
     {
 
     }
-    public interface IMessageReceipentRepository : IRepository<MessageReceipent>
-    {
-
-    }
-    public interface IMessageGroupRepository : IRepository<MessageGroup>
+    public interface IMessageContactRepository : IRepository<MessageContact>
     {
 
     }
@@ -39,13 +35,7 @@ namespace Infrastructure.Repository
         {
         }
     }
-    public class MessageReceipentRepository : Repository<MessageReceipent>, IMessageReceipentRepository
-    {
-        public MessageReceipentRepository(ZaloDbContext context) : base(context)
 
-        {
-        }
-    }
     public class MessageAttachmentRepository : Repository<MessageAttachment>, IMessageAttachmentRepository
     {
         public MessageAttachmentRepository(ZaloDbContext context) : base(context)
@@ -53,9 +43,9 @@ namespace Infrastructure.Repository
         {
         }
     }
-    public class MessageGroupRepository : Repository<MessageGroup>, IMessageGroupRepository
+    public class MessageContactRepository : Repository<MessageContact>, IMessageContactRepository
     {
-        public MessageGroupRepository(ZaloDbContext context) : base(context)
+        public MessageContactRepository(ZaloDbContext context) : base(context)
 
         {
         }

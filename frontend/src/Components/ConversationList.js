@@ -7,24 +7,48 @@ import { Button, InputGroup, ListGroup, ListGroupItem } from "react-bootstrap";
 import Form from 'react-bootstrap/Form';
 import SearchIcon from "./assets/icon/searchIcon.png";
 import AddUserIcon from "./assets/icon/addUserIcon.png";
+import {GetUserContacts, getuserApi} from "../Services/userService"
 class ConversationList extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      contacts: [],
+    };
   }
+  componentDidMount = async() =>{
+   // alert(this.props.id);
+        const contacts =  await GetUserContacts(this.props.id);
+  
+        if(contacts){
+          this.setState({ contacts: contacts });
+          
+        }
+      
 
-  render() {
+   
+       
+    
+    
+   
+  }
+  render = () => {
+
+
     let rows = [];
-    for(let i = 0;i < 50;i++){
+    
+    let contacts = this.state.contacts;
+    for(let i = 0;i < contacts.length;i++){
+      let name = contacts[i].isUserContact ? contacts[i].userContactName : contacts[i].groupContactName;
       rows.push(<ListGroupItem  key={i} action>
         <div className="float-start">
           <img src={Test} className="rounded-circle" width="48 px" height="48 px" alt=""/>
         </div>
         <div className="float-start ms-3">
           <span className="float-right">
-            tên
+          {name}
           </span>
           <div className="text-muted"> 
-            chat
+            {this.state.contacts[i].lastMessageContent}
           </div>
         </div>
 

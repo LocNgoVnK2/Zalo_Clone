@@ -13,26 +13,37 @@ class Home extends Component {
     super(props);
     this.state = {
       email: '',
+<<<<<<< HEAD
       id:''
+=======
+      userId: ''
+>>>>>>> 08d86bfed6a37a9de387120e536c05346b4cbe0a
     }
     this.currentState = HomeState.None;
-
   }
-  componentDidMount() {
+  CallApiDataforUser = async (email) => {
+    let res = await getuserApi(email);
+    if (res) {
+      this.setState({userId : res.id}, this.render);
+    }
+  }
+  componentDidMount = async () =>{
     const token = localStorage.getItem('token');
     if (token) {
       const user = jwtDecode(token);
       const emailU = user["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"];
-      this.setState({ email: emailU });
+      this.setState({ email: emailU,
+      userId : (await getuserApi(emailU)).id});
 
     }
   }
-  componentDidUpdate(prevProps, prevState) {
+   componentDidUpdate = async(prevProps, prevState) => {
     if (prevState.email !== this.state.email) { 
-      this.CallApiDataforUser(this.state.email);
+      await this.CallApiDataforUser(this.state.email);
     }
   }
 
+<<<<<<< HEAD
   CallApiDataforUser = async (email) => {
     let res = await getuserApi(email);
     if (res) {
@@ -44,18 +55,27 @@ class Home extends Component {
     const idValue = this.state.id;
     console.log(idValue);
   }
+=======
+  
+>>>>>>> 08d86bfed6a37a9de387120e536c05346b4cbe0a
 
   changeState = (state) => {
     // this.setState( { currentState: state } );
     this.currentState = state;
-    alert(this.currentState);
+    //alert(this.currentState);
   };
-  render() {
+  render = () => {
+    if(!this.state.userId)
+      return;
     return (
+      
       <div>
         <button onClick={this.testFunction()}></button>
         <Sidebar changeState={this.changeState} />
-        <ConversationList />
+      
+         <ConversationList id={this.state.userId}/>
+        
+       
       </div>
     );
   }
