@@ -21,12 +21,9 @@ namespace Infrastructure.Service
     {
 
         Task<User> GetUser(string email);
-<<<<<<< HEAD
-        void InsertUser(User userAccount);
-=======
         Task<User> GetUserById(string id);
         Task<bool> InsertUser(User userAccount);
->>>>>>> 08d86bfed6a37a9de387120e536c05346b4cbe0a
+
         Task<bool> UpdateUser(User userAccount);
 
         Task<string> GetIdByEmailAsync(string email);

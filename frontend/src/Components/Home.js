@@ -13,11 +13,8 @@ class Home extends Component {
     super(props);
     this.state = {
       email: '',
-<<<<<<< HEAD
-      id:''
-=======
       userId: ''
->>>>>>> 08d86bfed6a37a9de387120e536c05346b4cbe0a
+
     }
     this.currentState = HomeState.None;
   }
@@ -43,21 +40,6 @@ class Home extends Component {
     }
   }
 
-<<<<<<< HEAD
-  CallApiDataforUser = async (email) => {
-    let res = await getuserApi(email);
-    if (res) {
-      this.setState({ id: res.id });
-    }
-   
-  }
-  testFunction = () => {
-    const idValue = this.state.id;
-    console.log(idValue);
-  }
-=======
-  
->>>>>>> 08d86bfed6a37a9de387120e536c05346b4cbe0a
 
   changeState = (state) => {
     // this.setState( { currentState: state } );
