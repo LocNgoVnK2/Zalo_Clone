@@ -34,33 +34,21 @@ namespace Zalo_Clone.Controllers
             }
             return BadRequest();
         }
-        [HttpPost("SendMessageToUser")]
+        [HttpPost("SendMessageToContact")]
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> SendMessageToUser(MessageReceipentModel model)
+        public async Task<IActionResult> SendMessageToUser(MessageContactModel model)
         {
             var message = mapper.Map<Message>(model);
-            bool result = await messageService.SendMessageToUser(message,model.Receiver,model.AttachmentByBase64);
+            bool result = await messageService.SendMessageToContact(message,model.ContactId,model.AttachmentByBase64);
             if(result)
             {
                 return NoContent();
             }
             return BadRequest();
         }
-        [HttpPost("SendMessageToGroup")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> SendMessageToGroup(MessageGroupModel model)
-        {
-            var message = mapper.Map<Message>(model);
-            bool result = await messageService.SendMessageToGroup(message, model.GroupReceive, model.AttachmentByBase64);//SendMessageToUser(message, model.GroupReceive, model.AttachmentByBase64);
-            if (result)
-            {
-                return NoContent();
-            }
-            return BadRequest();
-        }
+    
         [HttpPost("SendMessageToDoList")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -113,25 +101,25 @@ namespace Zalo_Clone.Controllers
             return result;
         }
         [HttpGet("GetMessagesOfGroup")]
-        public async Task<List<MessageGroupModel>> GetMessagesOfGroup(string groupId)
+        public async Task<List<MessageContactModel>> GetMessagesOfGroup(string groupId)
         {
-            var messages = await messageService.GetMessagesFromGroup(groupId);
-            List<MessageGroupModel> result = new List<MessageGroupModel>();
+            var messages = await messageService.GetMessagesOfGroup(groupId);
+            List<MessageContactModel> result = new List<MessageContactModel>();
             foreach(var m in messages)
             {
                 long idMessage = m.Id;
-                MessageGroupModel messageGroupModel = mapper.Map<MessageGroupModel>(m);
+                MessageContactModel messageGroupModel = mapper.Map<MessageContactModel>(m);
                 messageGroupModel.AttachmentByBase64 = new List<string>();
-                List<MessageAttachment> attachmenets = await messageService.GetAttachmentsOfMessage(idMessage);
-                if (attachmenets is null)
+                List<MessageAttachment> attachments = await messageService.GetAttachmentsOfMessage(idMessage);
+                if (attachments is null)
                 {
                     result.Add(messageGroupModel);
                     continue;
                 }
                     
-                foreach(MessageAttachment attachment in attachmenets)
+                foreach(MessageAttachment attachment in attachments)
                 {
-                    string attachmentByBase64 = Convert.ToBase64String(attachment.Attachment);
+                    string attachmentByBase64 = Convert.ToBase64String(attachment.Attachment!);
                     messageGroupModel.AttachmentByBase64.Add(attachmentByBase64);
                 }
                 result.Add(messageGroupModel);
@@ -165,16 +153,17 @@ namespace Zalo_Clone.Controllers
             return result;
         }
         [HttpGet("GetMessagesFromContactOfUser")]
-        public async Task<List<MessageReceipentModel>> GetMessagesOfContactUser(string userFirst,string userSec)
+        public async Task<IActionResult> GetMessagesOfContactUser(string userId,string contactId)
         {
-            var messages = await messageService.GetMessagesOfUsersContact(userFirst, userSec);
-            var result = new List<MessageReceipentModel>();
+            var messages = await messageService.GetMessagesOfUsersContact(userId, contactId);
+            if(messages == null)
+                return BadRequest();
+            var result = new List<MessageContactModel>();
             foreach (var m in messages)
             {
                 long idMessage = m.Id;
 
-                MessageReceipentModel messageReceipentModel = mapper.Map<MessageReceipentModel>(m);
-                messageReceipentModel.Receiver = messageReceipentModel.Sender.Equals(userFirst) ? userSec : userFirst;
+                MessageContactModel messageReceipentModel = mapper.Map<MessageContactModel>(m);
                 messageReceipentModel.AttachmentByBase64 = new List<string>();
                 List<MessageAttachment> attachmenets = await messageService.GetAttachmentsOfMessage(idMessage);
                 if (attachmenets is null)
@@ -190,7 +179,7 @@ namespace Zalo_Clone.Controllers
                 }
                 result.Add(messageReceipentModel);
             }
-            return result;
+            return Ok(result);
         }
     }
 }

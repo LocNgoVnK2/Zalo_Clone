@@ -15,7 +15,6 @@ namespace Zalo_Clone.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService userAccountService;
-        private readonly IUserDataService userDataService;
         private readonly IEmailService emailService;
         private readonly IMapper mapper;
         private readonly IValidationByEmailService validationByEmailServices;
@@ -24,20 +23,21 @@ namespace Zalo_Clone.Controllers
         private readonly IGroupUserService groupUserService;
         private readonly IMessageService messageService;
         private readonly IGroupChatService groupChatService;
+        private readonly IContactService contactService;
         public UserController(IUserService userAccountService,
-        IMapper mapper, IUserDataService userDataService,
+        IMapper mapper,
         IEmailService emailService,
         IValidationByEmailService validationByEmailServices,
         IUtils utils,
         IUserContactService userContactService,
         IGroupUserService groupUserService,
         IMessageService messageService,
-        IGroupChatService groupChatService
+        IGroupChatService groupChatService,
+        IContactService contactService
         )
         {
             this.userAccountService = userAccountService;
             this.mapper = mapper;
-            this.userDataService = userDataService;
             this.emailService = emailService;
             this.validationByEmailServices = validationByEmailServices;
             this.utils = utils;
@@ -45,6 +45,7 @@ namespace Zalo_Clone.Controllers
             this.groupUserService = groupUserService;
             this.messageService = messageService;
             this.groupChatService = groupChatService;
+            this.contactService = contactService;
         }
         [HttpGet("GetContactsOfUser")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -53,23 +54,22 @@ namespace Zalo_Clone.Controllers
         {
             var userContactModels = new List<UserContactModel>();
             var contacts = await userContactService.GetContactsOfUserByTimeDesc(userID);
-            var groupContacts = await groupUserService.GetAllGroupsOfUser(userID);
+
             foreach (var contact in contacts)
             {
-                var message = await messageService.GetMessageById(contact.LastMessageId);
-                contact.LastMessageContent = message.Content;
-                contact.LastMessageTime = message.SendTime;
+                var lastMessage = (await messageService.GetMessagesOfUsersContact(userID, contact.ContactId))?.LastOrDefault();
+                contact.LastMessage = lastMessage;
+                
             }
-            foreach (var groupContact in groupContacts)
+            contacts = contacts.OrderByDescending(x => x.LastMessage?.SendTime).ToList();
+            foreach (var contact in contacts)
             {
-                var group = groupChatService.GetGroupChatById(groupContact.IdGroup!);
-                var contact = new UserContact()
-                {
-                    GroupContactId = groupContact.IdGroup,
-
-                };
+                var contactData = await contactService.GetContactData(contact.ContactId);
+                var model = mapper.Map<UserContactModel>(contactData);
+                model.LastMessageContent = contact.LastMessage?.Content;
+                userContactModels.Add(model);
             }
-            return Ok(contacts);
+            return Ok(userContactModels);
 
         }
         [HttpPost("ResetPassword")]
@@ -336,6 +336,7 @@ namespace Zalo_Clone.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        
         [HttpPost("verifyEmail")]
         public async Task<IActionResult> verifyEmail(string email)
         {
@@ -388,18 +389,18 @@ namespace Zalo_Clone.Controllers
             try
             {
                 var appUser = await userAccountService.GetUser(email);
-                var userData = await userDataService.GetUserData(appUser.Id);
+                var userData = await contactService.GetContactData(appUser.Id);
                 if (appUser != null && userData != null)
                 {
-                    UserInformationModel user = new UserInformationModel();
+                    UserInformationModel user = new();
                     user.Id = appUser.Id;
                     user.PhoneNumber = appUser.PhoneNumber;
-                    user.UserName = appUser.UserName;
+                    user.UserName = userData.ContactName;
                     user.Email = appUser.Email;
                     user.Avatar = userData.Avatar;
-                    user.Gender = userData.Gender;
-                    user.DateOfBirth = userData.DateOfBirth;
-                    user.Background = userData.Background;
+                    user.Gender = appUser.Gender;
+                    user.Background = appUser.Background;
+                    user.DateOfBirth = appUser.DateOfBirth;
                     return Ok(user);
                 }
                 else

@@ -6,7 +6,6 @@ namespace Zalo_Clone.Models
     public class GroupChatModel
     {
 
-            public string Id { get; set; }
             public string Name { get; set; }
             [NotMapped]
             public string? imageByBase64 { get; set; }

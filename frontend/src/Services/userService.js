@@ -7,13 +7,14 @@ const loginApi = (email, password) => {
   
     return axios.post("/api/User/signin", data);
   };
-  const signupApi = (email, password,username,Phonenumber,gender) => {
+  const signupApi = (email, password,username,Phonenumber,gender,dateOfBirth) => {
     const data = {
       email: email,
       password: password,
       username: username,
       Phonenumber : Phonenumber,
-      gender: gender
+      gender: gender,
+      dateOfBirth: dateOfBirth
     };
   
     return axios.post("/api/User/signup", data);
@@ -39,6 +40,7 @@ const loginApi = (email, password) => {
 
     return axios.post(`/api/User/ResetPassword?email=${email}`);
   };
+
   const RenewTokenResetPassword = (token) => {
 
     return axios.post(`/api/User/ReSendTokenResetPassword?token=${token}`);
@@ -51,5 +53,22 @@ const loginApi = (email, password) => {
 
     return axios.post(`/api/User/UpdatePassword?token=${token}&password=${password}`);
   };
+  const GetUserContacts = (id) =>
+  {
+    return axios.get(`/api/User/GetContactsOfUser?userID=${id}`)
+  }
   
-export{loginApi,signupApi,getuserApi,getuserDataApi,ValidateSignUp,RenewToken,SendTokenForForgotPassword,RenewTokenResetPassword,ValidateResetPassword,UpdatePasswordApi};   
+export{
+  loginApi,
+  signupApi,
+  getuserApi,
+  getuserDataApi,
+  ValidateSignUp,
+  RenewToken,
+  SendTokenForForgotPassword,
+  RenewTokenResetPassword,
+  ValidateResetPassword,
+  UpdatePasswordApi,
+  GetUserContacts};   
+
+

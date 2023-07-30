@@ -18,25 +18,18 @@ namespace Infrastructure.Service
     }
     public class UserContactService : IUserContactService
     {
-        private readonly IUserDataRepository userDataRepository;
+
         private readonly IMessageRepository messageRepository;
-        private readonly IMessageReceipentRepository messageReceipentRepository;
-        private readonly IMessageGroupRepository messageGroupRepository;
         private readonly IUserContactRepository userContactRepository;
         private readonly IGroupChatRepository groupChatRepository;
         private readonly IGroupUserRepository groupUserRepository;
-        public UserContactService(IUserDataRepository userDataRepository,
+        public UserContactService(
         IMessageRepository messageRepository,
-        IMessageReceipentRepository messageReceipentRepository,
-        IMessageGroupRepository messageGroupRepository,
         IUserContactRepository userContactRepository,
         IGroupChatRepository groupChatRepository,
         IGroupUserRepository groupUserRepository)
         {
-            this.userDataRepository = userDataRepository;
             this.messageRepository = messageRepository;
-            this.messageGroupRepository = messageGroupRepository;
-            this.messageReceipentRepository = messageReceipentRepository;
             this.userContactRepository = userContactRepository;
             this.groupChatRepository = groupChatRepository;
             this.groupUserRepository = groupUserRepository;
@@ -44,10 +37,17 @@ namespace Infrastructure.Service
 
         public async Task<List<UserContact>> GetContactsOfUserByTimeDesc(string userID)
         {
-            var contacts = await userContactRepository.GetAll().Where(x => x.UserId.Equals(userID) || x.OtherUserId.Equals(userID)).ToListAsync();
-            var messages = messageRepository.GetAll();
-            var joinTable = contacts.Join(messages, x => x.LastMessageId, y => y.Id, (contacts, messages) => new { contacts, messages })
-            .OrderByDescending(x => x.messages.SendTime);
+            var contacts = await userContactRepository.GetAll().Where(x => x.UserId.Equals(userID) || x.ContactId.Equals(userID)).ToListAsync();
+            foreach(var contact in contacts){
+                if(contact.ContactId.Equals(userID)){
+                    var temp = contact.UserId;
+                    contact.UserId = userID;
+                    contact.ContactId = temp;
+                }
+            }
+            //var messages = messageRepository.GetAll();
+            // var joinTable = contacts.Join(messages, x => x.LastMessageId, y => y.Id, (contacts, messages) => new { contacts, messages })
+            // .OrderByDescending(x => x.messages.SendTime);
             //Thêm contact group vào đây sau
             return contacts;
         }

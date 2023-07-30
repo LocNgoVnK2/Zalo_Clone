@@ -51,13 +51,14 @@ namespace Zalo_Clone.Controllers
             List<GroupChat> groupChats = await _groupChatService.GetAll();
 
             List<GroupChatModel> result = _mapper.Map<List<GroupChatModel>>(groupChats);
-            foreach (GroupChatModel groupChat in result)
+            foreach (var groupChat in groupChats)
             {
-                byte[] imageBytes = groupChats.FirstOrDefault(x => x.Id.Equals(groupChat.Id))?.Image;
+                var groupChatModel = _mapper.Map<GroupChatModel>(groupChat);
+                byte[] imageBytes = groupChat.Image!;
                 if (imageBytes != null)
                 {
                     string imageBase64 = Convert.ToBase64String(imageBytes);
-                    groupChat.imageByBase64 = imageBase64;
+                    groupChatModel.imageByBase64 = imageBase64;
                 }
             }
 

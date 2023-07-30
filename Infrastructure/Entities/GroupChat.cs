@@ -14,8 +14,10 @@ namespace Infrastructure.Entities
         [Column("id")]
         public string Id { get; set; }
         [Column("name")]
+        [NotMapped]
         public string Name { get; set; }
         [Column("image")]
+        [NotMapped]
         public byte[]? Image { get; set; }
         [Column("leader")]
         public string Leader { get; set; }
