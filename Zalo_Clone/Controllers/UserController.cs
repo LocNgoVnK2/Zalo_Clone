@@ -336,6 +336,7 @@ namespace Zalo_Clone.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+        
         [HttpPost("verifyEmail")]
         public async Task<IActionResult> verifyEmail(string email)
         {
@@ -394,9 +395,12 @@ namespace Zalo_Clone.Controllers
                     UserInformationModel user = new();
                     user.Id = appUser.Id;
                     user.PhoneNumber = appUser.PhoneNumber;
-                    user.UserName = appUser.UserName;
+                    user.UserName = userData.ContactName;
                     user.Email = appUser.Email;
                     user.Avatar = userData.Avatar;
+                    user.Gender = appUser.Gender;
+                    user.Background = appUser.Background;
+                    user.DateOfBirth = appUser.DateOfBirth;
                     return Ok(user);
                 }
                 else

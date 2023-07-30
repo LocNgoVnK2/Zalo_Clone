@@ -3,7 +3,7 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
-import { sendMail, signupApi } from "../Services/userService";
+import { signupApi } from "../Services/userService";
 import AlertCustom from "./AlertCustom";
 class Signup extends Component {
     constructor(props) {
@@ -16,6 +16,7 @@ class Signup extends Component {
             phonenumber: '',
             username: '',
             gender: '',
+            dob: '',
             showAlert: false,
 
         }
@@ -24,7 +25,7 @@ class Signup extends Component {
         this.handleUserNameChange = this.handleUserNameChange.bind(this);
         this.handlePhoneNumberChange = this.handlePhoneNumberChange.bind(this);
         this.handleGenderChange = this.handleGenderChange.bind(this);
-
+        this.handleDOBChange = this.handleDOBChange.bind(this);
     }
 
 
@@ -47,15 +48,16 @@ class Signup extends Component {
     handleGenderChange(event) {
         this.setState({ gender: event.target.value });
     }
+    handleDOBChange(event){
+        this.setState({ dob: event.target.value });
+    }
     handleSignup = async () => {
-        if (!this.state.email || !this.state.password || !this.state.username || !this.state.phonenumber || !this.state.gender) {
+        if (!this.state.email || !this.state.password || !this.state.username || !this.state.phonenumber || !this.state.gender || !this.state.dob) {
             alert("Please fill in all fields");
             return;
         }
         try {
-            let res = await signupApi(this.state.email, this.state.password, this.state.username, this.state.phonenumber, this.state.gender);
-            
-            
+            let res = await signupApi(this.state.email, this.state.password, this.state.username, this.state.phonenumber, this.state.gender,this.state.dob);
             if (res) {
 
                 this.setState({ showAlert: true }, () => {
@@ -174,6 +176,17 @@ class Signup extends Component {
                                                 className="me-3"
                                                 onChange={this.handleGenderChange}
                                             />
+                                        </Col>
+                                    </Form.Group>
+                                    <Form.Group as={Row} className="mb-3" controlId="formPlaintextDOB">
+                                        <Form.Label column xs="4" sm="4">
+                                            Ngày sinh
+                                        </Form.Label>
+                                        <Col xs="8" sm="8">
+                                            <Form.Control type="date"
+                                                placeholder="Date of Birth"
+                                                value={this.state.dob}
+                                                onChange={this.handleDOBChange} />
                                         </Col>
                                     </Form.Group>
                                     <div className="d-grid">
