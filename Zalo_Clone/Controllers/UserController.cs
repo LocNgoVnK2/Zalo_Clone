@@ -21,6 +21,7 @@ namespace Zalo_Clone.Controllers
         private readonly IUtils utils;
         private readonly IUserContactService userContactService;
         private readonly IGroupUserService groupUserService;
+        private readonly IGroupUserService groupUserService;
         private readonly IMessageService messageService;
         private readonly IGroupChatService groupChatService;
         private readonly IContactService contactService;
@@ -92,9 +93,9 @@ namespace Zalo_Clone.Controllers
                 ValidationType = (int)ValidationType.ResetPassword
             };
             string token = utils.ValidationByEmailEntityToToken(validationEntity);
-            string subject = "Xin chào: " + user.UserName;
+            string subject = "Xin chào: " + user.UserName + " | Email reset password";
             string content = "Đây là email gửi tự động bởi hệ thống xác minh , vui lòng nhấn vào đường dẫn để reset password của bạn: " +
-            "http://localhost:3000/validation?token=" + token;
+            "http://localhost:3000/renewPassword?token=" + token;
             var message = new EmailMessage(email, subject, content);
             emailService.SendEmail(message);
             return Ok("Sent email successfully, waiting for validation");
@@ -111,16 +112,13 @@ namespace Zalo_Clone.Controllers
             {
                 case ValidationRespond.Success:
                     //do something
-
                     return Ok("Validate email successfully");
-
-
                 case ValidationRespond.IncorrectType:
                     return BadRequest("Incorrect validation type");
                 case ValidationRespond.IsExpired:
                     return BadRequest("Validation code is expired");
                 case ValidationRespond.IsUsed:
-                    return BadRequest("Validation code is used");
+                    return NotFound("Validation code is used");
                 case ValidationRespond.WrongCode:
                     return BadRequest("Wrong validation code");
                 default:
@@ -223,6 +221,48 @@ namespace Zalo_Clone.Controllers
                 return BadRequest("Email does not exist");
             }
         }
+
+        [HttpPost("ReSendTokenResetPassword")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> ReSendTokenResetPassword(string token)
+        {
+            var entity = utils.TokenToValidationByEmailEntity(token);
+            var emailExist = await userAccountService.GetUser(entity.Email);
+            if (emailExist != null)
+            {
+                try
+                {
+                    var validationCode = await validationByEmailServices.CreateValidationCode(emailExist.Email, ValidationType.ResetPassword);
+                    if (string.IsNullOrEmpty(validationCode))
+                    {
+                        return BadRequest("Can't create validation code");
+                    }
+                    var validationEntity = new ValidationByEmail()
+                    {
+                        Email = emailExist.Email,
+                        ValidationCode = validationCode,
+                        ValidationType = (int)ValidationType.ResetPassword
+                    };
+                    string newtoken = utils.ValidationByEmailEntityToToken(validationEntity);
+                    string subject = "Xin chào: " + emailExist.UserName + " | Email xác nhận lại resest password";
+                    string content = "Đây là email gửi tự động bởi hệ thống xác minh , vui lòng nhấn vào đường dẫn để reset password của bạn:" +
+                    "http://localhost:3000/renewPassword?token=" + newtoken;
+                    var message = new EmailMessage(emailExist.Email, subject, content);
+                    emailService.SendEmail(message);
+                    return Ok("User registered successfully, waiting for validation");
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, ex.Message);
+                }
+            }
+            else
+            {
+                return BadRequest("Email does not exist");
+            }
+        }
         [HttpPost("ValidateSignUp")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -245,7 +285,7 @@ namespace Zalo_Clone.Controllers
                 case ValidationRespond.IsExpired:
                     return BadRequest("Validation code is expired");
                 case ValidationRespond.IsUsed:
-                    return BadRequest("Validation code is used");
+                    return NotFound("Validation code is used");
                 case ValidationRespond.WrongCode:
                     return BadRequest("Wrong validation code");
                 default:
@@ -368,6 +408,39 @@ namespace Zalo_Clone.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
+            }
+        }
+        [HttpPost("UpdatePassword")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UpdatePassword(string token, string password)
+        {
+            var entity = utils.TokenToValidationByEmailEntity(token);
+            User accountExist = await userAccountService.GetUser(entity.Email);
+            if (accountExist != null)
+            {
+                try
+                {
+                    accountExist.Password = password;
+                    bool result = await userAccountService.UpdatePassword(accountExist);
+                    if (result)
+                    {
+                        return Ok(result);
+                    }
+                    else
+                    {
+                        return BadRequest();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, ex.Message);
+                }
+            }
+            else
+            {
+                return BadRequest("Email does not exist");
             }
         }
     }

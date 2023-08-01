@@ -52,7 +52,7 @@ class Home extends Component {
     return (
       
       <div>
-
+        <button onClick={this.testFunction()}></button>
         <Sidebar changeState={this.changeState} />
       
          <ConversationList id={this.state.userId}/>
