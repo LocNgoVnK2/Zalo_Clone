@@ -13,6 +13,8 @@ class UserProfileDialog extends Component {
             userName: this.props.user.userName,
             gender: this.props.user.gender,
             dateOfBirth: this.props.user.dateOfBirth,
+            avatarImageToLoad:'data:image/jpeg;base64,'+ this.props.user.avatar,
+            backgroundImageToload:'data:image/jpeg;base64,'+ this.props.user.background,
             avatarImage: '',
             backgroundImage: ''
         }
@@ -60,7 +62,7 @@ class UserProfileDialog extends Component {
         if (handleClose) {
             handleClose();
         }
-        this.setState({ updateDialog: false });
+        this.setState({ updateDialog: false, avatarImage: '',backgroundImage: ''});
     };
 
     handleUserNameChange = (event) => {
@@ -104,8 +106,11 @@ class UserProfileDialog extends Component {
             }
         }
     }
+    
     render() {
         const { show, handleClose } = this.props;
+
+        
         if (this.state.updateDialog) {
             return (<Modal show={this.state.updateDialog} onHide={this.handleClose} dialogClassName="custom-dialog">
                 <Modal.Header closeButton >
@@ -130,7 +135,7 @@ class UserProfileDialog extends Component {
                                         <img
                                             alt="User's avatar"
                                             className="a-child"
-                                            src={this.state.avatarImage ? this.state.avatarImage : avatar}
+                                            src={this.state.avatarImage ? this.state.avatarImageToLoad : avatar }
                                         />
 
                                     </label>
@@ -240,14 +245,14 @@ class UserProfileDialog extends Component {
                             <img
                                 alt="User's cover"
                                 crossOrigin="Anonymous"
-                                style={{ cursor: 'pointer', width: '100%', height: 'auto' }}
-                                src={background}
+                                style={{ cursor: 'pointer', width: ' 466.4px', height: '310.95px' }}
+                                src={this.state.backgroundImageToload}
                             />
                             <div className="avatar-container">
                                 <img
                                     alt="User's avatar"
                                     className="a-child"
-                                    src={avatar}
+                                    src={this.state.avatarImageToLoad}
                                 />
                             </div>
                         </div>

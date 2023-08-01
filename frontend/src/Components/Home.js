@@ -18,13 +18,15 @@ class Home extends Component {
     }
     this.currentState = HomeState.None;
     this.isUserLoaded = false;
+    
   }
 
   CallApiDataforUser = async (email) => {
     let userData = await getuserApi(email);
-
+    console.log(userData);
     if (userData) {
       this.setState({ userId: userData.id, user: userData });
+      
     }
 
   }
