@@ -21,7 +21,6 @@ namespace Zalo_Clone.Controllers
         private readonly IUtils utils;
         private readonly IUserContactService userContactService;
         private readonly IGroupUserService groupUserService;
-        private readonly IGroupUserService groupUserService;
         private readonly IMessageService messageService;
         private readonly IGroupChatService groupChatService;
         private readonly IContactService contactService;
@@ -59,7 +58,7 @@ namespace Zalo_Clone.Controllers
             {
                 var lastMessage = (await messageService.GetMessagesOfUsersContact(userID, contact.ContactId))?.LastOrDefault();
                 contact.LastMessage = lastMessage;
-                
+
             }
             contacts = contacts.OrderByDescending(x => x.LastMessage?.SendTime).ToList();
             foreach (var contact in contacts)
@@ -378,7 +377,26 @@ namespace Zalo_Clone.Controllers
             return Ok();
 
         }
+        [HttpGet("GetContactInformationById")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetContactInformationById(string id)
+        {
+            try
+            {
+                var contactData = await contactService.GetContactData(id);
+                var model = mapper.Map<ContactDataModel>(contactData);
 
+                return Ok(model);
+
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
         [HttpGet("GetUserInformation")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
