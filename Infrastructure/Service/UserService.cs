@@ -73,6 +73,7 @@ namespace Infrastructure.Service
    
         public async Task<bool> UpdateUser(User userAccount)
         {
+            
             var contact = await contactRepository.GetById(userAccount.Id);
             contact.ContactName = userAccount.UserName;
             bool result = await contactRepository.Update(contact);

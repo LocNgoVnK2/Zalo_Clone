@@ -57,7 +57,20 @@ const loginApi = (email, password) => {
   {
     return axios.get(`/api/User/GetContactsOfUser?userID=${id}`)
   }
+  ///api/User/UpdateUserInformation
+  const UpdateUserInformationApi = (id,email,username,gender,dateOfBirth,avatar,background) => {
+    const data = {
+      id:id,
+      userName: username,
+      email: email,
+      gender: gender,
+      dateOfBirth: dateOfBirth,
+      avatar: avatar,
+      background: background
+    };
   
+    return axios.post("api/User/UpdateUserInformation", data);
+  };
 export{
   loginApi,
   signupApi,
@@ -69,6 +82,7 @@ export{
   RenewTokenResetPassword,
   ValidateResetPassword,
   UpdatePasswordApi,
-  GetUserContacts};   
+  GetUserContacts,
+  UpdateUserInformationApi};   
 
 

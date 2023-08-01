@@ -1,4 +1,5 @@
 @import "../node_modules/bootstrap/dist/css/bootstrap.css";
+
 .App {
   text-align: center;
 }
@@ -33,16 +34,18 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
 }
 
-.sidebar-container{
+.sidebar-container {
   width: 64px;
   float: left;
 }
-.sidebar-body{
+
+.sidebar-body {
   background-color: #0091ff;
   color: white;
   height: 100vh;
@@ -51,60 +54,66 @@
   flex-direction: column;
 }
 
-.sidebar-tabs-top{
+.sidebar-tabs-top {
   margin-bottom: auto;
 }
-.sidebar-tabs-bottom{
+
+.sidebar-tabs-bottom {
   margin-top: auto;
 }
-.sidebar-tabs{
+
+.sidebar-tabs {
   position: relative;
   height: 64px;
   display: flex;
-  align-items: center;  
+  align-items: center;
   justify-content: center;
 }
 
-.sidebar-avatar{
+.sidebar-avatar {
   height: 100px;
 }
-.sidebar-avatar-image{
+
+.sidebar-avatar-image {
   width: 48px;
   height: 48px;
   border-radius: 50%;
 }
 
-.sidebar-tabs .icon{
+.sidebar-tabs .icon {
   width: 24px;
   height: 24px;
 }
-.sidebar-tabs:hover{
+
+.sidebar-tabs:hover {
   background-color: #8fb6ff;
 }
-.conversation-list-container
-{
- float: left;
- min-width: 300px;
 
- max-width: fit-content;
- height: 100vh;
- background-color:white;
- resize: horizontal; 
+.conversation-list-container {
+  float: left;
+  min-width: 300px;
+
+  max-width: fit-content;
+  height: 100vh;
+  background-color: white;
+  resize: horizontal;
 }
-.contact-search{
+
+.contact-search {
   background-color: white;
   height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.contact-search-box{
+
+.contact-search-box {
   width: 190px;
   height: 32px;
   float: left;
 }
 
-.conversation-list{
+.conversation-list {
   height: calc(100vh - 64px);
   overflow-y: scroll;
 }
@@ -114,15 +123,15 @@
 }
 
 .custom-popover .popover-content {
-  width: 300px; 
+  width: 300px;
 }
 
 .custom-popover .popover-body {
   display: flex;
   flex-wrap: wrap;
-  justify-content: left; 
+  justify-content: left;
   margin-left: 0px;
-  margin-right: 10px; 
+  margin-right: 10px;
 }
 
 // dialog 
@@ -191,14 +200,15 @@
   justify-content: center;
   padding: 1rem;
 }
+
 .custom-dialog__profile-photo {
   position: relative;
   margin-bottom: 10px;
 
   img {
     cursor: pointer;
-    width: 100%;
-    height: auto;
+    width: 500px;
+    height: 300px;
   }
 
   .avatar-container {
@@ -226,8 +236,44 @@
     right: 30%;
     bottom: 0%;
 
-    strong {
-      
-    }
+    strong {}
   }
+
+  .custom-dialog__user-name-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: flex-end;
+}
+
+  
+
+  .user-name-label {
+    margin-right: 10px;
+  }
+
+  .user-name-label__text {
+
+  }
+
+  .user-name-input {
+    flex: 1;
+  }
+
+  .user-name-input__field {
+ 
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  .display-name {
+
+    color: #999;
+  }
+
 }
