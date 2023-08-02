@@ -62,12 +62,12 @@ class Sidebar extends Component {
                 {this.state.showPopover && (
                   <OverlayTrigger trigger="click" placement="right" overlay={popover}>
 
-                    <img src={this.state.avatarImage} className="sidebar-avatar-image" alt="" />
+                    <img src={this.props.user.avatar? this.state.avatarImage:UserAvatar} className="sidebar-avatar-image" alt="" />
                   </OverlayTrigger>
                 )}
                 {!this.state.showPopover && (
                   // load hình tịa đây
-                  <img src={this.state.avatarImage} className="sidebar-avatar-image" alt="" />
+                  <img src={this.props.user.avatar? this.state.avatarImage:UserAvatar} className="sidebar-avatar-image" alt="" />
 
                 )}
               </SidebarMenu.Nav>

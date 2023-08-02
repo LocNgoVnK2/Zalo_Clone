@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import avatar from "./assets/test.png";
+import UserAvatar from "./assets/friends.png";
 import background from './assets/background-may-dep-cho-khai-giang.jpg';
 import { UpdateUserInformationApi } from '../Services/userService';
 class UserProfileDialog extends Component {
@@ -63,6 +64,7 @@ class UserProfileDialog extends Component {
             handleClose();
         }
         this.setState({ updateDialog: false, avatarImage: '',backgroundImage: ''});
+        window.location.reload();
     };
 
     handleUserNameChange = (event) => {
@@ -77,6 +79,7 @@ class UserProfileDialog extends Component {
         this.setState({ dateOfBirth: event.target.value });
     };
     handleSubmit = async () => {
+        
         var base64StringAvatar = null;
         var base64StringBackGround = null;
         if (this.state.avatarImage) {
@@ -87,6 +90,7 @@ class UserProfileDialog extends Component {
             var background = this.state.backgroundImage;
             base64StringBackGround = background.split(',')[1];
         }
+        
         try {
             let res = await UpdateUserInformationApi(this.props.user.id
                 , this.props.user.email
@@ -95,16 +99,19 @@ class UserProfileDialog extends Component {
                 , this.state.dateOfBirth
                 , base64StringAvatar
                 , base64StringBackGround);
+                alert("đã call api");
+               
             if (res) {
                 alert("Excute Success");
             }
         } catch (error) {
-            if (error.response && error.response.status === 400) {
+            if (error.response ) {
                 alert(error.response.data.error);
             } else {
                 alert("An error occurred");
             }
         }
+       
     }
     
     render() {
@@ -126,7 +133,7 @@ class UserProfileDialog extends Component {
                                         alt="User's cover"
                                         crossOrigin="Anonymous"
                                         style={{ cursor: 'pointer', width: '466.4px', height: '310.95px', zIndex: 2 }}
-                                        src={this.state.backgroundImage ? this.state.backgroundImage : background}
+                                        src={ this.state.backgroundImage ? this.state.backgroundImage : this.props.user.background ? this.state.backgroundImageToload : background}
                                     />
                                 </label>
                                 <div className="avatar-container">
@@ -135,7 +142,7 @@ class UserProfileDialog extends Component {
                                         <img
                                             alt="User's avatar"
                                             className="a-child"
-                                            src={this.state.avatarImage ? this.state.avatarImageToLoad : avatar }
+                                            src={this.state.avatarImage ? this.state.avatarImage : this.props.user.avatar ? this.state.avatarImageToLoad : avatar}
                                         />
 
                                     </label>
@@ -246,13 +253,13 @@ class UserProfileDialog extends Component {
                                 alt="User's cover"
                                 crossOrigin="Anonymous"
                                 style={{ cursor: 'pointer', width: ' 466.4px', height: '310.95px' }}
-                                src={this.state.backgroundImageToload}
+                                src={this.props.user.background?this.state.backgroundImageToload:background}
                             />
                             <div className="avatar-container">
                                 <img
                                     alt="User's avatar"
                                     className="a-child"
-                                    src={this.state.avatarImageToLoad}
+                                    src={this.props.user.avatar?this.state.avatarImageToLoad:UserAvatar}
                                 />
                             </div>
                         </div>
