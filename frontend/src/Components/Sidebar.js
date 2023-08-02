@@ -16,9 +16,13 @@ class Sidebar extends Component {
     super(props);
     this.state = {
       showDialog: false,
-      showPopover: true
+      showPopover: true,
+      avatarImage:'data:image/jpeg;base64,'+ this.props.user.avatar
+
     }
+    
   }
+
 
   handleSignOut = () => {
     localStorage.removeItem('token');
@@ -35,6 +39,7 @@ class Sidebar extends Component {
   };
 
   render() {
+    
     const popover = (
       <Popover id="popover-basic" className="custom-popover"> {/* Add the "custom-popover" class */}
         <Popover.Header as="h3"><strong>{this.props.user.userName}</strong></Popover.Header>
@@ -56,12 +61,13 @@ class Sidebar extends Component {
               <SidebarMenu.Nav className="sidebar-tabs sidebar-avatar">
                 {this.state.showPopover && (
                   <OverlayTrigger trigger="click" placement="right" overlay={popover}>
-                    <img src={UserAvatar} className="sidebar-avatar-image" alt="" />
+
+                    <img src={this.props.user.avatar? this.state.avatarImage:UserAvatar} className="sidebar-avatar-image" alt="" />
                   </OverlayTrigger>
                 )}
                 {!this.state.showPopover && (
-
-                  <img src={UserAvatar} className="sidebar-avatar-image" alt="" />
+                  // load hình tịa đây
+                  <img src={this.props.user.avatar? this.state.avatarImage:UserAvatar} className="sidebar-avatar-image" alt="" />
 
                 )}
               </SidebarMenu.Nav>

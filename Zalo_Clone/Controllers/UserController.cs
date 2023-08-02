@@ -59,7 +59,7 @@ namespace Zalo_Clone.Controllers
             {
                 var lastMessage = (await messageService.GetMessagesOfUsersContact(userID, contact.ContactId))?.LastOrDefault();
                 contact.LastMessage = lastMessage;
-                
+
             }
             contacts = contacts.OrderByDescending(x => x.LastMessage?.SendTime).ToList();
             foreach (var contact in contacts)
@@ -336,7 +336,7 @@ namespace Zalo_Clone.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-        
+
         [HttpPost("verifyEmail")]
         public async Task<IActionResult> verifyEmail(string email)
         {
@@ -379,7 +379,26 @@ namespace Zalo_Clone.Controllers
             return Ok();
 
         }
+        [HttpGet("GetContactInformationById")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetContactInformationById(string id)
+        {
+            try
+            {
+                var contactData = await contactService.GetContactData(id);
+                var model = mapper.Map<ContactDataModel>(contactData);
 
+                return Ok(model);
+
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
         [HttpGet("GetUserInformation")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -392,16 +411,81 @@ namespace Zalo_Clone.Controllers
                 var userData = await contactService.GetContactData(appUser.Id);
                 if (appUser != null && userData != null)
                 {
+
                     UserInformationModel user = new();
                     user.Id = appUser.Id;
                     user.PhoneNumber = appUser.PhoneNumber;
                     user.UserName = userData.ContactName;
                     user.Email = appUser.Email;
-                    user.Avatar = userData.Avatar;
+                    if (userData.Avatar != null)
+                    {
+                        user.Avatar = Convert.ToBase64String(userData.Avatar);
+                    }
+                    else
+                    {
+                        user.Avatar = null;
+                    }
                     user.Gender = appUser.Gender;
-                    user.Background = appUser.Background;
+                    if (appUser.Background != null)
+                    {
+                        user.Background = Convert.ToBase64String(appUser.Background);
+                    }
+                    else
+                    {
+                        user.Background = null;
+                    }
+
                     user.DateOfBirth = appUser.DateOfBirth;
                     return Ok(user);
+                }
+                else
+                {
+                    return BadRequest("Invalid email or password");
+                }
+            }
+
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        [HttpPost("UpdateUserInformation")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UpdateUserInformation(UserInformationModel user)
+        {
+            try
+            {
+
+
+                var appUser = await userAccountService.GetUser(user.Email);
+                var userData = await contactService.GetContactData(appUser.Id);
+                if (appUser != null && userData != null)
+                {
+                    appUser.UserName = user.UserName;
+                    appUser.Gender = user.Gender;
+                    appUser.DateOfBirth = user.DateOfBirth;
+                    if (user.Avatar != null && user.Avatar != "")
+                    {
+                        byte[] avatarData = Convert.FromBase64String(user.Avatar);
+                        userData.Avatar = avatarData;
+                    }
+                    if (user.Background != null && user.Background != "")
+                    {
+                        byte[] backgroundData = Convert.FromBase64String(user.Background);
+                        appUser.Background = backgroundData;
+                    }
+                    bool resultAppUser = await userAccountService.UpdateUser(appUser);
+                    bool resultContactData = await contactService.UpdateContact(userData);
+                    if (resultAppUser && resultContactData)
+                    {
+                        return Ok("Update success");
+                    }
+                    else
+                    {
+                        return BadRequest("Something wrong");
+                    }
                 }
                 else
                 {

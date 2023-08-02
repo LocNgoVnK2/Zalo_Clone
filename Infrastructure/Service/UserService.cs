@@ -33,13 +33,13 @@ namespace Infrastructure.Service
 
         Task<SignUpUser> GetSignUpUserByEmail(string email);
         Task<bool> CompleteSignUp(string email);
-          Task<bool> UpdatePassword(User request);
+        Task<bool> UpdatePassword(User request);
     }
     public class UserService : IUserService
     {
         private IUserRepository userAccountRepository;
         private readonly IContactRepository contactRepository;
-        private IConfiguration configuration;   
+        private IConfiguration configuration;
         private IUtils utils;
         private ISignUpUserRepository signUpUserRepository;
 
@@ -63,25 +63,26 @@ namespace Infrastructure.Service
         }
         public async Task<bool> InsertUser(User userAccount)
         {
-            bool result = await contactRepository.Add(new Contact(){
+            bool result = await contactRepository.Add(new Contact()
+            {
                 Id = userAccount.Id!,
                 ContactName = userAccount.UserName
             });
             result = await userAccountRepository.Add(userAccount);
             return result;
         }
-   
+
         public async Task<bool> UpdateUser(User userAccount)
         {
+
             var contact = await contactRepository.GetById(userAccount.Id);
             contact.ContactName = userAccount.UserName;
             bool result = await contactRepository.Update(contact);
             result = await userAccountRepository.Update(userAccount);
             return result;
-            
 
         }
-        
+
 
         public async Task<string> SignInAsync(User request)
         {
@@ -211,7 +212,8 @@ namespace Infrastructure.Service
             {
                 appUser.Id = utils.GenerateRandomString(64);
             } while (await userAccountRepository.GetById(appUser.Id) != null);
-            bool result = await contactRepository.Add(new Contact(){
+            bool result = await contactRepository.Add(new Contact()
+            {
                 Id = appUser.Id,
                 ContactName = user.Username
             });
