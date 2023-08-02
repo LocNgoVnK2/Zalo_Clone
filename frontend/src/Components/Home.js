@@ -2,8 +2,13 @@ import React, { Component } from "react";
 import Sidebar from "./Sidebar";
 import ConversationList from "./ConversationList";
 
-import jwtDecode from 'jwt-decode';
-import { getuserApi } from "../Services/userService";
+
+import jwtDecode from "jwt-decode";
+import { getuserApi, GetContactInformationById } from "../Services/userService";
+import { GetMessagesFromContactOfUser } from "../Services/MessageServices";
+import Main from "./Main";
+
+
 const HomeState = {
   None: "none",
   Message: "Message",
@@ -12,13 +17,15 @@ class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: '',
-      userId: '',
-      user: null
-    }
+      email: "",
+      userId: "",
+      user: null,
+      messageContact: [],
+      contactInformation: {},
+    };
     this.currentState = HomeState.None;
     this.isUserLoaded = false;
-    
+
   }
 
   CallApiDataforUser = async (email) => {
@@ -26,26 +33,47 @@ class Home extends Component {
     console.log(userData);
     if (userData) {
       this.setState({ userId: userData.id, user: userData });
-      
+
     }
 
   }
-  componentDidMount = async () => {
-    const token = localStorage.getItem('token');
+
+  componentDidMount = () => {
+    const token = localStorage.getItem("token");
     if (token) {
       const user = jwtDecode(token);
-      const emailU = user["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"];
-      this.setState({ email: emailU });
-
+      const emailU =
+        user[
+        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"
+        ];
+      getuserApi(emailU).then((response) => {
+        this.setState({ email: emailU, userId: response.id });
+      });
+      // this.setState({ email: emailU, userId: (await getuserApi(emailU)).id });
     }
-  }
+  };
   componentDidUpdate = async (prevProps, prevState) => {
     if (prevState.email !== this.state.email && !this.isUserLoaded) {
       await this.CallApiDataforUser(this.state.email);
       this.isUserLoaded = true;
     }
   }
-  
+
+  updateChatView = (contactId) => {
+    if (!this.state.userId || !contactId) return;
+    GetMessagesFromContactOfUser(this.state.userId, contactId).then(
+      (response) => {
+        this.setState({
+          messageContact: response,
+        });
+      }
+    );
+    GetContactInformationById(contactId).then((response) => {
+      this.setState({ contactInformation: response });
+    });
+  };
+
+
   changeState = (state) => {
     this.currentState = state;
   };
@@ -78,19 +106,27 @@ class Home extends Component {
   };
 
   render = () => {
+
+    let conversation = (
+      <ConversationList
+        id={this.state.userId}
+        updateChatView={this.updateChatView}
+      />
+    );
     const { user } = this.state;
     if (user && this.isUserLoaded) {
       return (
         <div>
-          <button ></button>
-          <Sidebar changeState={this.changeState} user={this.state.user} navigate={this.props.navigate}  />
-          <ConversationList id={this.state.userId} />
+
+          <Sidebar changeState={this.changeState} user={this.state.user} navigate={this.props.navigate} />
+          {conversation}
+          <Main messageContact={this.state.messageContact} contactInformation={this.state.contactInformation} userId={this.state.userId} />
         </div>
       );
     } else {
       return this.renderContent();
     }
-  }
+  };
 
 }
 export default Home;

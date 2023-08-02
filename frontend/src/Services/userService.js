@@ -19,8 +19,9 @@ const loginApi = (email, password) => {
   
     return axios.post("/api/User/signup", data);
   };
-  const getuserApi = (email) => {
-    return axios.get(`/api/User/GetUserInformation?email=${email}`);
+  const  getuserApi =  (email) => {
+    const response = axios.get(`/api/User/GetUserInformation?email=${email}`);
+    return response;
   };
 
 
@@ -53,6 +54,7 @@ const loginApi = (email, password) => {
 
     return axios.post(`/api/User/UpdatePassword?token=${token}&password=${password}`);
   };
+
   const GetUserContacts = (id) =>
   {
     return axios.get(`/api/User/GetContactsOfUser?userID=${id}`)
@@ -71,6 +73,10 @@ const loginApi = (email, password) => {
   
     return axios.post("api/User/UpdateUserInformation", data);
   };
+  const  GetContactInformationById =  (id) => {
+    const response = axios.get(`/api/User/GetContactInformationById?id=${id}`);
+    return response;
+  };
 export{
   loginApi,
   signupApi,
@@ -83,6 +89,8 @@ export{
   ValidateResetPassword,
   UpdatePasswordApi,
   GetUserContacts,
-  UpdateUserInformationApi};   
+  UpdateUserInformationApi,
+  GetContactInformationById};   
+
 
 

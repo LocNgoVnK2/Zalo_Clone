@@ -99,7 +99,7 @@ class UserProfileDialog extends Component {
                 , this.state.dateOfBirth
                 , base64StringAvatar
                 , base64StringBackGround);
-                alert("đã call api");
+                
                
             if (res) {
                 alert("Excute Success");

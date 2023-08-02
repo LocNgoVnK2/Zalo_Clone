@@ -16,7 +16,9 @@ namespace Zalo_Clone
             //Contact
             CreateMap<Contact, UserContactModel>();
             CreateMap<UserContactModel, Contact>();
-
+            CreateMap<Contact, ContactDataModel>();
+            CreateMap<ContactDataModel, Contact>();
+            //
             CreateMap<SignUpModel, User>();
             CreateMap<User, SignUpModel>();
 

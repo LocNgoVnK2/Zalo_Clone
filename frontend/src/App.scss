@@ -40,8 +40,12 @@
   }
 }
 
-.sidebar-container {
-  width: 64px;
+.container{
+ // display: flex;
+}
+.sidebar-container{
+  width: 78px;
+
   float: left;
 }
 
@@ -92,8 +96,6 @@
 .conversation-list-container {
   float: left;
   min-width: 300px;
-
-  max-width: fit-content;
   height: 100vh;
   background-color: white;
   resize: horizontal;
@@ -117,6 +119,7 @@
   height: calc(100vh - 64px);
   overflow-y: scroll;
 }
+
 
 .custom-popover {
   font-size: 16px;
@@ -204,12 +207,7 @@
 .custom-dialog__profile-photo {
   position: relative;
   margin-bottom: 10px;
-
-  img {
-    cursor: pointer;
-    width: 500px;
-    height: 300px;
-  }
+}
 
   .avatar-container {
     position: absolute;
@@ -275,5 +273,76 @@
 
     color: #999;
   }
+
+
+.main{
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  align-items: stretch;
+}
+.main .header{
+  width: calc(100vw - 380px);
+  height: 100px;
+  background-color: red;
+}
+
+.main .chat-title{
+  margin: 20px;
+}
+.main .chat-title .contact-name{
+  font-weight: bold;
+  font-size: larger;
+}
+.main .chat-view{ 
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  width: 100%;
+  margin: auto;
+  padding: auto;
+  flex: auto;
+
+  background-color: rgb(234, 234, 234);
+}
+.main .contact-avatar{
+  width: 64px;
+  height: 64px;
+  margin: 16px;
+}
+.main .text-input{
+  background-color: green;
+  flex: 0 0 106px;
+}
+.message{
+  background-color: white;
+  border-radius: 15px;
+  min-width: 200px;
+  
+  height: 110px;
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: larger;
+  padding: 15px;
+}
+.message-contact{
+  align-self: flex-start;
+}
+.message-user{
+  height: 90px;
+  align-self: flex-end;
+}
+.message .contact-name{
+  font-size: smaller;
+  color: #616161;
+}
+.message .send-time{
+  font-size: smaller;
+  color: #616161;
+}
+.message .content{
+  font-size: larger;
 
 }

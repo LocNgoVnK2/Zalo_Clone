@@ -23,7 +23,10 @@ namespace Infrastructure.Service
         Task<User> GetUser(string email);
         Task<User> GetUserById(string id);
         Task<bool> InsertUser(User userAccount);
+<<<<<<< HEAD
 
+=======
+>>>>>>> 528df07461e844da2a5657a41d659211f8d3555c
         Task<bool> UpdateUser(User userAccount);
 
         Task<string> GetIdByEmailAsync(string email);
@@ -70,7 +73,7 @@ namespace Infrastructure.Service
             result = await userAccountRepository.Add(userAccount);
             return result;
         }
-   
+
         public async Task<bool> UpdateUser(User userAccount)
         {
             
@@ -80,7 +83,6 @@ namespace Infrastructure.Service
             result = await userAccountRepository.Update(userAccount);
             return result;
             
-
         }
         
 
