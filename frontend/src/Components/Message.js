@@ -8,17 +8,22 @@ function Message(props) {
   const [contactMessage, setContactMessage] = useState();
   const [userMessage, setUserMessage] = useState();
   const [isUserMessage, setIsUserMessage] = useState();
+
+
+useEffect(() => {
+  GetContactInformationById(props.message.sender).then((response) => {
+    setSender(response.contactName);
+  });
+  let time = new Date(props.message.sendTime);
+  let hours = time.getHours();
+  let minutes = time.getMinutes();
+  minutes = minutes < 10 ? "0" + minutes : minutes;
+  setSendTime(hours + ":" + minutes);
+  setIsUserMessage(props.message.sender === props.userId);
+  setIsFinishLoading(true);
+},[])
+
   useEffect(() => {
-    setIsFinishLoading(false);
-    let time = new Date(props.message.sendTime);
-    let hours = time.getHours();
-    let minutes = time.getMinutes();
-    minutes = minutes < 10 ? "0" + minutes : minutes;
-    setSendTime(hours + ":" + minutes);
-    GetContactInformationById(props.message.sender).then((response) => {
-      setSender(response.contactName);
-    });
-    setIsUserMessage(props.message.sender === props.userId);
     if (isUserMessage) {
       setUserMessage(
         <div className="message message-user">
@@ -35,8 +40,7 @@ function Message(props) {
         </div>
       );
 
-    setIsFinishLoading(true);
-  }, [isUserMessage, props.message, props.userId, sendTime, sender]);
+  }, [props.message, isUserMessage, sender, sendTime]);
 
   return isFinishLoading
     ? isUserMessage

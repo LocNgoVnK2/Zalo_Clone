@@ -30,6 +30,9 @@ namespace Infrastructure.Service
         Task<List<Message>> GetMessagesOfUsersContact(string userId, string contactId);
         Task<List<Message>> GetMessagesFromToDoList(long todoId);
         Task<Message> GetMessageById(long id);
+        Task<bool> IsThereNewMessage(long lastMessageId, UserContact contact);
+        Task<List<Contact>> GetContactsOfUnNotifiedMessage(string userId);
+        Task<bool> MarkedMessagesAsNotified(List<long> messagesId);
 
     }
 
@@ -43,6 +46,7 @@ namespace Infrastructure.Service
         private readonly IReactionRepository _reactionRepo;
         private readonly IUserContactRepository userContactRepository;
         private readonly IGroupChatRepository groupChatRepository;
+        private readonly IContactRepository contactRepository;
         public MessageService(IMessageRepository messageRepo,
             IMessageContactRepository messageContactRepository,
             IMessageAttachmentRepository messageAttachmentRepo,
@@ -50,7 +54,8 @@ namespace Infrastructure.Service
             IReactionRepository reactionRepository,
             IMessageToDoListRepository messageToDoListRepo,
             IUserContactRepository userContactRepository,
-            IGroupChatRepository groupChatRepository
+            IGroupChatRepository groupChatRepository,
+            IContactRepository contactRepository
             )
         {
             this._messageRepo = messageRepo;
@@ -61,6 +66,7 @@ namespace Infrastructure.Service
             _messageToDoListRepo = messageToDoListRepo;
             this.userContactRepository = userContactRepository;
             this.groupChatRepository = groupChatRepository;
+            this.contactRepository = contactRepository;
         }
 
         public int CountAllReactionInMessage(long idMessage)
@@ -275,6 +281,43 @@ namespace Infrastructure.Service
             .Select(x => x.messages).ToListAsync();
             return joinTable;
 
+        }
+
+        public async Task<bool> IsThereNewMessage(long lastMessageId, UserContact contact)
+        {
+            var lastMessage = (await GetMessagesOfUsersContact(contact.UserId, contact.ContactId)).LastOrDefault();
+            return lastMessageId != lastMessage?.Id;
+        }
+        public async Task<List<Contact>> GetContactsOfUnNotifiedMessage(string userId)
+        {
+            var unNotifiedMessages = _messageContactRepo.GetAll().Where(x => x.ContactId.Equals(userId) && !x.IsNotified).Select(x => x.MessageId);
+            if (!unNotifiedMessages.Any())
+            {
+                return null;
+            }
+
+            var messages = _messageRepo.GetAll();
+            var messageJoinTable = messages.Join(unNotifiedMessages, x => x.Id, y => y, (messages, unNotifiedMessageId) => new { messages, unNotifiedMessages })
+            .Select(x => x.messages.Sender);
+            var contacts = contactRepository.GetAll();
+            var contactJoinTable = await contacts.Join(messageJoinTable, x => x.Id, y => y, (contacts, messageJoinTable) => new { contacts, messageJoinTable })
+            .Select(x => x.contacts).Distinct().ToListAsync();
+            if (!await MarkedMessagesAsNotified(unNotifiedMessages.ToList()))
+            {
+                return null;
+            }
+            return contactJoinTable;
+        }
+        public async Task<bool> MarkedMessagesAsNotified(List<long> messagesId)
+        {
+            bool result = false;
+            foreach (var id in messagesId)
+            {
+                var message = _messageContactRepo.GetAll().Where(x => x.MessageId.Equals(id)).Single();
+                message.IsNotified = true;
+                result = await _messageContactRepo.Update(message);
+            }
+            return result;
         }
     }
 }

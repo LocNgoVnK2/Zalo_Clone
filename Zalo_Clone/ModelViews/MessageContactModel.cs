@@ -2,6 +2,7 @@
 {
     public class MessageContactModel
     {
+        public long Id {get ; set;}
         public string Sender { get; set; }
         public string ContactId { get; set; }
         public DateTime SendTime { get; set; }

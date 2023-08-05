@@ -18,29 +18,29 @@ class ConversationList extends Component {
     };
   }
   componentDidMount = () => {
-    this.props.id &&
-      GetUserContacts(this.props.id).then((response) => {
-        this.setState({
-          contacts: response,
-          isFinishLoading: true,
-        });
-      });
+    // this.props.id &&
+    //   GetUserContacts(this.props.id).then((response) => {
+    //     this.setState({
+    //       contacts: response.data,
+    //       isFinishLoading: true,
+    //     });
+    //   });
   };
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.id !== this.props.id) {
-      GetUserContacts(this.props.id).then((response) => {
-        this.setState({
-          contacts: response,
-          isFinishLoading: true,
-        });
-      });
-    }
+    // if (prevProps.id !== this.props.id) {
+    //   GetUserContacts(this.props.id).then((response) => {
+    //     this.setState({
+    //       contacts: response.data,
+    //       isFinishLoading: true,
+    //     });
+    //   });
+    // }
   }
   render = () => {
     let updateChatView = this.props.updateChatView;
     let rows = [];
-    if (this.state.contacts) {
-      let contacts = this.state.contacts;
+    if (this.props.contacts) {
+      let contacts = this.props.contacts;
       for (let i = 0; i < contacts.length; i++) {
         let name = contacts[i].contactName;
         rows.push(
@@ -66,7 +66,7 @@ class ConversationList extends Component {
             <div className="float-start ms-3">
               <span className="float-right">{name}</span>
               <div className="text-muted">
-                {this.state.contacts[i].lastMessageContent}
+                {this.props.contacts[i].lastMessageContent}
               </div>
             </div>
           </ListGroupItem>

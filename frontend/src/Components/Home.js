@@ -3,10 +3,9 @@ import Sidebar from "./Sidebar";
 import ConversationList from "./ConversationList";
 import Header from "./Header";
 import jwtDecode from "jwt-decode";
-import { getuserApi, GetContactInformationById } from "../Services/userService";
+import { getuserApi, GetContactInformationById, GetUserContacts } from "../Services/userService";
 import { GetMessagesFromContactOfUser } from "../Services/MessageServices";
 import Main from "./Main";
-
 const HomeState = {
   None: "none",
   Message: "Message",
@@ -19,6 +18,7 @@ class Home extends Component {
       userId: "",
       messageContact: [],
       contactInformation: {},
+      contacts: []
     };
     this.currentState = HomeState.None;
     //this.GetUserData();
@@ -51,31 +51,38 @@ class Home extends Component {
         ];
 
       getuserApi(emailU).then((response) => {
-        this.setState({ email: emailU, userId: response.id });
+        this.setState({ email: emailU, userId: response.data.id });
       });
       // this.setState({ email: emailU, userId: (await getuserApi(emailU)).id });
+      this.state.userId && this.updateConversationList();
     }
   };
-  // componentDidUpdate = async (prevProps, prevState) => {
-  //    if (prevState.email !== this.state.email) {
-  //      await this.CallApiDataforUser(this.state.email);
-  //    }
-  // };
+  componentDidUpdate = async (prevProps, prevState) => {
+     if (prevState.userId !== this.state.userId) {
+       this.updateConversationList();
+     }
+  };
 
   updateChatView = (contactId) => {
     if (!this.state.userId || !contactId) return;
     GetMessagesFromContactOfUser(this.state.userId, contactId).then(
       (response) => {
         this.setState({
-          messageContact: response,
+          messageContact: response.data,
         });
       }
     );
     GetContactInformationById(contactId).then((response) => {
-      this.setState({ contactInformation: response });
+      this.setState({ contactInformation: response.data });
     });
   };
+  updateConversationList = () => {
+    GetUserContacts(this.state.userId).then((response) => {
+      this.setState({
+        contacts: response.data,
+      });})
 
+  }
   changeState = (state) => {
     // this.setState( { currentState: state } );
     this.currentState = state;
@@ -84,7 +91,7 @@ class Home extends Component {
   render = () => {
     let conversation = (
       <ConversationList
-        id={this.state.userId}
+        contacts={this.state.contacts}
         updateChatView={this.updateChatView}
       />
     );
@@ -93,7 +100,12 @@ class Home extends Component {
         {/* <button onClick={this.testFunction()}></button> */}
         <Sidebar changeState={this.changeState} />
         {conversation}
-        <Main messageContact={this.state.messageContact} contactInformation={this.state.contactInformation} userId={this.state.userId}/>
+        <Main
+          messageContact={this.state.messageContact}
+          contactInformation={this.state.contactInformation}
+          userId={this.state.userId}
+          updateConversationList = {this.updateConversationList}
+        />
       </div>
     );
   };

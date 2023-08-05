@@ -16,6 +16,7 @@ namespace Infrastructure.Entities
         [Key]
         public long MessageId { get; set; }
         public string ContactId { get; set; }
+        public bool IsNotified {get ; set;}
 
 
     }

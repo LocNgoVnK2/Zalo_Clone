@@ -49,7 +49,8 @@ namespace Infrastructure.Utils
         public ValidationByEmail TokenToValidationByEmailEntity(string token)
         {
             var information = DecodeInformation(token!);
-            return new ValidationByEmail(){
+            return new ValidationByEmail()
+            {
                 Email = information[0],
                 ValidationCode = information[1],
                 ValidationType = int.Parse(information[2])
@@ -59,7 +60,18 @@ namespace Infrastructure.Utils
 
         public string ValidationByEmailEntityToToken(ValidationByEmail entity)
         {
-            return EncodeInformation(entity.Email,entity.ValidationCode,entity.ValidationType.ToString());
+            return EncodeInformation(entity.Email, entity.ValidationCode, entity.ValidationType.ToString());
+        }
+        public static async Task WaitUntil(Func<bool> condition, int frequency = 25, int timeout = -1)
+        {
+            var waitTask = Task.Run(async () =>
+            {
+                while (!condition()) await Task.Delay(frequency);
+            });
+
+            if (waitTask != await Task.WhenAny(waitTask,
+                    Task.Delay(timeout)))
+                throw new TimeoutException();
         }
     }
 }
