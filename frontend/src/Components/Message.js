@@ -16,7 +16,7 @@ function Message(props) {
     minutes = minutes < 10 ? "0" + minutes : minutes;
     setSendTime(hours + ":" + minutes);
     GetContactInformationById(props.message.sender).then((response) => {
-      setSender(response.contactName);
+      setSender(response.data.contactName);
     });
     setIsUserMessage(props.message.sender === props.userId);
     if (isUserMessage) {

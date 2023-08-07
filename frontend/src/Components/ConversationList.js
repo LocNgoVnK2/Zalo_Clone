@@ -7,6 +7,7 @@ import { Button, InputGroup, ListGroup, ListGroupItem } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import SearchIcon from "./assets/icon/searchIcon.png";
 import AddUserIcon from "./assets/icon/addUserIcon.png";
+import AddFriendDialog from "./AddFriendDialog";
 
 import { GetUserContacts, getuserApi } from "../Services/userService";
 
@@ -18,7 +19,7 @@ class ConversationList extends Component {
       contacts: [],
 
       contactChosenId: "",
-
+      showAddFriendDialog: false
     };
 
   }
@@ -27,7 +28,7 @@ class ConversationList extends Component {
     this.props.id &&
       GetUserContacts(this.props.id).then((response) => {
         this.setState({
-          contacts: response,
+          contacts: response.data,
           isFinishLoading: true,
         });
       });
@@ -36,13 +37,22 @@ class ConversationList extends Component {
     if (prevProps.id !== this.props.id) {
       GetUserContacts(this.props.id).then((response) => {
         this.setState({
-          contacts: response,
+          contacts: response.data,
           isFinishLoading: true,
         });
       });
 
     }
   }
+  handleOpenAddFriendDialog = () => {
+    this.setState({ showAddFriendDialog: true });
+  };
+
+  handleCloseAddFriendDialog = () => {
+    this.setState({ showAddFriendDialog: false});
+
+  };
+
   render = () => {
     let updateChatView = this.props.updateChatView;
     let rows = [];
@@ -54,7 +64,6 @@ class ConversationList extends Component {
         rows.push(
           <ListGroupItem
             key={contacts[i].id}
-            //disabled={this.state.contactChosenId === contacts[i].id}
             action
             onClick={(e) => {
               if (this.state.contactChosenId !== contacts[i].id)
@@ -85,6 +94,7 @@ class ConversationList extends Component {
 
     return (
       <>
+       <AddFriendDialog show={this.state.showAddFriendDialog} handleClose={this.handleCloseAddFriendDialog} userId={this.props.id}/>
         <div className="conversation-list-container">
           <div className="contact-search">
             <span className="contact-search-box">
@@ -101,7 +111,7 @@ class ConversationList extends Component {
               </InputGroup>
             </span>
             <span className="float-start ms-1">
-              <Button variant="light">
+              <Button variant="light" onClick={this.handleOpenAddFriendDialog}>
                 <img src={AddUserIcon} alt="" width="14 px" height="14 px" />
               </Button>
             </span>

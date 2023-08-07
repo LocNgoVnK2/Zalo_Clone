@@ -346,3 +346,29 @@
   font-size: larger;
 
 }
+.z--btn--v2.btn-outline-tertiary-primary {
+  
+  display: inline;
+  background-color: transparent;
+  color: #0068ff;
+  border: 1px solid #0068ff;
+}
+
+.z--btn--v2.small {
+
+}
+
+.z--btn--v2, .z--btn--v2.small {
+
+  line-height: 1.5;
+}
+
+.z--btn--v2 {
+  box-sizing: border-box;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 0 16px;
+  font-size: 1rem;
+  width: fit-content;
+  min-width: max-content;
+}

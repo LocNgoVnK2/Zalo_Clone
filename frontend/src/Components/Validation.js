@@ -20,14 +20,17 @@ const Validation = () => {
       const validateToken = async () => {
         try {
           let res = await ValidateSignUp(token);
-          navigate("/");
+          if (res) {
+            navigate("/");
+          }
+
         } catch (error) {
           if (error.response && error.response.status === 400) {
             setGetNewTokenPage(true);
             await RenewToken(token);
 
-          } else if(error.response && error.response.status === 404){
-            
+          } else if (error.response && error.response.status === 404) {
+
             return;
           }
         }
