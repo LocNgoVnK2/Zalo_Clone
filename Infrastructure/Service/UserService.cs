@@ -34,6 +34,7 @@ namespace Infrastructure.Service
         Task<SignUpUser> GetSignUpUserByEmail(string email);
         Task<bool> CompleteSignUp(string email);
         Task<bool> UpdatePassword(User request);
+        Task<List<User>> GetRecommandUsers(string id);
     }
     public class UserService : IUserService
     {
@@ -42,12 +43,16 @@ namespace Infrastructure.Service
         private IConfiguration configuration;
         private IUtils utils;
         private ISignUpUserRepository signUpUserRepository;
+        private IFriendListRepository friendListRepository;
+        private IFriendRequestRepository friendRequestRepository;
 
         public UserService(IUserRepository userAccountRepository,
         IConfiguration configuration,
         IUtils utils,
         ISignUpUserRepository signUpUserRepository,
-        IContactRepository contactRepository
+        IContactRepository contactRepository,
+        IFriendListRepository friendListRepository,
+        IFriendRequestRepository friendRequestRepository
         )
         {
             this.userAccountRepository = userAccountRepository;
@@ -55,6 +60,8 @@ namespace Infrastructure.Service
             this.configuration = configuration;
             this.utils = utils;
             this.signUpUserRepository = signUpUserRepository;
+            this.friendListRepository = friendListRepository;
+            this.friendRequestRepository = friendRequestRepository;
         }
 
         public async Task<User> GetUser(string email)
@@ -225,6 +232,31 @@ namespace Infrastructure.Service
         public async Task<User> GetUserById(string id)
         {
             return await userAccountRepository.GetById(id);
+        }
+        public async Task<List<User>> GetRecommandUsers(string id)
+        {
+            var listUsers = userAccountRepository.GetAll();
+            User userSrc = await userAccountRepository.GetById(id);
+            var friends = await friendListRepository.GetAll().Where(f => f.User1.Equals(id) || f.User2.Equals(id)).ToListAsync();
+            var friendRequestsToSend =  await friendRequestRepository.GetAll().Where(o => o.User1.Equals(id)).ToListAsync();
+            var friendRequestsToReceiver =  await friendRequestRepository.GetAll().Where(o => o.User2.Equals(id)).ToListAsync();
+           
+            var nonFriends = listUsers.ToList().Where(user =>
+                        !friends.Any(friendId => friendId.User2 == user.Id || friendId.User1 == user.Id)
+                        && !friendRequestsToSend.Any(request => request.User2 == user.Id)
+                        && !friendRequestsToReceiver.Any(request => request.User1 == user.Id)
+                        && user.Id != id
+                        ).ToList();
+            var recommandUsers = new List<User>();
+            Random random = new Random();
+            while (recommandUsers.Count < 5 && nonFriends.Count > 0)
+            {
+                var randomIndex = random.Next(nonFriends.Count);
+                var randomUser = nonFriends[randomIndex];
+                recommandUsers.Add(randomUser);
+                nonFriends.RemoveAt(randomIndex);
+            }
+            return recommandUsers;
         }
     }
 }

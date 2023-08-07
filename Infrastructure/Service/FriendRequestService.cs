@@ -10,26 +10,28 @@ using System.Threading.Tasks;
 namespace Infrastructure.Service
 {
 
-        public interface IFriendRequestService
-        {
-            Task<List<FriendRequest>> GetFriendRequestByIdForSender(string userID);
-            Task<List<FriendRequest>> GetFriendRequestByIdForReceiver(string userID);
-            Task<bool> RemoveFriendRequest(string userSrcId, string userDesId);
-            Task<bool> CreateFriendRequest(string userSrcId, string userDesId);
-            Task<bool> AcceptFriendRequest(string userSrcId, string userDesId);
-            
+    public interface IFriendRequestService
+    {
+        Task<List<FriendRequest>> GetFriendRequestByIdForSender(string userID);
+        Task<List<FriendRequest>> GetFriendRequestByIdForReceiver(string userID);
+        Task<bool> RemoveFriendRequest(string userSrcId, string userDesId);
+        Task<bool> CreateFriendRequest(string userSrcId, string userDesId);
+        Task<bool> AcceptFriendRequest(string userSrcId, string userDesId);
+
+        Task<bool> CheckFriendRequesting(string userSrcId,string userDesId);
+
     }
-        public class FriendRequestService : IFriendRequestService
+    public class FriendRequestService : IFriendRequestService
+    {
+        private readonly IFriendRequestRepository _friendRequestRepository;
+        private readonly IFriendListRepository _friendListRepository;
+
+        public FriendRequestService(IFriendRequestRepository _friendRequestRepository, IFriendListRepository _friendListRepository)
         {
-            private readonly IFriendRequestRepository _friendRequestRepository;
-            private readonly IFriendListRepository _friendListRepository;
-           
-            public FriendRequestService(IFriendRequestRepository _friendRequestRepository, IFriendListRepository _friendListRepository)
-            {
-                this._friendRequestRepository = _friendRequestRepository;
-                this._friendListRepository = _friendListRepository;
-             
-            }
+            this._friendRequestRepository = _friendRequestRepository;
+            this._friendListRepository = _friendListRepository;
+
+        }
 
         public async Task<bool> AcceptFriendRequest(string userSrcId, string userDesId)
         {
@@ -43,10 +45,10 @@ namespace Infrastructure.Service
                     friendRequest.AcceptDate = DateTime.Now;
                     bool result = await _friendRequestRepository.Update(friendRequest);
 
-                     if (result)
+                    if (result)
                     {
-                          bool areFriends = await _friendListRepository.GetAll()
-                .AnyAsync(f => (f.User1 == userSrcId && f.User2 == userDesId) || (f.User1 == userDesId && f.User2 == userSrcId));
+                        bool areFriends = await _friendListRepository.GetAll()
+              .AnyAsync(f => (f.User1 == userSrcId && f.User2 == userDesId) || (f.User1 == userDesId && f.User2 == userSrcId));
 
                         if (areFriends)
                         {
@@ -103,7 +105,8 @@ namespace Infrastructure.Service
                 {
                     return false;
                 }
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
@@ -123,7 +126,7 @@ namespace Infrastructure.Service
 
         public async Task<bool> RemoveFriendRequest(string userSrcId, string userDesId)
         {
-            FriendRequest friendRequest = await _friendRequestRepository.GetAll().FirstOrDefaultAsync(u=>u.User1.Equals(userSrcId)&& u.User2.Equals(userDesId));
+            FriendRequest friendRequest = await _friendRequestRepository.GetAll().FirstOrDefaultAsync(u => u.User1.Equals(userSrcId) && u.User2.Equals(userDesId));
             if (friendRequest != null)
             {
                 bool result = await _friendRequestRepository.Delete(friendRequest);
@@ -132,5 +135,19 @@ namespace Infrastructure.Service
 
             return false;
         }
+        public async Task<bool> CheckFriendRequesting(string userSrcId, string userDesId)
+        {
+            FriendRequest alreadyRequested = await _friendRequestRepository.GetAll().FirstOrDefaultAsync(u =>
+                                                           (u.User1.Equals(userSrcId) && u.User2.Equals(userDesId)) ||
+                                                           (u.User1.Equals(userDesId) && u.User2.Equals(userSrcId)));
+            if (alreadyRequested == null)
+            {
+                return false;
+            }else{
+                return true;
+            }
+        }
+
+
     }
 }

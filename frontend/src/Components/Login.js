@@ -38,16 +38,11 @@ class Login extends Component {
     }
     try {
       let res = await loginApi(this.state.email, this.state.password);
-      if (res && res.token) {
-        localStorage.setItem('token', res.token);
+      if (res.data && res.data.token) {
+        localStorage.setItem('token', res.data.token);
         this.props.navigate("/home");
       } else {
-        if (res && res.status === 400) {
-          alert(res.data.error);
-
-        } else {
           alert("Invalid account information");
-        }
       }
 
     } catch (error) {

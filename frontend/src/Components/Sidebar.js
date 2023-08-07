@@ -17,10 +17,10 @@ class Sidebar extends Component {
     this.state = {
       showDialog: false,
       showPopover: true,
-      avatarImage:'data:image/jpeg;base64,'+ this.props.user.avatar
+      avatarImage: 'data:image/jpeg;base64,' + this.props.user.avatar
 
     }
-    
+
   }
 
 
@@ -39,9 +39,9 @@ class Sidebar extends Component {
   };
 
   render() {
-    
+
     const popover = (
-      <Popover id="popover-basic" className="custom-popover"> {/* Add the "custom-popover" class */}
+      <Popover id="popover-basic" className="custom-popover">
         <Popover.Header as="h3"><strong>{this.props.user.userName}</strong></Popover.Header>
         <Popover.Body>
           <span className="popover-body" onClick={this.handleOpenDialog}>Hồ sơ của bạn</span>
@@ -49,6 +49,15 @@ class Sidebar extends Component {
           <span className="popover-body">Cài đặt</span>
         </Popover.Body>
         <Popover.Header as="h3" onClick={this.handleSignOut}>Đăng xuất</Popover.Header>
+      </Popover>
+    );
+    const popoverForSetting = (
+      <Popover id="popover-basic" className="custom-popover">
+        <Popover.Header as="h3"><span className="popover-body" onClick={this.handleOpenDialog}>Hồ sơ của bạn</span></Popover.Header>
+        <Popover.Body>
+          <span className="popover-body" onClick={this.handleSignOut}>Đăng xuất</span>
+        </Popover.Body>
+
       </Popover>
     );
     return (
@@ -62,12 +71,12 @@ class Sidebar extends Component {
                 {this.state.showPopover && (
                   <OverlayTrigger trigger="click" placement="right" overlay={popover}>
 
-                    <img src={this.props.user.avatar? this.state.avatarImage:UserAvatar} className="sidebar-avatar-image" alt="" />
+                    <img src={this.props.user.avatar ? this.state.avatarImage : UserAvatar} className="sidebar-avatar-image" alt="" />
                   </OverlayTrigger>
                 )}
                 {!this.state.showPopover && (
                   // load hình tịa đây
-                  <img src={this.props.user.avatar? this.state.avatarImage:UserAvatar} className="sidebar-avatar-image" alt="" />
+                  <img src={this.props.user.avatar ? this.state.avatarImage : UserAvatar} className="sidebar-avatar-image" alt="" />
 
                 )}
               </SidebarMenu.Nav>
@@ -86,7 +95,17 @@ class Sidebar extends Component {
                 <img src={ToolboxIcon} className="icon" alt="" />
               </SidebarMenu.Nav.Link>
               <SidebarMenu.Nav.Link eventKey="5" className="sidebar-tabs">
-                <img src={SettingIcon} className="icon" alt="" />
+                {this.state.showPopover && (
+                  <OverlayTrigger trigger="click" placement="right" overlay={popoverForSetting}>
+                    <img src={SettingIcon} className="icon" alt="" />
+                  </OverlayTrigger>
+                )}
+                {!this.state.showPopover && (
+                  // load hình tịa đây
+                  <img src={SettingIcon} className="icon" alt="" />
+
+                )}
+
               </SidebarMenu.Nav.Link>
             </div>
           </SidebarMenu.Body>

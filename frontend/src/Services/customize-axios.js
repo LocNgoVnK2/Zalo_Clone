@@ -1,11 +1,18 @@
 import axios from "axios";
+// import http from 'http';
+// import https from 'https';
+
 const instance = axios.create({
     baseURL: 'https://localhost:7009',
+    timeout: 20000,
+    // httpAgent: new http.Agent({ keepAlive: true }),
+    // httpsAgent: new https.Agent({ keepAlive: true }),
 });
 
 
 instance.interceptors.response.use(function(response){
-    return response.data;
+    return response;
+    //return response.data;
 },function(error){
     console.log(">> error :"+error.name+"|"+error.response);
     

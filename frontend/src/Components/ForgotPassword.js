@@ -30,7 +30,6 @@ class ForgotPassword extends Component {
     }
     try {
       let res = await SendTokenForForgotPassword(this.state.email);
-      alert(res);
       if (res) {
         this.setState({ showAlert: true });
       }

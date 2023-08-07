@@ -66,11 +66,7 @@ class Signup extends Component {
                     }, 60000);
                 });
 
-            } else {
-
-                alert(res.data.error);
-
-            }
+            } 
         } catch (error) {
             alert("An error occurred");
             return false;

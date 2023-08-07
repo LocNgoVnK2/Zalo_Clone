@@ -30,9 +30,9 @@ class Home extends Component {
 
   CallApiDataforUser = async (email) => {
     let userData = await getuserApi(email);
-    console.log(userData);
+   
     if (userData) {
-      this.setState({ userId: userData.id, user: userData });
+      this.setState({ userId: userData.data.id, user: userData.data });
 
     }
 
@@ -47,7 +47,7 @@ class Home extends Component {
         "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"
         ];
       getuserApi(emailU).then((response) => {
-        this.setState({ email: emailU, userId: response.id });
+        this.setState({ email: emailU, userId: response.data.id });
       });
       // this.setState({ email: emailU, userId: (await getuserApi(emailU)).id });
     }
@@ -64,12 +64,12 @@ class Home extends Component {
     GetMessagesFromContactOfUser(this.state.userId, contactId).then(
       (response) => {
         this.setState({
-          messageContact: response,
+          messageContact: response.data,
         });
       }
     );
     GetContactInformationById(contactId).then((response) => {
-      this.setState({ contactInformation: response });
+      this.setState({ contactInformation: response.data });
     });
   };
 
@@ -111,6 +111,7 @@ class Home extends Component {
       <ConversationList
         id={this.state.userId}
         updateChatView={this.updateChatView}
+        
       />
     );
     const { user } = this.state;

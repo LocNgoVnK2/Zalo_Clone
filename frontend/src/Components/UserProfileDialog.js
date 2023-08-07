@@ -29,7 +29,6 @@ class UserProfileDialog extends Component {
         const avatarImage = event.target.files[0];
         if (avatarImage && avatarImage.type.startsWith('image/')) {
             this.getBase64(avatarImage, (result) => {
-
                 this.setState({ avatarImage: result });
             });
         }
@@ -39,8 +38,9 @@ class UserProfileDialog extends Component {
         const backgroundImage = event.target.files[0];
         if (backgroundImage && backgroundImage.type.startsWith('image/')) {
             this.getBase64(backgroundImage, (result) => {
-
-                this.setState({ backgroundImage: result });
+                this.setState({ backgroundImage: result }, () => {
+                    console.log("Background Image State:", this.state.backgroundImage);
+                });
             });
         }
     };
@@ -50,6 +50,7 @@ class UserProfileDialog extends Component {
         reader.readAsDataURL(file);
         reader.onload = function () {
             cb(reader.result);
+            
         };
         reader.onerror = function (error) {
             console.log('Error: ', error);
