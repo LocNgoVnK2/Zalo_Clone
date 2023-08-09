@@ -112,6 +112,9 @@ builder.Services.AddAuthentication(options =>
 // user account
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
+// SearchLog account
+builder.Services.AddScoped<ISearchLogRepository, SearchLogRepository>();
+builder.Services.AddScoped<ISearchLogService, SearchLogService>();
 // add email config
 
 var configBuilder = new ConfigurationBuilder()

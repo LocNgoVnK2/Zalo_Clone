@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace Infrastructure.Data
 {
@@ -46,13 +47,19 @@ namespace Infrastructure.Data
         public DbSet<SignUpUser> signUpUsers { get; set; }
         public DbSet<UserContact> userContacts { get; set; }
         public DbSet<Contact> contacts {  get; set; }
-
+        public DbSet<SearchLog> searchLogs { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<SearchLog>(b =>
+            {
+                b.HasKey(e => e.Id);
+                b.Property(e => e.Id).UseIdentityColumn();
+            });
 
-            modelBuilder.Entity<MuteUser>(entity =>
+
+          modelBuilder.Entity<MuteUser>(entity =>
             {
                 entity.ToTable("MUTE_USER");
 

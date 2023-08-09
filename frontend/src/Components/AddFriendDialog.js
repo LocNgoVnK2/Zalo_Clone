@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
-import avatar from "./assets/test.png";
+
 import UserAvatar from "./assets/friends.png";
 import background from './assets/background-may-dep-cho-khai-giang.jpg';
 import Test from "./assets/test.png";
 import { ListGroup, ListGroupItem } from "react-bootstrap";
 import { getuserApi } from '../Services/userService';
-import { SendFriendRequest, CheckIsFriend } from '../Services/friendService';
+import { SendFriendRequest, CheckIsFriend, GetRecentSearch, AddSearchLog, RemoveSearchLog } from '../Services/friendService';
 import UserInforSearchedDialog from './UserInforSearchedDialog';
 import { RecommandFriend } from '../Services/friendService';
 class AddFriendDialog extends Component {
@@ -18,37 +18,42 @@ class AddFriendDialog extends Component {
             userInforSearched: false,
             returnUserInfor: null,
             listRecomandUser: [],
-            isFinishLoading: false
+            listRecentSearch: [],
+            isFinishLoading: false,
+            userSearchButton:false
         }
-       
+
         this.handleEmailChange = this.handleEmailChange.bind(this);
 
     }
     handleEmailChange = (event) => {
         this.setState({ email: event.target.value });
     };
-    componentDidMount = () => {
-        RecommandFriend(this.props.userId).then((response) => {
+    componentDidMount = async () => {
+        let recommandFriendRes = await RecommandFriend(this.props.userId);
+        let recentSearchRes = await GetRecentSearch(this.props.userId);
+        if (recommandFriendRes && recentSearchRes) {
             this.setState({
-                listRecomandUser: response.data,
+                listRecomandUser: recommandFriendRes.data,
+                listRecentSearch: recentSearchRes.data,
                 isFinishLoading: true,
             });
-        });
+        }
     }
 
     handleAddFriend = async (userId, email) => {
         try {
-           
+
             let receiverRes = await getuserApi(email);
-            
+
             if (receiverRes.data.id !== userId) {
-                
+
                 let checkFriend = await CheckIsFriend(userId, email);
-               
+
                 if (receiverRes && checkFriend.data === false) {
-                    
+
                     let sendFriendRequestRes = await SendFriendRequest(userId, receiverRes.data.id);
-                    
+
                     if (sendFriendRequestRes) {
                         alert("Send Friend Request success");
                         this.componentDidMount();
@@ -73,14 +78,17 @@ class AddFriendDialog extends Component {
             }
         }
     }
-    handleOpenUserInforSearchedDialog = async (email) => {
+    handleOpenUserInforSearchedDialog = async (email,userButton) => {
         try {
             let receiverRes = await getuserApi(email);
             if (receiverRes) {
-                this.setState({ userInforSearched: true, returnUserInfor: receiverRes.data });
-                
-            }
 
+                this.setState({ userInforSearched: true, returnUserInfor: receiverRes.data });
+                if(userButton){
+                    await AddSearchLog(this.props.userId,receiverRes.data.id)
+                    
+                }
+            }
         } catch (error) {
             if (error.response) {
                 alert(error.response.data.error);
@@ -92,20 +100,41 @@ class AddFriendDialog extends Component {
     }
 
     handleCloseUserInforSearchedDialog = () => {
-        this.setState({ userInforSearched: false, returnUserInfor: null });
+        this.setState({ userInforSearched: false, returnUserInfor: null,userSearchButton:false });
+        this.componentDidMount();
+        
+    }
+    handleRemoveRecentSearch = async(userSrc,userDes)=>{
+    
+        try {
+            let res = await RemoveSearchLog(userSrc,userDes);
+            if(res){
+                this.componentDidMount();
+              
+            }
+        } catch (error) {
+            if (error.response) {
+                alert(error.response.data.error);
+            } else {
+                alert("An error occurred");
+            }
+        }
+       
     }
 
     render() {
         let rows = [];
         let rowsRecentSearch = [];
-        for (let i = 0; i < 3; i++) {
-            let name = 'Test';
+
+        for (let i = 0; i < this.state.listRecentSearch.length; i++) {
+
+            let avatarImageToLoad = 'data:image/jpeg;base64,' + this.state.listRecentSearch[i].avatar;
             rowsRecentSearch.push(
-                <ListGroupItem key={i} >
+                <ListGroupItem key={this.state.listRecentSearch[i]} >
                     <div className="row align-items-center">
-                        <div className="col-2">
+                        <div className="col-2" onClick={() => this.handleOpenUserInforSearchedDialog(this.state.listRecentSearch[i].email)} >
                             <img
-                                src={Test}
+                                src={this.state.listRecentSearch[i].avatar ? avatarImageToLoad : UserAvatar}
                                 className="rounded-circle"
                                 width="48 px"
                                 height="48 px"
@@ -113,9 +142,16 @@ class AddFriendDialog extends Component {
                             />
                         </div>
                         <div className="col-7">
-                            <span className="float-right">{name}</span>
+                            <span className="float-right">{this.state.listRecentSearch[i].userName}</span>
                             <br />
-
+                            <span className="float-right">{this.state.listRecentSearch[i].email}</span>
+                        </div>
+                        <div className="col-3 text-end">
+                            <button className='z--btn--v2 btn-outline-tertiary-primary'
+                                onClick={() => this.handleRemoveRecentSearch(this.props.userId, this.state.listRecentSearch[i].id)}
+                            >
+                                X
+                            </button>
                         </div>
                     </div>
                 </ListGroupItem>
@@ -123,34 +159,34 @@ class AddFriendDialog extends Component {
         }
         for (let i = 0; i < this.state.listRecomandUser.length; i++) {
             let avatarImageToLoad = 'data:image/jpeg;base64,' + this.state.listRecomandUser[i].avatar;
-                rows.push(
-                    <ListGroupItem key={this.state.listRecomandUser[i]} >
-                        <div className="row align-items-center">
-                            <div className="col-2" onClick={() => this.handleOpenUserInforSearchedDialog(this.state.listRecomandUser[i].email)}>
-                                <img
-                                    src={this.state.listRecomandUser[i].avatar? avatarImageToLoad : UserAvatar}
-                                    className="rounded-circle"
-                                    width="48 px"
-                                    height="48 px"
-                                    alt=""
-                                />
-                            </div>
-                            <div className="col-7" onClick={() => this.handleOpenUserInforSearchedDialog(this.state.listRecomandUser[i].email)}>
-                                <span className="float-right">{this.state.listRecomandUser[i].userName}</span>
-                                <br />
-                                <span className="float-right">Từ gợi ý kết bạn</span>
-                            </div>
-                            <div className="col-3 text-end">
-                                <button
-                                    className="z--btn--v2 btn-outline-tertiary-primary"
-                                onClick={() => this.handleAddFriend(this.props.userId,this.state.listRecomandUser[i].email)}
-                                >
-                                    Kết bạn
-                                </button>
-                            </div>
+            rows.push(
+                <ListGroupItem key={this.state.listRecomandUser[i]} >
+                    <div className="row align-items-center">
+                        <div className="col-2" onClick={() => this.handleOpenUserInforSearchedDialog(this.state.listRecomandUser[i].email)}>
+                            <img
+                                src={this.state.listRecomandUser[i].avatar ? avatarImageToLoad : UserAvatar}
+                                className="rounded-circle"
+                                width="48 px"
+                                height="48 px"
+                                alt=""
+                            />
                         </div>
-                    </ListGroupItem>
-                );
+                        <div className="col-7" onClick={() => this.handleOpenUserInforSearchedDialog(this.state.listRecomandUser[i].email)}>
+                            <span className="float-right">{this.state.listRecomandUser[i].userName}</span>
+                            <br />
+                            <span className="float-right">Từ gợi ý kết bạn</span>
+                        </div>
+                        <div className="col-3 text-end">
+                            <button
+                                className="z--btn--v2 btn-outline-tertiary-primary"
+                                onClick={() => this.handleAddFriend(this.props.userId, this.state.listRecomandUser[i].email)}
+                            >
+                                Kết bạn
+                            </button>
+                        </div>
+                    </div>
+                </ListGroupItem>
+            );
         }
 
         const { show, handleClose } = this.props;
@@ -193,7 +229,7 @@ class AddFriendDialog extends Component {
                                 </div>
                             </div>
                             <div className="custom-dialog__actions" style={{ textAlign: 'center' }}>
-                                <Button variant="primary center" onClick={() => this.handleOpenUserInforSearchedDialog(this.state.email)}>
+                                <Button variant="primary center" onClick={() => this.handleOpenUserInforSearchedDialog(this.state.email,true)}>
                                     Tìm kiếm
                                 </Button>
                             </div>
@@ -205,17 +241,24 @@ class AddFriendDialog extends Component {
 
                             overflowY: 'auto',
                         }}>
-                            <span className="user-name-label__text">
-                                Tìm kiếm gần đây
-                            </span>
-                            <ListGroup variant="pills">{rowsRecentSearch}</ListGroup>
+
+                            {this.state.isFinishLoading && this.state.listRecentSearch !== null && this.state.listRecentSearch.length > 0 &&(
+                                <>
+                                    <span className="user-name-label__text">
+                                        Tìm kiếm gần đây
+                                    </span>
+                                    <ListGroup variant="pills">{rowsRecentSearch}</ListGroup>
+                                </>
+                            )}
+
+
                             <span className="user-name-label__text">
                                 Bạn có thể quen
                             </span>
                             {this.state.isFinishLoading && (
-                               <ListGroup variant="pills">{rows}</ListGroup>
+                                <ListGroup variant="pills">{rows}</ListGroup>
                             )}
-                            
+
 
                         </div>
                     </Modal.Body>
