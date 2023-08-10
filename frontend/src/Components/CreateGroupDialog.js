@@ -6,28 +6,101 @@ import CameraIcon from "./assets/icon/photo-camera-interface-symbol-for-button.p
 import SearchIcon from "./assets/icon/searchIcon.png";
 import { ListGroup, ListGroupItem } from "react-bootstrap";
 import Test from "./assets/test.png";
+import { GetListFriend } from '../Services/friendService';
+import UserAvatar from "./assets/friends.png";
 class CreateGroupDialog extends Component {
     constructor(props) {
         super(props);
         this.state = {
-
+            isFinishLoading: false,
+            listFriends: [],
+            originalListFriends: [],
+            listSelectedUser: [],
+            searchText: ''
         }
+        this.HandleSearchChange = this.HandleSearchChange.bind(this);
+    }
+    componentDidMount = async () => {
+        let listFriendsRes = await GetListFriend(this.props.userId);
+
+        if (listFriendsRes) {
+            this.setState({
+                originalListFriends: listFriendsRes.data,
+                listFriends: listFriendsRes.data,
+                isFinishLoading: true,
+            });
+        }
+    }
+    handleCheckboxChange = (friend) => {
+        this.setState(prevState => {
+            const listSelectedUser = prevState.listSelectedUser.includes(friend)
+                ? prevState.listSelectedUser.filter(f => f !== friend)
+                : [...prevState.listSelectedUser, friend];
+            return { listSelectedUser };
+
+        });
+    }
+    handleCreateGroup = () => {
 
     }
 
+    HandleSearchChange(event) {
+        const searchText = event.target.value;
 
+        const filteredFriends = searchText
+            ? this.state.listFriends.filter(friend =>
+                friend.userName.toLowerCase().includes(searchText.toLowerCase())
+            )
+            : this.state.originalListFriends;
+
+        this.setState({ searchText, listFriends: filteredFriends });
+    }
     render() {
+
         const { show, handleClose } = this.props;
         let rows = [];
-        for (let i = 0; i < 30; i++) {
+
+        for (let i = 0; i < this.state.listFriends.length; i++) {
+            let avatarImageToLoad = 'data:image/jpeg;base64,' + this.state.listFriends[i].avatar;
             rows.push(
                 <ListGroupItem
-                    key={i}
+                    key={this.state.listFriends[i]}
                     action
                 >
 
                     <div className="float-start">
-                        <input type="radio" style={{ marginRight: '10px' }} />
+                        <input
+                            type="checkbox"
+                            style={{ marginRight: '10px' }}
+                            checked={this.state.selectedFriends && this.state.selectedFriends.includes(this.state.listFriends[i])}
+                            onChange={() => this.handleCheckboxChange(this.state.listFriends[i])}
+                        />
+
+                        <img
+                            src={this.state.listFriends[i].avatar ? avatarImageToLoad : UserAvatar}
+                            className="rounded-circle"
+                            width="48 px"
+                            height="48 px"
+                            alt=""
+                        />
+
+                    </div>
+                    <div className="float-start ms-3">
+                        <span className="float-right">{this.state.listFriends[i].userName}</span>
+                    </div>
+                </ListGroupItem>
+            );
+        }
+        let usersSelect = [];
+
+        for (let i = 0; i < 20; i++) {
+            let avatarImageToLoad = 'data:image/jpeg;base64,';
+            usersSelect.push(
+                <ListGroupItem
+                    key={i}
+                    action
+                >
+                    <div className="float-start">
                         <img
                             src={Test}
                             className="rounded-circle"
@@ -38,7 +111,7 @@ class CreateGroupDialog extends Component {
 
                     </div>
                     <div className="float-start ms-3">
-                        <span className="float-right">test</span>
+                        <span className="float-right">test name</span>
                     </div>
                 </ListGroupItem>
             );
@@ -47,14 +120,14 @@ class CreateGroupDialog extends Component {
 
         return (
             <>
-                <Modal show={show} onHide={handleClose} dialogClassName="custom-dialog">
+                <Modal show={show} onHide={handleClose} dialogClassName="custom-dialog" >
                     <Modal.Header closeButton >
                         <Modal.Title > Tạo nhóm </Modal.Title>
 
                     </Modal.Header>
-                    <Modal.Body className="custom-dialog__body">
+                    <Modal.Body className="custom-dialog__body" >
                         <form >
-                            <div style={{ flex: '1 1 0%' }}>
+                            <div >
                                 <div className="custom-dialog__user-name-container" style={{ marginTop: '20px' }}>
                                     <div className="user-name-label">
                                         <span className="user-name-label__text" style={{
@@ -89,27 +162,33 @@ class CreateGroupDialog extends Component {
                             <input
                                 style={{ borderRadius: '25px' }}
                                 tabIndex="1"
-                                placeholder="Nhập tên email hoặc số điện thoại người cần thêm"
+                                placeholder="Nhập tên người cần thêm"
                                 className="user-name-input__field"
+                                value={this.state.searchText}
+                                onChange={this.HandleSearchChange}
                             />
                             <div className="search-icon-wrapper">
                                 <img src={SearchIcon} alt="" className="search-icon" />
                             </div>
                         </div>
-                        <span className="user-name-label__text">
+                        <div style={{ display: 'flex', width: '100%' }}>
+                        <span className="user-name-label__text"style={{ flex: '65%', height: '30px', overflowY: 'auto' }}>
                             Danh sách bạn bè:
                         </span>
-                        <div style={{
-                            width: 'calc(100% + 30px)',
-                            height: '500px',
-                            marginLeft: '-15px',
 
-                            overflowY: 'auto',
-                        }}>
+                        <span className="user-name-label__text"style={{ flex: '30%', height: '30px', overflowY: 'auto' }}>
+                            Đã chọn:
+                        </span>
+                        </div>
+                        <div style={{ display: 'flex', width: '100%' }}>
+                            <div style={{ flex: '65%', height: '500px', overflowY: 'auto' }}>
+                                <ListGroup variant="pills">{rows}</ListGroup>
+                            </div>
 
-                            <ListGroup variant="pills">{rows}</ListGroup>
+                            <div style={{ flex: '30%', height: '500px', overflowY: 'auto', border: '1px solid black', marginTop: '20px', marginBottom: '20px' }}>
 
-
+                                <ListGroup variant="pills">{usersSelect}</ListGroup>
+                            </div>
                         </div>
                     </Modal.Body>
                     <Modal.Footer className="custom-dialog__footer" >
@@ -117,7 +196,7 @@ class CreateGroupDialog extends Component {
                             Đóng
                         </Button>
                         <div className="custom-dialog__actions" style={{ textAlign: 'center' }}>
-                            <Button variant="primary center" >
+                            <Button variant="primary center" onClick={this.handleCreateGroup}>
                                 Tạo nhóm
                             </Button>
                         </div>
