@@ -101,8 +101,6 @@ class AddFriendDialog extends Component {
 
     handleCloseUserInforSearchedDialog = () => {
         this.setState({ userInforSearched: false, returnUserInfor: null,userSearchButton:false });
-        this.componentDidMount();
-        
     }
     handleRemoveRecentSearch = async(userSrc,userDes)=>{
     

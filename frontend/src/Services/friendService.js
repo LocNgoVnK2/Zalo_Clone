@@ -21,11 +21,15 @@ const RemoveSearchLog =  (userSrc,userDes) =>{
 const GetRecentSearch =(userSrc)=>{
     return axios.get(`/api/SearchLog/GetRecentSearch?userSrc=${userSrc}`);
 }
+const GetListFriend =(userSrc)=>{
+    return axios.get(`/api/Friend/GetFriendByID?userId=${userSrc}`);
+}
 export{SendFriendRequest,
     CheckIsFriend,
     RecommandFriend,
     CheckFriendRequesting,
     AddSearchLog,
     RemoveSearchLog,
-    GetRecentSearch
+    GetRecentSearch,
+    GetListFriend
     };   

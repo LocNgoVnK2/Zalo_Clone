@@ -19,10 +19,10 @@ class CreateGroupDialog extends Component {
             searchText: ''
         }
         this.HandleSearchChange = this.HandleSearchChange.bind(this);
+
     }
     componentDidMount = async () => {
         let listFriendsRes = await GetListFriend(this.props.userId);
-
         if (listFriendsRes) {
             this.setState({
                 originalListFriends: listFriendsRes.data,
@@ -36,6 +36,7 @@ class CreateGroupDialog extends Component {
             const listSelectedUser = prevState.listSelectedUser.includes(friend)
                 ? prevState.listSelectedUser.filter(f => f !== friend)
                 : [...prevState.listSelectedUser, friend];
+                console.log(listSelectedUser);
             return { listSelectedUser };
 
         });
@@ -46,14 +47,24 @@ class CreateGroupDialog extends Component {
 
     HandleSearchChange(event) {
         const searchText = event.target.value;
-
+        
+        
         const filteredFriends = searchText
             ? this.state.listFriends.filter(friend =>
                 friend.userName.toLowerCase().includes(searchText.toLowerCase())
             )
             : this.state.originalListFriends;
-
+           
         this.setState({ searchText, listFriends: filteredFriends });
+        
+    }
+    handleClose = () => {
+        this.setState({
+            listSelectedUser: [],
+            searchText: ''
+        });
+    
+        this.props.handleClose(); // Gọi hàm handleClose từ props để đóng dialog
     }
     render() {
 
@@ -64,15 +75,16 @@ class CreateGroupDialog extends Component {
             let avatarImageToLoad = 'data:image/jpeg;base64,' + this.state.listFriends[i].avatar;
             rows.push(
                 <ListGroupItem
-                    key={this.state.listFriends[i]}
+                    key={this.state.listFriends[i].id}
+                    
                     action
                 >
-
+               
                     <div className="float-start">
                         <input
                             type="checkbox"
                             style={{ marginRight: '10px' }}
-                            checked={this.state.selectedFriends && this.state.selectedFriends.includes(this.state.listFriends[i])}
+                            checked={this.state.listSelectedUser && this.state.listSelectedUser.includes(this.state.listFriends[i])}
                             onChange={() => this.handleCheckboxChange(this.state.listFriends[i])}
                         />
 
@@ -91,18 +103,18 @@ class CreateGroupDialog extends Component {
                 </ListGroupItem>
             );
         }
-        let usersSelect = [];
+        let usersSelected = [];
 
-        for (let i = 0; i < 20; i++) {
-            let avatarImageToLoad = 'data:image/jpeg;base64,';
-            usersSelect.push(
+        for (let i = 0; i < this.state.listSelectedUser.length; i++) {
+            let avatarImageToLoad = 'data:image/jpeg;base64,'+ this.state.listSelectedUser[i].avatar;
+            usersSelected.push(
                 <ListGroupItem
-                    key={i}
+                    key={this.state.listSelectedUser[i].id}
                     action
                 >
                     <div className="float-start">
                         <img
-                            src={Test}
+                            src={this.state.listSelectedUser[i].avatar ? avatarImageToLoad : UserAvatar}
                             className="rounded-circle"
                             width="48 px"
                             height="48 px"
@@ -110,8 +122,8 @@ class CreateGroupDialog extends Component {
                         />
 
                     </div>
-                    <div className="float-start ms-3">
-                        <span className="float-right">test name</span>
+                    <div className="float-start ms-5">
+                        <span className="float-right">{this.state.listSelectedUser[i].userName}</span>
                     </div>
                 </ListGroupItem>
             );
@@ -120,7 +132,7 @@ class CreateGroupDialog extends Component {
 
         return (
             <>
-                <Modal show={show} onHide={handleClose} dialogClassName="custom-dialog" >
+                <Modal show={show} onHide={this.handleClose} dialogClassName="custom-dialog" >
                     <Modal.Header closeButton >
                         <Modal.Title > Tạo nhóm </Modal.Title>
 
@@ -187,12 +199,12 @@ class CreateGroupDialog extends Component {
 
                             <div style={{ flex: '30%', height: '500px', overflowY: 'auto', border: '1px solid black', marginTop: '20px', marginBottom: '20px' }}>
 
-                                <ListGroup variant="pills">{usersSelect}</ListGroup>
+                                <ListGroup variant="pills">{usersSelected}</ListGroup>
                             </div>
                         </div>
                     </Modal.Body>
                     <Modal.Footer className="custom-dialog__footer" >
-                        <Button variant="secondary" onClick={handleClose}>
+                        <Button variant="secondary" onClick={this.handleClose}>
                             Đóng
                         </Button>
                         <div className="custom-dialog__actions" style={{ textAlign: 'center' }}>
