@@ -8,6 +8,7 @@ import { ListGroup, ListGroupItem } from "react-bootstrap";
 import Test from "./assets/test.png";
 import { GetListFriend } from '../Services/friendService';
 import UserAvatar from "./assets/friends.png";
+import { CreateGroupChat,AddManyGroupUser } from '../Services/groupService';
 class CreateGroupDialog extends Component {
     constructor(props) {
         super(props);
@@ -16,10 +17,13 @@ class CreateGroupDialog extends Component {
             listFriends: [],
             originalListFriends: [],
             listSelectedUser: [],
-            searchText: ''
+            searchText: '',
+            avatarImage: '',
+            groupName:''
         }
         this.HandleSearchChange = this.HandleSearchChange.bind(this);
-
+        this.handleAvatarChange = this.handleAvatarChange.bind(this);
+        this.handlegroupNameChange = this.handlegroupNameChange.bind(this);
     }
     componentDidMount = async () => {
         let listFriendsRes = await GetListFriend(this.props.userId);
@@ -36,35 +40,83 @@ class CreateGroupDialog extends Component {
             const listSelectedUser = prevState.listSelectedUser.includes(friend)
                 ? prevState.listSelectedUser.filter(f => f !== friend)
                 : [...prevState.listSelectedUser, friend];
-                console.log(listSelectedUser);
+            console.log(listSelectedUser);
             return { listSelectedUser };
 
         });
     }
-    handleCreateGroup = () => {
-
+    handlegroupNameChange =(event)=>{
+        this.setState({ groupName: event.target.value });
+    }
+    handleCreateGroup = async () => {
+        var base64StringAvatar = null;
+        
+        if (this.state.avatarImage) {
+            var avatar = this.state.avatarImage;
+            base64StringAvatar = avatar.split(',')[1];
+        } 
+        try{
+            let createGrRes = await CreateGroupChat(this.state.groupName,this.props.userId,base64StringAvatar);
+            if(createGrRes){
+                const usersToAdd = this.state.listSelectedUser.map(user => ({
+                    idUser: user.id, 
+                    idGroup: createGrRes.data, 
+                    idGroupRole: 0 ,
+                    joinDate: new Date().toISOString()
+                })); 
+                let addUserIntoGrRes = await AddManyGroupUser(usersToAdd);
+                if (addUserIntoGrRes) {
+                    alert("Tạo nhóm và thêm thành viên thành công!");
+                }
+            }
+        }
+        catch(err){
+            console.log(err);
+        }
     }
 
     HandleSearchChange(event) {
         const searchText = event.target.value;
-        
-        
         const filteredFriends = searchText
             ? this.state.listFriends.filter(friend =>
                 friend.userName.toLowerCase().includes(searchText.toLowerCase())
             )
             : this.state.originalListFriends;
-           
+
         this.setState({ searchText, listFriends: filteredFriends });
-        
+
     }
+
     handleClose = () => {
         this.setState({
             listSelectedUser: [],
-            searchText: ''
+            searchText: '',
+            avatarImage: '',
+            groupName:''
         });
-    
+
         this.props.handleClose(); // Gọi hàm handleClose từ props để đóng dialog
+    }
+    handleAvatarChange = (event) => {
+        const avatarImage = event.target.files[0];
+        if (avatarImage && avatarImage.type.startsWith('image/')) {
+            this.getBase64(avatarImage, (result) => {
+                this.setState({ avatarImage: result });
+            });
+        }
+    };
+
+
+    getBase64(file, cb) {
+        let reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function () {
+            cb(reader.result);
+
+        };
+        reader.onerror = function (error) {
+            console.log('Error: ', error);
+        };
     }
     render() {
 
@@ -73,13 +125,14 @@ class CreateGroupDialog extends Component {
 
         for (let i = 0; i < this.state.listFriends.length; i++) {
             let avatarImageToLoad = 'data:image/jpeg;base64,' + this.state.listFriends[i].avatar;
+            //data:image;base64,
             rows.push(
                 <ListGroupItem
                     key={this.state.listFriends[i].id}
-                    
+
                     action
                 >
-               
+
                     <div className="float-start">
                         <input
                             type="checkbox"
@@ -106,7 +159,7 @@ class CreateGroupDialog extends Component {
         let usersSelected = [];
 
         for (let i = 0; i < this.state.listSelectedUser.length; i++) {
-            let avatarImageToLoad = 'data:image/jpeg;base64,'+ this.state.listSelectedUser[i].avatar;
+            let avatarImageToLoad = 'data:image/jpeg;base64,' + this.state.listSelectedUser[i].avatar;
             usersSelected.push(
                 <ListGroupItem
                     key={this.state.listSelectedUser[i].id}
@@ -141,25 +194,46 @@ class CreateGroupDialog extends Component {
                         <form >
                             <div >
                                 <div className="custom-dialog__user-name-container" style={{ marginTop: '20px' }}>
-                                    <div className="user-name-label">
-                                        <span className="user-name-label__text" style={{
-                                            border: '1px solid black',
-                                            borderRadius: '50%',
-                                            padding: '10px',
-                                            paddingTop: '5px',
-                                            fontWeight: '400'
-                                        }}>
+                                    <div className="user-name-label" >
+                                        <label htmlFor="avatarInput">
 
-                                            <img src={CameraIcon} alt="" width="14 px" height="14 px" />
+                                            {this.state.avatarImage ? (
+                                                <img src={this.state.avatarImage} alt="Selected" width="35.6 px" height="38.2 px" style={{
+                                                    borderRadius: '50%',
+                                                    fontWeight: '400',
+                                                    cursor: 'pointer' // Đổi con trỏ chuột thành dấu hỏi để chỉ ra có thể click vào
+                                                }} />
 
+                                            ) : (
+                                                <span className="user-name-label__text" style={{
+                                                    border: '1px solid black',
+                                                    borderRadius: '50%',
+                                                    padding: '10px',
+                                                    paddingTop: '5px',
+                                                    fontWeight: '400',
+                                                    cursor: 'pointer' // Đổi con trỏ chuột thành dấu hỏi để chỉ ra có thể click vào
+                                                }}>
+                                                    <img src={CameraIcon} alt="" width="14 px" height="14 px" />
+                                                </span>
+                                            )}
 
-                                        </span>
+                                        </label>
+                                        <input
+                                            id="avatarInput"
+                                            type="file"
+                                            accept="image/*"
+                                            style={{ display: 'none', zIndex: 1 }}
+                                            onChange={this.handleAvatarChange}
+                                        />
                                     </div>
+
                                     <span className="user-name-input">
                                         <input
                                             tabIndex="1"
                                             placeholder="Nhập tên nhóm"
                                             className="user-name-input__field"
+                                            value={this.state.groupName}
+                                            onChange={this.handlegroupNameChange}
                                         />
                                     </span>
 
@@ -184,13 +258,13 @@ class CreateGroupDialog extends Component {
                             </div>
                         </div>
                         <div style={{ display: 'flex', width: '100%' }}>
-                        <span className="user-name-label__text"style={{ flex: '65%', height: '30px', overflowY: 'auto' }}>
-                            Danh sách bạn bè:
-                        </span>
+                            <span className="user-name-label__text" style={{ flex: '65%', height: '30px', overflowY: 'auto' }}>
+                                Danh sách bạn bè:
+                            </span>
 
-                        <span className="user-name-label__text"style={{ flex: '30%', height: '30px', overflowY: 'auto' }}>
-                            Đã chọn:
-                        </span>
+                            <span className="user-name-label__text" style={{ flex: '30%', height: '30px', overflowY: 'auto' }}>
+                                Đã chọn:
+                            </span>
                         </div>
                         <div style={{ display: 'flex', width: '100%' }}>
                             <div style={{ flex: '65%', height: '500px', overflowY: 'auto' }}>
