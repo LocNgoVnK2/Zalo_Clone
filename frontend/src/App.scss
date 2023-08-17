@@ -259,15 +259,15 @@
 
   .user-name-input {
     flex: 1;
-  }
+    position: relative;
+}
 
-  .user-name-input__field {
- 
+.user-name-input__field {
     width: 100%;
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
-  }
+}
 
   .display-name {
 
@@ -371,4 +371,22 @@
   font-size: 1rem;
   width: fit-content;
   min-width: max-content;
+}
+.search-icon-wrapper {
+  position: absolute;
+  top: 50%;
+  right: 10px; 
+  transform: translateY(-50%);
+  width: 30px;
+  height: 30px;
+  background-color: #fff;
+ 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-icon {
+  width: 20px;
+  height: 20px;
 }

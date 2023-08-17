@@ -18,7 +18,7 @@ namespace Zalo_Clone.Controllers
         private readonly IUserContactService userContactService;
         private readonly IContactService contactService;
         private readonly IMapper mapper;
-        public FriendController (IContactService contactService,IUserService userService,IUserContactService userContactService, IFriendRequestService friendRequestService, IFriendListService friendListService, IMapper mapper)
+        public FriendController(IContactService contactService, IUserService userService, IUserContactService userContactService, IFriendRequestService friendRequestService, IFriendListService friendListService, IMapper mapper)
         {
             this.friendRequestService = friendRequestService;
             this.friendListService = friendListService;
@@ -35,11 +35,73 @@ namespace Zalo_Clone.Controllers
             try
             {
                 List<FriendList> friendLists = await friendListService.GetFriendListOfUser(userId);
+                List<UserInformationModel> models = new List<UserInformationModel>();
                 if (friendLists != null)
                 {
+                    foreach (FriendList friend in friendLists)
+                    {
+                        if (friend.User1 != userId)
+                        {
+                            User user = await userService.GetUserById(friend.User1);
+                            Contact contact = await contactService.GetContactData(user.Id);
+                            UserInformationModel model = new UserInformationModel();
+                            model.PhoneNumber = user.PhoneNumber;
+                            model.UserName = contact.ContactName;
+                            if (contact.Avatar != null)
+                            {
+                                model.Avatar = Convert.ToBase64String(contact.Avatar);
+                            }
+                            else
+                            {
+                                contact.Avatar = null;
+                            }
+                            if (user.Background != null)
+                            {
+                                model.Background = Convert.ToBase64String(user.Background);
+                            }
+                            else
+                            {
+                                model.Background = null;
+                            }
+                            model.Gender = user.Gender;
+                            model.DateOfBirth = user.DateOfBirth;
+                            model.Email = user.Email;
+                            model.Id = user.Id;
+                            models.Add(model);
+                        }
+                        if (friend.User2 != userId)
+                        {
+                            User user = await userService.GetUserById(friend.User2);
+                            Contact contact = await contactService.GetContactData(user.Id);
+                            UserInformationModel model = new UserInformationModel();
+                            model.PhoneNumber = user.PhoneNumber;
+                            model.UserName = contact.ContactName;
+                            if (contact.Avatar != null)
+                            {
+                                model.Avatar = Convert.ToBase64String(contact.Avatar);
+                            }
+                            else
+                            {
+                                contact.Avatar = null;
+                            }
+                            if (user.Background != null)
+                            {
+                                model.Background = Convert.ToBase64String(user.Background);
+                            }
+                            else
+                            {
+                                model.Background = null;
+                            }
+                            model.Gender = user.Gender;
+                            model.DateOfBirth = user.DateOfBirth;
+                            model.Email = user.Email;
+                            model.Id = user.Id;
+                            models.Add(model);
+                        }
 
-                    return Ok(friendLists);
+                    }
 
+                    return Ok(models);
                 }
                 return BadRequest();
 
@@ -57,7 +119,7 @@ namespace Zalo_Clone.Controllers
         {
             try
             {
-                bool result = await friendListService.CheckFriend(id,emailSearched);
+                bool result = await friendListService.CheckFriend(id, emailSearched);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -89,7 +151,7 @@ namespace Zalo_Clone.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        
+
         [HttpGet("RecommandFriend")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -98,14 +160,15 @@ namespace Zalo_Clone.Controllers
         {
             try
             {
-                var recommandUser =  await userService.GetRecommandUsers(id);
+                var recommandUser = await userService.GetRecommandUsers(id);
                 List<UserInformationModel> models = new List<UserInformationModel>();
-                foreach(var user in recommandUser){
+                foreach (var user in recommandUser)
+                {
                     Contact contact = await contactService.GetContactData(user.Id);
                     UserInformationModel model = new UserInformationModel();
                     model.PhoneNumber = user.PhoneNumber;
                     model.UserName = contact.ContactName;
-                     if (contact.Avatar != null)
+                    if (contact.Avatar != null)
                     {
                         model.Avatar = Convert.ToBase64String(contact.Avatar);
                     }
@@ -124,7 +187,7 @@ namespace Zalo_Clone.Controllers
                     model.Gender = user.Gender;
                     model.DateOfBirth = user.DateOfBirth;
                     model.Email = user.Email;
-                    // push model to models
+                    model.Id = user.Id;
                     models.Add(model);
                 }
                 return Ok(models);
@@ -134,6 +197,6 @@ namespace Zalo_Clone.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-        
+
     }
 }

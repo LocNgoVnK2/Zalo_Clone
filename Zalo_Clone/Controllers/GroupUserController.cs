@@ -41,7 +41,19 @@ namespace Zalo_Clone.Controllers
                 return BadRequest("Failed to add group user.");
             }
         }
-
+        [HttpPost("AddManyGroupUser")]
+        public async Task<IActionResult> AddManyGroupUser(GroupUserModel[] groupUserModel)
+        {
+            foreach(GroupUserModel groupUser in groupUserModel){
+                var groupUserToAdd = _mapper.Map<GroupUser>(groupUser);
+                var success = await _groupUserService.AddGroupUser(groupUserToAdd);
+                if (!success)
+                {
+                    return BadRequest("Failed to add group user.");
+                }
+            }
+                return Ok(" Many group user added successfully.");
+        }
 
         [HttpPost("RemoveGroupUser")]
         public async Task<IActionResult> RemoveGroupUser(string idGroup,string idUser)

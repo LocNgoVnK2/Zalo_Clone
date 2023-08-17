@@ -83,6 +83,8 @@ class UserProfileDialog extends Component {
         
         var base64StringAvatar = null;
         var base64StringBackGround = null;
+        
+
         if (this.state.avatarImage) {
             var avatar = this.state.avatarImage;
             base64StringAvatar = avatar.split(',')[1];
@@ -93,6 +95,7 @@ class UserProfileDialog extends Component {
         }
         
         try {
+            
             let res = await UpdateUserInformationApi(this.props.user.id
                 , this.props.user.email
                 , this.state.userName

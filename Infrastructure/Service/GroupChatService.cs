@@ -15,7 +15,7 @@ namespace Infrastructure.Service
     {
         Task<List<GroupChat>> GetAll();
         Task<GroupChat> GetGroupChatById(string id);
-        Task<bool> AddGroupChat(GroupChat groupChat, string imageByBase64);
+        Task<string> AddGroupChat(GroupChat groupChat, string imageByBase64);
         Task<bool> RemoveGroupChat(string id);
         Task<bool> UpdateLeader(string id, string newLeader);
 
@@ -40,7 +40,7 @@ namespace Infrastructure.Service
             this.userContactRepository = userContactRepository;
             this.utils = utils;
         }
-        public async Task<bool> AddGroupChat(GroupChat groupChat, string imageByBase64)
+        public async Task<string> AddGroupChat(GroupChat groupChat, string imageByBase64)
         {
             var transaction = await _groupChatRepository.BeginTransaction();
             do
@@ -62,8 +62,6 @@ namespace Infrastructure.Service
 
                 result = await _groupChatRepository.Add(groupChat);
             }
-
-
             if (result)
             {
                 var contact = new UserContact()
@@ -88,12 +86,13 @@ namespace Infrastructure.Service
             {
                 transaction.Rollback();
                 transaction.Dispose();
-                return false;
+                return null;
             }
 
             transaction.Commit();
             transaction.Dispose();
-            return result;
+            string idGroup = groupChat.Id;
+            return idGroup;
         }
 
         public async Task<List<GroupChat>> GetAll()

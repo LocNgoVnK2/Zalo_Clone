@@ -12,7 +12,24 @@ const RecommandFriend = ( id) =>{
 const CheckFriendRequesting =  (userSrc,userDes)=>{
     return axios.get(`/api/FriendRequest/CheckRequestingAddFriend?userSrc=${userSrc}&userDes=${userDes}`);
 }
+const AddSearchLog = (userSrc,userDes) =>{
+    return axios.post(`/api/SearchLog/AddSearchLog?userSrc=${userSrc}&userDes=${userDes}`);
+}
+const RemoveSearchLog =  (userSrc,userDes) =>{
+    return axios.post(`/api/SearchLog/RemoveSearchLog?userSrc=${userSrc}&userDes=${userDes}`);
+}
+const GetRecentSearch =(userSrc)=>{
+    return axios.get(`/api/SearchLog/GetRecentSearch?userSrc=${userSrc}`);
+}
+const GetListFriend =(userSrc)=>{
+    return axios.get(`/api/Friend/GetFriendByID?userId=${userSrc}`);
+}
 export{SendFriendRequest,
     CheckIsFriend,
     RecommandFriend,
-    CheckFriendRequesting};   
+    CheckFriendRequesting,
+    AddSearchLog,
+    RemoveSearchLog,
+    GetRecentSearch,
+    GetListFriend
+    };   

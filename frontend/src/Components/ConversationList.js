@@ -1,13 +1,12 @@
 import React, { Component } from "react";
-import Nav from "react-bootstrap/Nav";
-
-import NavDropdown from "react-bootstrap/NavDropdown";
 import Test from "./assets/test.png";
 import { Button, InputGroup, ListGroup, ListGroupItem } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import SearchIcon from "./assets/icon/searchIcon.png";
 import AddUserIcon from "./assets/icon/addUserIcon.png";
+import AddGroupUserIcon from "./assets/icon/add-friend.png";
 import AddFriendDialog from "./AddFriendDialog";
+import CreateGroupDialog from "./CreateGroupDialog";
 
 import { GetUserContacts, getuserApi } from "../Services/userService";
 
@@ -19,7 +18,8 @@ class ConversationList extends Component {
       contacts: [],
 
       contactChosenId: "",
-      showAddFriendDialog: false
+      showAddFriendDialog: false,
+      showCreateGroupDialog:false
     };
 
   }
@@ -44,6 +44,13 @@ class ConversationList extends Component {
 
     }
   }
+  handleOpenCreateGroupDialog = ()=>{
+    this.setState({ showCreateGroupDialog: true });
+  }
+  handleCloseCreateGroupDialog = () => {
+    this.setState({ showCreateGroupDialog: false});
+
+  };
   handleOpenAddFriendDialog = () => {
     this.setState({ showAddFriendDialog: true });
   };
@@ -94,6 +101,7 @@ class ConversationList extends Component {
 
     return (
       <>
+      <CreateGroupDialog show={this.state.showCreateGroupDialog} handleClose={this.handleCloseCreateGroupDialog} userId={this.props.id}/>
        <AddFriendDialog show={this.state.showAddFriendDialog} handleClose={this.handleCloseAddFriendDialog} userId={this.props.id}/>
         <div className="conversation-list-container">
           <div className="contact-search">
@@ -116,12 +124,12 @@ class ConversationList extends Component {
               </Button>
             </span>
             <span className="float-start ms-1">
-              <Button variant="light">
-                <img src={AddUserIcon} alt="" width="14 px" height="14 px" />
+              <Button variant="light" onClick={this.handleOpenCreateGroupDialog}> 
+                <img src={AddGroupUserIcon} alt="" width="14 px" height="14 px" />
               </Button>
             </span>
           </div>
-          <div className="conversation-list">
+          <div className="conversation-list"> 
             <ListGroup variant="pills">{rows}</ListGroup>
           </div>
         </div>
