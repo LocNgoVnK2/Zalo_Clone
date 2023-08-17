@@ -52,8 +52,6 @@ namespace Infrastructure.Utils
             var information = DecodeInformation(token!);
             return new ValidationByEmail()
             {
-            return new ValidationByEmail()
-            {
                 Email = information[0],
                 ValidationCode = information[1],
                 ValidationType = int.Parse(information[2])

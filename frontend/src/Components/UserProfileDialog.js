@@ -96,18 +96,16 @@ class UserProfileDialog extends Component {
         
         try {
             
-            let res = await UpdateUserInformationApi(this.props.user.id
+            UpdateUserInformationApi(this.props.user.id
                 , this.props.user.email
                 , this.state.userName
                 , this.state.gender
                 , this.state.dateOfBirth
                 , base64StringAvatar
-                , base64StringBackGround);
+                , base64StringBackGround).then(() => {this.render()})
                 
                
-            if (res) {
-                alert("Excute Success");
-            }
+            
         } catch (error) {
             if (error.response ) {
                 alert(error.response.data.error);

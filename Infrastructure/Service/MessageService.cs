@@ -41,7 +41,6 @@ namespace Infrastructure.Service
         private readonly IMessageRepository _messageRepo;
         private readonly IMessageGroupRepository _messageGroupRepo;
         private readonly IMessageReceipentRepository _messageReceipentRepo;
-        private readonly IMessageGroupUserRepository _messageGroupUserRepo;
         private readonly IMessageAttachmentRepository _messageAttachmentRepo;
         private readonly IMessageToDoListRepository _messageToDoListRepo;
         private readonly IMessageReactDetailRepository _messageReactDetailRepo;
@@ -52,7 +51,6 @@ namespace Infrastructure.Service
         public MessageService(IMessageRepository messageRepo,
             IMessageGroupRepository messageGroupRepository,
             IMessageReceipentRepository messageReceipentRepository,
-            IMessageGroupUserRepository messageGroupUserRepository,
             IMessageAttachmentRepository messageAttachmentRepo,
             IMessageReactDetailRepository messageReactDetailRepository,
             IReactionRepository reactionRepository,
@@ -65,7 +63,6 @@ namespace Infrastructure.Service
             this._messageRepo = messageRepo;
             this._messageAttachmentRepo = messageAttachmentRepo;
             this._messageGroupRepo = messageGroupRepository;
-            this._messageGroupUserRepo = messageGroupUserRepository;
             this._messageReceipentRepo = messageReceipentRepository;
             _messageReactDetailRepo = messageReactDetailRepository;
             _reactionRepo = reactionRepository;
@@ -313,19 +310,19 @@ namespace Infrastructure.Service
         private List<long> GetListOfUnnotifiedMessageId(string userId)
         {
             List<long> unNotifiedMessageIds = new List<long>();
-            var unNotifiedMessagesReceipent = _messageReceipentRepo.GetAll().Where(x => x.UserId.Equals(userId) && x.Status == MessageStatus.Sending).Select(x => x.MessageId).ToList();
-            if (unNotifiedMessagesReceipent.Any())
-            {
-                unNotifiedMessageIds.AddRange(unNotifiedMessagesReceipent);
-            }
+            // var unNotifiedMessagesReceipent = _messageReceipentRepo.GetAll().Where(x => x.UserId.Equals(userId) && x.Status == MessageStatus.Sent).Select(x => x.MessageId).ToList();
+            // if (unNotifiedMessagesReceipent.Any())
+            // {
+            //     unNotifiedMessageIds.AddRange(unNotifiedMessagesReceipent);
+            // }
 
-            var unNotifiedMessagesGroup = _messageGroupUserRepo.GetAll().Where(x => x.UserId == userId && x.Status == MessageStatus.Sending).Select(x => x.MessageId).ToList();
-            if (unNotifiedMessagesGroup.Any())
-            {
-                unNotifiedMessageIds.AddRange(unNotifiedMessagesGroup);
-            }
-            if (!unNotifiedMessageIds.Any())
-                return null;
+            // var unNotifiedMessagesGroup = _messageGroupUserRepo.GetAll().Where(x => x.UserId == userId && x.Status == MessageStatus.Sent).Select(x => x.MessageId).ToList();
+            // if (unNotifiedMessagesGroup.Any())
+            // {
+            //     unNotifiedMessageIds.AddRange(unNotifiedMessagesGroup);
+            // }
+            // if (!unNotifiedMessageIds.Any())
+            //     return null;
             return unNotifiedMessageIds;
         }
         public async Task<List<Contact>> GetContactsOfUnNotifiedMessage(string userId)
@@ -346,20 +343,20 @@ namespace Infrastructure.Service
         }
         public async Task<bool> ChangeMessageStatus(long messageId, string userReceiveId, MessageStatus status)
         {
-            bool result = false;
-            var messageReceipent = _messageReceipentRepo.GetAll().Where(x => x.MessageId.Equals(messageId) && x.UserId.Equals(userReceiveId)).FirstOrDefault();
-            if (messageReceipent != null)
-            {
-                messageReceipent.Status = status;
-                result = await _messageReceipentRepo.Update(messageReceipent);
-                return result;
-            }
-            var messageGroupUser = _messageGroupUserRepo.GetAll().Where(x => x.MessageId.Equals(messageId) && x.UserId.Equals(userReceiveId)).FirstOrDefault();
-            if(messageGroupUser != null){
-                messageGroupUser.Status = status;
-                result = await _messageGroupUserRepo.Update(messageGroupUser);
-                return result;
-            }
+            // bool result = false;
+            // var messageReceipent = _messageReceipentRepo.GetAll().Where(x => x.MessageId.Equals(messageId) && x.UserId.Equals(userReceiveId)).FirstOrDefault();
+            // if (messageReceipent != null)
+            // {
+            //     messageReceipent.Status = status;
+            //     result = await _messageReceipentRepo.Update(messageReceipent);
+            //     return result;
+            // }
+            // var messageGroupUser = _messageGroupUserRepo.GetAll().Where(x => x.MessageId.Equals(messageId) && x.UserId.Equals(userReceiveId)).FirstOrDefault();
+            // if(messageGroupUser != null){
+            //     messageGroupUser.Status = status;
+            //     result = await _messageGroupUserRepo.Update(messageGroupUser);
+            //     return result;
+            // }
             return false;
 
         }
