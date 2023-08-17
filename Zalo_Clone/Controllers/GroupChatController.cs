@@ -29,11 +29,11 @@ namespace Zalo_Clone.Controllers
             GroupChat groupChat = _mapper.Map<GroupChat>(model);
             try
             {
-                bool result = await _groupChatService.AddGroupChat(groupChat, model.imageByBase64);
+                string result = await _groupChatService.AddGroupChat(groupChat, model.imageByBase64);
 
-                if (result)
+                if (result!=null)
                 {
-                    return Ok("Add group chat sussess");
+                    return Ok(result);
                 }
                 else
                 {
