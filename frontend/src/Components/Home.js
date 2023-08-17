@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Sidebar from "./Sidebar";
 import ConversationList from "./ConversationList";
-
+import PhoneBook from "./PhoneBook";
 
 import jwtDecode from "jwt-decode";
 import { getuserApi, GetContactInformationById } from "../Services/userService";
@@ -22,6 +22,7 @@ class Home extends Component {
       user: null,
       messageContact: [],
       contactInformation: {},
+      selection: 'default'
     };
     this.currentState = HomeState.None;
     this.isUserLoaded = false;
@@ -30,7 +31,7 @@ class Home extends Component {
 
   CallApiDataforUser = async (email) => {
     let userData = await getuserApi(email);
-   
+
     if (userData) {
       this.setState({ userId: userData.data.id, user: userData.data });
 
@@ -49,14 +50,18 @@ class Home extends Component {
       getuserApi(emailU).then((response) => {
         this.setState({ email: emailU, userId: response.data.id });
       });
-      // this.setState({ email: emailU, userId: (await getuserApi(emailU)).id });
+      
     }
+    
   };
   componentDidUpdate = async (prevProps, prevState) => {
     if (prevState.email !== this.state.email && !this.isUserLoaded) {
       await this.CallApiDataforUser(this.state.email);
       this.isUserLoaded = true;
     }
+  }
+  selectionChange = (selectionFromUser) => {
+    this.setState({ selection: selectionFromUser });
   }
 
   updateChatView = (contactId) => {
@@ -111,17 +116,25 @@ class Home extends Component {
       <ConversationList
         id={this.state.userId}
         updateChatView={this.updateChatView}
-        
+
       />
     );
     const { user } = this.state;
-    if (user && this.isUserLoaded) {
+    if (user && this.isUserLoaded && this.state.selection === 'default') {
+      return (
+        <div>
+  
+          <Sidebar changeState={this.changeState} user={this.state.user} navigate={this.props.navigate} selectionChange={this.selectionChange} />
+          {conversation}
+          <Main messageContact={this.state.messageContact} contactInformation={this.state.contactInformation} userId={this.state.userId} />
+        </div>
+      );
+    } else if (user && this.isUserLoaded && this.state.selection === 'phonebook') {
       return (
         <div>
 
-          <Sidebar changeState={this.changeState} user={this.state.user} navigate={this.props.navigate} />
-          {conversation}
-          <Main messageContact={this.state.messageContact} contactInformation={this.state.contactInformation} userId={this.state.userId} />
+          <Sidebar changeState={this.changeState} user={this.state.user} navigate={this.props.navigate} selectionChange={this.selectionChange} />
+          <PhoneBook/>
         </div>
       );
     } else {
