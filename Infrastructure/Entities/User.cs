@@ -25,8 +25,8 @@ namespace Infrastructure.Entities
         public string? RestoreMail { get; set; }
 
         public string? PhoneNumber { get; set; }
-        public string Gender { get; set; }  
-        public DateTime DateOfBirth { get; set; }
+        public string? Gender { get; set; }  
+        public DateTime? DateOfBirth { get; set; }
         public byte[]? Background { get; set; }
 
     }

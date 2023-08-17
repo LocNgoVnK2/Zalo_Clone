@@ -1,22 +1,29 @@
 import React, { Component } from "react";
-import Nav from "react-bootstrap/Nav";
-
-import NavDropdown from "react-bootstrap/NavDropdown";
 import Test from "./assets/test.png";
 import { Button, InputGroup, ListGroup, ListGroupItem } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import SearchIcon from "./assets/icon/searchIcon.png";
 import AddUserIcon from "./assets/icon/addUserIcon.png";
+import AddGroupUserIcon from "./assets/icon/add-friend.png";
+import AddFriendDialog from "./AddFriendDialog";
+import CreateGroupDialog from "./CreateGroupDialog";
+
 import { GetUserContacts, getuserApi } from "../Services/userService";
+
 class ConversationList extends Component {
   constructor(props) {
     super(props);
     this.state = {
       isFinishLoading: false,
       contacts: [],
+
       contactChosenId: "",
+      showAddFriendDialog: false,
+      showCreateGroupDialog:false
     };
+
   }
+
   componentDidMount = () => {
     // this.props.id &&
     //   GetUserContacts(this.props.id).then((response) => {
@@ -36,6 +43,22 @@ class ConversationList extends Component {
     //   });
     // }
   }
+  handleOpenCreateGroupDialog = ()=>{
+    this.setState({ showCreateGroupDialog: true });
+  }
+  handleCloseCreateGroupDialog = () => {
+    this.setState({ showCreateGroupDialog: false});
+
+  };
+  handleOpenAddFriendDialog = () => {
+    this.setState({ showAddFriendDialog: true });
+  };
+
+  handleCloseAddFriendDialog = () => {
+    this.setState({ showAddFriendDialog: false});
+
+  };
+
   render = () => {
     let updateChatView = this.props.updateChatView;
     let rows = [];
@@ -46,7 +69,6 @@ class ConversationList extends Component {
         rows.push(
           <ListGroupItem
             key={contacts[i].id}
-            //disabled={this.state.contactChosenId === contacts[i].id}
             action
             onClick={(e) => {
               if (this.state.contactChosenId !== contacts[i].id)
@@ -72,10 +94,13 @@ class ConversationList extends Component {
           </ListGroupItem>
         );
       }
+
     }
 
     return (
       <>
+      <CreateGroupDialog show={this.state.showCreateGroupDialog} handleClose={this.handleCloseCreateGroupDialog} userId={this.props.id}/>
+       <AddFriendDialog show={this.state.showAddFriendDialog} handleClose={this.handleCloseAddFriendDialog} userId={this.props.id}/>
         <div className="conversation-list-container">
           <div className="contact-search">
             <span className="contact-search-box">
@@ -92,17 +117,17 @@ class ConversationList extends Component {
               </InputGroup>
             </span>
             <span className="float-start ms-1">
-              <Button variant="light">
+              <Button variant="light" onClick={this.handleOpenAddFriendDialog}>
                 <img src={AddUserIcon} alt="" width="14 px" height="14 px" />
               </Button>
             </span>
             <span className="float-start ms-1">
-              <Button variant="light">
-                <img src={AddUserIcon} alt="" width="14 px" height="14 px" />
+              <Button variant="light" onClick={this.handleOpenCreateGroupDialog}> 
+                <img src={AddGroupUserIcon} alt="" width="14 px" height="14 px" />
               </Button>
             </span>
           </div>
-          <div className="conversation-list">
+          <div className="conversation-list"> 
             <ListGroup variant="pills">{rows}</ListGroup>
           </div>
         </div>

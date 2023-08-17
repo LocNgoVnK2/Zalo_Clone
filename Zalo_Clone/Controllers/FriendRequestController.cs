@@ -23,14 +23,25 @@ namespace Zalo_Clone.Controllers
         [HttpPost("SendFriendRequest")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> SendFriendRequest(string userSenderId , string userReceiverId)
+        public async Task<IActionResult> SendFriendRequest(string userSenderId, string userReceiverId)
         {
-            bool result = await friendRequestService.CreateFriendRequest(userSenderId, userReceiverId);
-            if (result)
+            try
             {
-                return Ok("Request successfully");
+                bool result = await friendRequestService.CreateFriendRequest(userSenderId, userReceiverId);
+                if (result)
+                {
+                    return Ok("Request successfully");
+                }
+                else
+                {
+                    return NotFound("Are Friend");
+                }
             }
-            return BadRequest();
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
         }
 
         [HttpDelete("DeniedFriendRequest")]
@@ -43,7 +54,7 @@ namespace Zalo_Clone.Controllers
             }
             return BadRequest();
         }
-        
+
         [HttpPost("AcceptFriendRequest")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -53,10 +64,10 @@ namespace Zalo_Clone.Controllers
             try
             {
                 bool result = await friendRequestService.AcceptFriendRequest(userSenderId, userReceiverId);
-                
+
                 if (result)
                 {
-                    return Ok("Request successfully"); 
+                    return Ok("Request successfully");
                 }
                 return BadRequest();
             }
@@ -71,7 +82,7 @@ namespace Zalo_Clone.Controllers
             try
             {
                 var friendRequests = await friendRequestService.GetFriendRequestByIdForSender(userID);
-                
+
                 return Ok(friendRequests);
             }
             catch (Exception ex)
@@ -86,6 +97,19 @@ namespace Zalo_Clone.Controllers
             {
                 var friendRequests = await friendRequestService.GetFriendRequestByIdForReceiver(userID);
                 return Ok(friendRequests);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+          [HttpGet("CheckRequestingAddFriend")]
+        public async Task<IActionResult> CheckRequestingAddFriend(string userSrc,string userDes)
+        {
+            try
+            {
+                bool result = await friendRequestService.CheckFriendRequesting(userSrc,userDes);
+                return Ok(result);
             }
             catch (Exception ex)
             {

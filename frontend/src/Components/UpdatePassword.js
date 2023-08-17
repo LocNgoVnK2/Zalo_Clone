@@ -67,7 +67,7 @@ class UpdatePassword extends Component {
     render() {
         if (!this.state.shouldRender) {
 
-            return  this.props.navigate("/404");;
+            return  this.props.navigate("/404");
 
         } else {
             return (

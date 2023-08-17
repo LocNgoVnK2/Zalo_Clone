@@ -11,6 +11,7 @@ namespace Infrastructure.Utils
         string[] DecodeInformation(string code);
         ValidationByEmail TokenToValidationByEmailEntity(string token);
         string ValidationByEmailEntityToToken(ValidationByEmail entity);
+        List<int> GetRandomNumbers(int min, int max, int count);
     }
     public class Utils : IUtils
     {
@@ -51,6 +52,8 @@ namespace Infrastructure.Utils
             var information = DecodeInformation(token!);
             return new ValidationByEmail()
             {
+            return new ValidationByEmail()
+            {
                 Email = information[0],
                 ValidationCode = information[1],
                 ValidationType = int.Parse(information[2])
@@ -61,6 +64,26 @@ namespace Infrastructure.Utils
         public string ValidationByEmailEntityToToken(ValidationByEmail entity)
         {
             return EncodeInformation(entity.Email, entity.ValidationCode, entity.ValidationType.ToString());
+        }
+        public List<int> GetRandomNumbers(int min, int max, int count)
+        {
+            if (count > max - min + 1)
+            {
+                throw new Exception($"Không thể sinh ngẫu nhiên {count} số trong khoảng từ {min} đến {max}");
+            }
+
+            var result = new List<int>();
+            var random = new Random();
+            while (result.Count < count)
+            {
+                int randomNumber = random.Next(min, max + 1);
+                if (!result.Contains(randomNumber))
+                {
+                    result.Add(randomNumber);
+                }
+            }
+
+            return result;
         }
         public static async Task WaitUntil(Func<bool> condition, int frequency = 25, int timeout = -1)
         {

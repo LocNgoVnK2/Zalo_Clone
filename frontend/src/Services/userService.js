@@ -7,13 +7,14 @@ const loginApi = (email, password) => {
   
     return axios.post("/api/User/signin", data);
   };
-  const signupApi = (email, password,username,Phonenumber,gender) => {
+  const signupApi = (email, password,username,Phonenumber,gender,dateOfBirth) => {
     const data = {
       email: email,
       password: password,
       username: username,
       Phonenumber : Phonenumber,
-      gender: gender
+      gender: gender,
+      dateOfBirth: dateOfBirth
     };
   
     return axios.post("/api/User/signup", data);
@@ -40,11 +41,7 @@ const loginApi = (email, password) => {
 
     return axios.post(`/api/User/ResetPassword?email=${email}`);
   };
-  const GetUserContacts = (id) =>
-  {
-    return axios.get(`/api/User/GetContactsOfUser?userID=${id}`);
-  }
- 
+
   const RenewTokenResetPassword = (token) => {
 
     return axios.post(`/api/User/ReSendTokenResetPassword?token=${token}`);
@@ -57,10 +54,43 @@ const loginApi = (email, password) => {
 
     return axios.post(`/api/User/UpdatePassword?token=${token}&password=${password}`);
   };
+
+  const GetUserContacts = (id) =>
+  {
+    return axios.get(`/api/User/GetContactsOfUser?userID=${id}`)
+  }
+  ///api/User/UpdateUserInformation
+  const UpdateUserInformationApi = (id,email,username,gender,dateOfBirth,avatar,background) => {
+    const data = {
+      id:id,
+      userName: username,
+      email: email,
+      gender: gender,
+      dateOfBirth: dateOfBirth,
+      avatar: avatar,
+      background: background
+    };
+  
+    return axios.post("api/User/UpdateUserInformation", data);
+  };
   const  GetContactInformationById =  (id) => {
     const response = axios.get(`/api/User/GetContactInformationById?id=${id}`);
     return response;
   };
-export{loginApi,signupApi,getuserApi,getuserDataApi,ValidateSignUp,RenewToken,SendTokenForForgotPassword,RenewTokenResetPassword,ValidateResetPassword,UpdatePasswordApi,
-GetUserContacts,
-GetContactInformationById};   
+export{
+  loginApi,
+  signupApi,
+  getuserApi,
+  getuserDataApi,
+  ValidateSignUp,
+  RenewToken,
+  SendTokenForForgotPassword,
+  RenewTokenResetPassword,
+  ValidateResetPassword,
+  UpdatePasswordApi,
+  GetUserContacts,
+  UpdateUserInformationApi,
+  GetContactInformationById};   
+
+
+

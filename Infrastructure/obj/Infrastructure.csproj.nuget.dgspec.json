@@ -1,20 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "e:\\Project C-sharp\\ZaloClone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj": {}
+    "d:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj": {}
   },
   "projects": {
-    "e:\\Project C-sharp\\ZaloClone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj": {
+    "d:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "e:\\Project C-sharp\\ZaloClone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj",
+        "projectUniqueName": "d:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj",
         "projectName": "Infrastructure",
-        "projectPath": "e:\\Project C-sharp\\ZaloClone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj",
-        "packagesPath": "C:\\Users\\LENOVO\\.nuget\\packages\\",
-        "outputPath": "e:\\Project C-sharp\\ZaloClone\\Zalo_Clone\\Infrastructure\\obj\\",
+        "projectPath": "d:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\a\\.nuget\\packages\\",
+        "outputPath": "d:\\Zalo_Clone\\Zalo_Clone\\Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\LENOVO\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\a\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -75,7 +79,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.203\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.202\\RuntimeIdentifierGraph.json"
         }
       }
     }
