@@ -280,9 +280,10 @@
   flex-direction: column;
   height: 100vh;
   align-items: stretch;
+  max-width: calc(100vw - 410px);
 }
 .main .header{
-  width: calc(100vw - 380px);
+  width: calc(100vw - 410px);
   height: 100px;
   background-color: red;
 }
@@ -297,12 +298,13 @@
 .main .chat-view{ 
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: flex-start;
   width: 100%;
   margin: auto;
   padding: auto;
   flex: auto;
-
+  overflow-y: scroll;
+  min-height: auto;
   background-color: rgb(234, 234, 234);
 }
 .main .contact-avatar{

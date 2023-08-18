@@ -4,7 +4,7 @@ import ConversationList from "./ConversationList";
 import PhoneBook from "./PhoneBook";
 
 import jwtDecode from "jwt-decode";
-import { getuserApi, GetContactInformationById } from "../Services/userService";
+import { getuserApi, GetContactInformationById, GetUserContacts } from "../Services/userService";
 import { GetMessagesFromContactOfUser } from "../Services/MessageServices";
 import Main from "./Main";
 
@@ -22,7 +22,9 @@ class Home extends Component {
       user: null,
       messageContact: [],
       contactInformation: {},
-      selection: 'default'
+      selection: 'default',
+      contacts: []
+
     };
     this.currentState = HomeState.None;
     this.isUserLoaded = false;
@@ -50,19 +52,22 @@ class Home extends Component {
       getuserApi(emailU).then((response) => {
         this.setState({ email: emailU, userId: response.data.id });
       });
-      
+
+      // this.setState({ email: emailU, userId: (await getuserApi(emailU)).id });
+      this.state.userId && this.updateConversationList();
+
     }
     
   };
   componentDidUpdate = async (prevProps, prevState) => {
-    if (prevState.email !== this.state.email && !this.isUserLoaded) {
-      await this.CallApiDataforUser(this.state.email);
-      this.isUserLoaded = true;
-    }
-  }
-  selectionChange = (selectionFromUser) => {
-    this.setState({ selection: selectionFromUser });
-  }
+     if (prevState.email !== this.state.email && !this.isUserLoaded) {
+       await this.CallApiDataforUser(this.state.email);
+       this.isUserLoaded = true;
+     }
+     if (prevState.userId !== this.state.userId) {
+       this.updateConversationList();
+     }
+  };
 
   updateChatView = (contactId) => {
     if (!this.state.userId || !contactId) return;
@@ -77,8 +82,13 @@ class Home extends Component {
       this.setState({ contactInformation: response.data });
     });
   };
+  updateConversationList = () => {
+    GetUserContacts(this.state.userId).then((response) => {
+      this.setState({
+        contacts: response.data,
+      });})
 
-
+  }
   changeState = (state) => {
     this.currentState = state;
   };
@@ -114,7 +124,7 @@ class Home extends Component {
 
     let conversation = (
       <ConversationList
-        id={this.state.userId}
+        contacts={this.state.contacts}
         updateChatView={this.updateChatView}
 
       />
@@ -126,15 +136,22 @@ class Home extends Component {
   
           <Sidebar changeState={this.changeState} user={this.state.user} navigate={this.props.navigate} selectionChange={this.selectionChange} />
           {conversation}
-          <Main messageContact={this.state.messageContact} contactInformation={this.state.contactInformation} userId={this.state.userId} />
+          <Main
+          messageContact={this.state.messageContact}
+          contactInformation={this.state.contactInformation}
+          userId={this.state.userId}
+          updateConversationList = {this.updateConversationList}
+        />
         </div>
       );
     } else if (user && this.isUserLoaded && this.state.selection === 'phonebook') {
       return (
         <div>
 
+
           <Sidebar changeState={this.changeState} user={this.state.user} navigate={this.props.navigate} selectionChange={this.selectionChange} />
           <PhoneBook/>
+
         </div>
       );
     } else {
