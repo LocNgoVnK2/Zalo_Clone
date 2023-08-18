@@ -48,6 +48,7 @@ namespace Infrastructure.Service
         private readonly IUserContactRepository userContactRepository;
         private readonly IGroupChatRepository groupChatRepository;
         private readonly IContactRepository contactRepository;
+        private readonly IGroupUserRepository groupUserRepository;
         public MessageService(IMessageRepository messageRepo,
             IMessageGroupRepository messageGroupRepository,
             IMessageReceipentRepository messageReceipentRepository,
@@ -57,7 +58,8 @@ namespace Infrastructure.Service
             IMessageToDoListRepository messageToDoListRepo,
             IUserContactRepository userContactRepository,
             IGroupChatRepository groupChatRepository,
-            IContactRepository contactRepository
+            IContactRepository contactRepository,
+            IGroupUserRepository groupUserRepository
             )
         {
             this._messageRepo = messageRepo;
@@ -70,6 +72,7 @@ namespace Infrastructure.Service
             this.userContactRepository = userContactRepository;
             this.groupChatRepository = groupChatRepository;
             this.contactRepository = contactRepository;
+            this.groupUserRepository = groupUserRepository;
         }
 
         public int CountAllReactionInMessage(long idMessage)
@@ -251,6 +254,16 @@ namespace Infrastructure.Service
                     MessageId = message.Id,
                     GroupId = contactId
                 });
+                var groupUsers = groupUserRepository.GetAll().Where(x => x.IdGroup!.Equals(contactId)).Select(x => x.IdUser).ToList();
+                foreach (var user in groupUsers)
+                {
+                    result = await _messageReceipentRepo.Add(new MessageReceipent()
+                    {
+                        MessageId = message.Id,
+                        GroupId = contactId,
+                        UserId = user!
+                    });
+                }
             }
             else
             {
@@ -309,54 +322,66 @@ namespace Infrastructure.Service
         }
         private List<long> GetListOfUnnotifiedMessageId(string userId)
         {
-            List<long> unNotifiedMessageIds = new List<long>();
-            // var unNotifiedMessagesReceipent = _messageReceipentRepo.GetAll().Where(x => x.UserId.Equals(userId) && x.Status == MessageStatus.Sent).Select(x => x.MessageId).ToList();
-            // if (unNotifiedMessagesReceipent.Any())
-            // {
-            //     unNotifiedMessageIds.AddRange(unNotifiedMessagesReceipent);
-            // }
-
-            // var unNotifiedMessagesGroup = _messageGroupUserRepo.GetAll().Where(x => x.UserId == userId && x.Status == MessageStatus.Sent).Select(x => x.MessageId).ToList();
-            // if (unNotifiedMessagesGroup.Any())
-            // {
-            //     unNotifiedMessageIds.AddRange(unNotifiedMessagesGroup);
-            // }
-            // if (!unNotifiedMessageIds.Any())
-            //     return null;
-            return unNotifiedMessageIds;
+            return null;
         }
         public async Task<List<Contact>> GetContactsOfUnNotifiedMessage(string userId)
         {
-            var listOfUnnotifiedMessageId = GetListOfUnnotifiedMessageId(userId);
+            
+            using var transaction = await _messageRepo.BeginTransaction();
+            List<string> groupContactIds = new List<string>();
+            List<long> messageReceipentIds = new List<long>();
+            var unNotifiedMessages = _messageReceipentRepo.GetAll().Where(x => x.UserId.Equals(userId) && x.Status == MessageStatus.Sent).ToList();
+            if (!unNotifiedMessages.Any())
+            {
+                
+                return null;
+            }
+
+            //Lọc các id group vào list riêng 
+            foreach (var messageReceipent in unNotifiedMessages)
+            {
+                if (!string.IsNullOrEmpty(messageReceipent.GroupId))
+                {
+                    groupContactIds.Add(messageReceipent.GroupId);
+                }
+                else
+                {
+                    messageReceipentIds.Add(messageReceipent.MessageId);
+                }
+            }
+            //Lấy id của các sender người mà gửi tin nhắn cho user nhận truyền vào
+            var messages = _messageRepo.GetAll().ToList();
+            var messageJoinTable = messages.Join(messageReceipentIds, x => x.Id, y => y, (messages, messageReceipentIds) => new { messages, messageReceipentIds })
+            .Select(x => x.messages.Sender).ToList();
+            //Thêm các id của group vào list contacts.
+            messageJoinTable.AddRange(groupContactIds);
+            var contacts = contactRepository.GetAll().ToList();
+            //Lấy thông tin của contact join vào
+            var contactJoinTable = contacts.Join(messageJoinTable, x => x.Id, y => y, (contacts, messageJoinTable) => new { contacts, messageJoinTable })
+            .Select(x => x.contacts).Distinct().ToList();
 
 
-
-
-            var messages = _messageRepo.GetAll();
-            var messageJoinTable = messages.Join(listOfUnnotifiedMessageId, x => x.Id, y => y, (messagesReceipent, unNotifiedMessagesReceipent) => new { messagesReceipent, unNotifiedMessagesReceipent })
-            .Select(x => x.messagesReceipent.Sender);
-
-            var contacts = contactRepository.GetAll();
-            var contactJoinTable = await contacts.Join(messageJoinTable, x => x.Id, y => y, (contacts, messageJoinTable) => new { contacts, messageJoinTable })
-            .Select(x => x.contacts).Distinct().ToListAsync();
+            foreach (var message in unNotifiedMessages)
+            {
+                if (!await ChangeMessageStatus(message.MessageId, userId, MessageStatus.Received))
+                {
+                    transaction.Rollback();
+                    return null;
+                }
+            }
+            transaction.Commit();
             return contactJoinTable;
         }
         public async Task<bool> ChangeMessageStatus(long messageId, string userReceiveId, MessageStatus status)
         {
-            // bool result = false;
-            // var messageReceipent = _messageReceipentRepo.GetAll().Where(x => x.MessageId.Equals(messageId) && x.UserId.Equals(userReceiveId)).FirstOrDefault();
-            // if (messageReceipent != null)
-            // {
-            //     messageReceipent.Status = status;
-            //     result = await _messageReceipentRepo.Update(messageReceipent);
-            //     return result;
-            // }
-            // var messageGroupUser = _messageGroupUserRepo.GetAll().Where(x => x.MessageId.Equals(messageId) && x.UserId.Equals(userReceiveId)).FirstOrDefault();
-            // if(messageGroupUser != null){
-            //     messageGroupUser.Status = status;
-            //     result = await _messageGroupUserRepo.Update(messageGroupUser);
-            //     return result;
-            // }
+            bool result = false;
+            var messageReceipent = _messageReceipentRepo.GetAll().Where(x => x.MessageId.Equals(messageId) && x.UserId.Equals(userReceiveId)).FirstOrDefault();
+            if (messageReceipent != null)
+            {
+                messageReceipent.Status = status;
+                result = await _messageReceipentRepo.Update(messageReceipent);
+                return result;
+            }
             return false;
 
         }

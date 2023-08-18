@@ -187,8 +187,9 @@ namespace Zalo_Clone.Controllers
         public async Task<IActionResult> GetContactsOfUnNotifiedMessage(string userId)
         {
             var timeOut = 15000;
-            var frequency = 25;
+            var frequency = 500;
             List<Contact>? contacts =  null;
+        
             try
             {
                 var waitTask = Task.Run(async () =>

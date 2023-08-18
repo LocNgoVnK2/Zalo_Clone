@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Entities
 {
-    public enum MessageStatus{
+    public enum MessageStatus : Int16
+    {
         Sent = 0,
         Received = 1,
         Seen = 2
