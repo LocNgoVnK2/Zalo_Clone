@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 //image
 import UserAvatar from "./assets/friends.png";
+import GroupAvatar from "./assets/community-3245739_640.png";
 import FriendIcon from "./assets/icon/icons8-group-50.png";
 import GroupIcon from "./assets/icon/icons8-group-64.png";
 import LetterIcon from "./assets/icon/icons8-letter-64.png";
@@ -9,7 +10,7 @@ import SearchIcon from "./assets/icon/searchIcon.png";
 //api
 import { GetListFriend, UnfriendAPI, GetFriendRequestsByIdOfReceiverAPI, GetFriendRequestsByIdOfSenderAPI, AcceptFriendRequestAPI, DeniedFriendRequestAPI } from '../Services/friendService';
 import { getuserApi } from '../Services/userService';
-
+import { GetAllGroupChatsOfUserByUserIdAPI } from '../Services/groupService';
 //react bootstrap
 import { ListGroup, ListGroupItem, OverlayTrigger } from 'react-bootstrap';
 import { Popover } from 'react-bootstrap';
@@ -24,26 +25,32 @@ function PhoneBook(props) {
   const [usersList, setUserList] = useState([]);
   const [sendFriendRequestList, setSendFriendRequestList] = useState([]);
   const [receiveFriendRequestList, setreceiveFriendRequestList] = useState([]);
+  const [listGroup, setListGroup] = useState([]);
   const [usersListTmp, setUserListTmp] = useState([]);
+  const [listGroupTmp, setListGroupTmp] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [searchText, setSearchText] = useState("");
+  const [searchGroupText, setSearchGroupText] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [userInforSearched, setuserInforSearched] = useState(false);
   const [UserInfor, setUserInfor] = useState(null);
-  //frontend/src/Components/PhoneBook.js
-  
+
+
   const fetchData = useCallback(async () => {
     try {
-      const [listFriendResponse, sendRequestResponse, receiveRequestResponse] = await Promise.all([
+      const [listFriendResponse, sendRequestResponse, receiveRequestResponse, listGroupResponse] = await Promise.all([
         GetListFriend(props.userId),
         GetFriendRequestsByIdOfSenderAPI(props.userId),
-        GetFriendRequestsByIdOfReceiverAPI(props.userId)
+        GetFriendRequestsByIdOfReceiverAPI(props.userId),
+        GetAllGroupChatsOfUserByUserIdAPI(props.userId)
       ]);
 
       setUserList(listFriendResponse.data);
       setUserListTmp(listFriendResponse.data);
       setSendFriendRequestList(sendRequestResponse.data);
       setreceiveFriendRequestList(receiveRequestResponse.data);
+      setListGroup(listGroupResponse.data);
+      setListGroupTmp(listGroupResponse.data);
     } catch (error) {
       if (error.response) {
         alert(error.response.data.error);
@@ -58,7 +65,7 @@ function PhoneBook(props) {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
-  
+
 
   const handleUserContextMenu = (e, user) => {
     e.preventDefault();
@@ -82,6 +89,22 @@ function PhoneBook(props) {
       setUserList(filteredList);
     }
   };
+
+  const HandleSearchGroupChange = (e) => {
+    const value = e.target.value;
+    setSearchGroupText(value);
+
+    if (value.trim() === "") {
+      setListGroup(listGroupTmp);
+    } else {
+      const filteredList = listGroupTmp.filter((group) =>
+        group.name.toLowerCase().includes(value.toLowerCase())
+      );
+      setListGroup(filteredList);
+    }
+  };
+
+
   const handleUnfriend = (userSenderId, userReceiverId) => {
     UnfriendAPI(userSenderId, userReceiverId)
       .then((response) => {
@@ -95,7 +118,6 @@ function PhoneBook(props) {
         }
       })
       .catch((error) => {
-
         alert("Lỗi kết nối. Vui lòng thử lại sau.");
       });
   };
@@ -105,7 +127,6 @@ function PhoneBook(props) {
       if (receiverRes) {
         setUserInfor(receiverRes.data);
         setuserInforSearched(true);
-
       }
     } catch (error) {
       if (error.response) {
@@ -319,7 +340,47 @@ function PhoneBook(props) {
     ));
 
   };
+  const renderListGroupOfUser = (listGroup) => {
+    if (listGroup.length === 0) {
+      return (
+        <>
+          <h3>Không có nhóm nào hiện tại</h3>
+          <div style={{ height: '300px' }}></div>
+        </>
+      );
+    }
+    return listGroup.map((request) => (
 
+      <ListGroup.Item
+        key={request.idGroup}
+        style={{
+          borderBottom: '1px solid black',
+          paddingTop: '5px',
+          paddingBottom: '5px',
+          boxShadow: '0px 1px 0px 0px #ccc',
+        }}
+      //onContextMenu={(e) => handleUserContextMenu(e, request)}
+      >
+        <div className="row align-items-center">
+          <div className="col-2">
+            <img
+              src={request.imageByBase64
+                ? 'data:image/jpeg;base64,' + request.imageByBase64
+                : GroupAvatar}
+              className="rounded-circle"
+              width="48 px"
+              height="48 px"
+              alt=""
+            />
+          </div>
+          <div className="col-7">
+            <span className="user-name">{request.name}</span>
+          </div>
+        </div>
+      </ListGroup.Item>
+    ));
+
+  };
 
   const renderContent = () => {
 
@@ -356,9 +417,14 @@ function PhoneBook(props) {
               Bạn bè {'('} {usersList.length} {')'}
             </span>
             <main style={{ backgroundColor: 'green', flex: 1 }}>
-              <ListGroup className="user-list">
-                {renderUserList(usersList)}
-              </ListGroup>
+              <div style={{
+                height: '330px',
+                overflowY: 'auto',
+              }}>
+                <ListGroup className="user-list">
+                  {renderUserList(usersList)}
+                </ListGroup>
+              </div>
             </main>
           </>
         )}
@@ -372,9 +438,42 @@ function PhoneBook(props) {
               alt="" />Danh sách nhóm</div>
         </div>
       </div >
-        <main style={{ backgroundColor: 'green', flex: 1 }}>
-          {/* render content*/}
-        </main>
+        <div className="contact-search-box1">
+
+          <div className="search-container">
+            <img src={SearchIcon} alt="" className="search-icon" />
+            <input
+              type="text"
+              placeholder="Tìm kiếm"
+              className="search-input"
+              value={searchGroupText}
+              onChange={HandleSearchGroupChange}
+            />
+          </div>
+        </div>
+        {isLoading ? (
+          <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+            <Spinner animation="border" variant="primary" />
+          </div>
+        ) : (
+          <>
+
+            <main style={{ backgroundColor: 'green', flex: 1 }}>
+              <div className="card-title">
+                Danh sách nhóm :
+              </div >
+              <div style={{
+                height: '330px',
+                overflowY: 'auto',
+              }}>
+                <ListGroup className="user-list" style={{ height: '330px' }}>
+                  {renderListGroupOfUser(listGroup)}
+                </ListGroup>
+              </div>
+            </main>
+          </>
+        )}
+
       </div>;
     } else if (selectedButton === 'invitations') {
       return <div className="main" style={{ backgroundColor: 'yellow' }}><div style={{ backgroundColor: 'blue' }}>

@@ -14,8 +14,11 @@ const AddManyGroupUser = (users) => {
     
     return axios.post("/api/GroupUser/AddManyGroupUser", data);
 }
-
-
+//
+const GetAllGroupChatsOfUserByUserIdAPI =  (userSrc) =>{
+    return axios.get(`/api/GroupChat/GetAllGroupChatsOfUserByUserId?userId=${userSrc}`);
+}
 export{CreateGroupChat,
-    AddManyGroupUser
+    AddManyGroupUser,
+    GetAllGroupChatsOfUserByUserIdAPI
     };   
