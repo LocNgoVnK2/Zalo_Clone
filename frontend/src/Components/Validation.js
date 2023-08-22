@@ -4,7 +4,7 @@ import { ValidateSignUp } from "../Services/userService";
 import { useRef } from "react";
 import { useState } from "react";
 import { RenewToken } from "../Services/userService";
-
+import { Spinner } from "react-bootstrap";
 const Validation = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -13,33 +13,40 @@ const Validation = () => {
 
   const isApiCalledRef = useRef(false);
   const [showGetNewTokenPage, setGetNewTokenPage] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (token && !isApiCalledRef.current) {
       isApiCalledRef.current = true;
-      const validateToken = async () => {
-        try {
-          let res = await ValidateSignUp(token);
-          if (res) {
-            navigate("/");
-          }
 
-        } catch (error) {
-          if (error.response && error.response.status === 400) {
-            setGetNewTokenPage(true);
-            await RenewToken(token);
-
-          } else if (error.response && error.response.status === 404) {
-
-            return;
-          }
-        }
-      };
 
       validateToken();
     }
   }, [token, navigate]);
 
+  const validateToken = async () => {
+    try {
+      let res = await ValidateSignUp(token);
+      if (res) {
+        navigate("/");
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        setGetNewTokenPage(true);
+        await RenewToken(token);
+      } else if (error.response && error.response.status === 404) {
+        return;
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading) {
+    return <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+      <Spinner animation="border" variant="primary" />
+    </div>;
+  }
 
   if (showGetNewTokenPage) {
     // Trả về trang chứa form và nút submit khi API gọi lỗi
@@ -84,7 +91,7 @@ const Validation = () => {
       <h1 style={{ fontSize: '1.1em', marginTop: '0px', marginBottom: '100px', textAlign: "center" }}>
         <img width="48" height="48" src="https://img.icons8.com/color/48/zalo.png" alt="zalo" />
         <br />
-        404 - ERROR. Có thể mã xác nhận của bạn có vấn đề. Hãy yêu cầu cấp lại mã mới.
+        404 - ERROR. Bạn đã xác nhận thành công hãy thủ đăng nhập.
       </h1>
 
     </div>

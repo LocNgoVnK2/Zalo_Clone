@@ -92,6 +92,10 @@ class Home extends Component {
   changeState = (state) => {
     this.currentState = state;
   };
+  selectionChange=(selectionFromUser)=>{
+    this.setState({selection:selectionFromUser})
+  }
+
   renderContent = () => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -126,7 +130,7 @@ class Home extends Component {
       <ConversationList
         contacts={this.state.contacts}
         updateChatView={this.updateChatView}
-
+        id={this.state.userId}
       />
     );
     const { user } = this.state;
@@ -147,11 +151,8 @@ class Home extends Component {
     } else if (user && this.isUserLoaded && this.state.selection === 'phonebook') {
       return (
         <div>
-
-
           <Sidebar changeState={this.changeState} user={this.state.user} navigate={this.props.navigate} selectionChange={this.selectionChange} />
-          <PhoneBook/>
-
+          <PhoneBook userId ={this.state.userId}/>
         </div>
       );
     } else {

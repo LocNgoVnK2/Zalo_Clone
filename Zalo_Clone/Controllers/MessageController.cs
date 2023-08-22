@@ -153,11 +153,7 @@ namespace Zalo_Clone.Controllers
             }
             return result;
         }
-<<<<<<< HEAD
-        
-=======
 
->>>>>>> ff92e3caaf7436ae377ece0692167f20413e8dc9
         [HttpGet("GetMessagesFromContactOfUser")]
         public async Task<IActionResult> GetMessagesOfContactUser(string userId, string contactId)
         {
