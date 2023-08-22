@@ -242,10 +242,12 @@ function PhoneBook(props) {
   const renderFriendRequestToMe = (FrienRequestList) => {
     if (FrienRequestList.length === 0) {
       return (
-        <>
+        <div style={{
+          backgroundColor: 'white'
+        }}>
           <h3>Không có lời mời nào hiện tại</h3>
           <div style={{ height: '300px' }}></div>
-        </>
+        </div>
       );
     }
     return FrienRequestList.map((request) => (
@@ -295,10 +297,12 @@ function PhoneBook(props) {
   const renderFriendRequestToOtherPeople = (FrienRequestList) => {
     if (FrienRequestList.length === 0) {
       return (
-        <>
+        <div  style={{
+          backgroundColor: 'white'
+        }}>
           <h3>Không có lời mời nào hiện tại</h3>
           <div style={{ height: '300px' }}></div>
-        </>
+        </div>
       );
     }
     return FrienRequestList.map((request) => (
@@ -385,8 +389,16 @@ function PhoneBook(props) {
   const renderContent = () => {
 
     if (selectedButton === 'friends') {
-      return <div className="main" style={{ backgroundColor: 'yellow' }}>
-        <div style={{ backgroundColor: 'blue' }}>
+      return <div className="main"
+        style={{
+          backgroundColor: 'white',
+          borderLeft: 'solid'
+        }}>
+        <div style={{
+          backgroundColor: 'white',
+          borderBottom: 'solid',
+          borderLeft: 'solid'
+        }}>
           <div className="chat-title">
             <div className="contact-name">
               <img
@@ -416,7 +428,7 @@ function PhoneBook(props) {
             <span className="user-name">
               Bạn bè {'('} {usersList.length} {')'}
             </span>
-            <main style={{ backgroundColor: 'green', flex: 1 }}>
+            <main style={{ flex: 1 }}>
               <div style={{
                 height: '330px',
                 overflowY: 'auto',
@@ -430,14 +442,22 @@ function PhoneBook(props) {
         )}
       </div>
     } else if (selectedButton === 'groups') {
-      return <div className="main" style={{ backgroundColor: 'yellow' }}><div style={{ backgroundColor: 'blue' }}>
-        <div className="chat-title">
-          <div className="contact-name">
-            <img
-              src={GroupIcon}
-              alt="" />Danh sách nhóm</div>
-        </div>
-      </div >
+      return <div className="main" style={{
+        backgroundColor: 'white',
+        borderLeft: 'solid'
+      }}>
+        <div style={{
+          backgroundColor: 'white',
+          borderBottom: 'solid',
+          borderLeft: 'solid'
+        }}>
+          <div className="chat-title">
+            <div className="contact-name">
+              <img
+                src={GroupIcon}
+                alt="" />Danh sách nhóm</div>
+          </div>
+        </div >
         <div className="contact-search-box1">
 
           <div className="search-container">
@@ -458,7 +478,7 @@ function PhoneBook(props) {
         ) : (
           <>
 
-            <main style={{ backgroundColor: 'green', flex: 1 }}>
+            <main style={{ flex: 1 }}>
               <div className="card-title">
                 Danh sách nhóm :
               </div >
@@ -476,31 +496,39 @@ function PhoneBook(props) {
 
       </div>;
     } else if (selectedButton === 'invitations') {
-      return <div className="main" style={{ backgroundColor: 'yellow' }}><div style={{ backgroundColor: 'blue' }}>
-        <div className="chat-title">
-          <div className="contact-name">
-            <img
-              src={LetterIcon}
-              alt="" />Lời mời kết bạn</div>
-        </div>
-      </div >
+      return <div className="main" style={{
+        backgroundColor: 'white',
+        borderLeft: 'solid'
+      }}>
+        <div style={{
+          backgroundColor: 'white',
+          borderBottom: 'solid',
+          borderLeft: 'solid'
+        }}>
+          <div className="chat-title">
+            <div className="contact-name">
+              <img
+                src={LetterIcon}
+                alt="" />Lời mời kết bạn</div>
+          </div>
+        </div >
         <main style={{ backgroundColor: 'green' }}>
           {isLoading ? (
             <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
               <Spinner animation="border" variant="primary" />
             </div>
           ) : (
-            <>
-
-              <main style={{ backgroundColor: 'green', flex: 1 }}>
+          
+              <main style={{ flex: 1 }}>
                 <div className="card-title">
                   Lời mời đã nhận
-                </div >
+                </div>
                 <div style={{
-                  height: '330px',
+                  height: '50%',
+                  maxHeight: '240px',
                   overflowY: 'auto',
                 }}>
-                  <ListGroup className="user-list" style={{ height: '330px' }}>
+                  <ListGroup className="user-list">
                     {renderFriendRequestToMe(receiveFriendRequestList)}
                   </ListGroup>
                 </div>
@@ -509,18 +537,19 @@ function PhoneBook(props) {
                   Lời mời đã gửi
                 </div>
                 <div style={{
-                  height: '330px',
+                  height: '50%',
+                  maxHeight: '235px',
                   overflowY: 'auto',
                 }}>
-                  <ListGroup className="user-list" style={{ height: '330px' }}>
+                  <ListGroup className="user-list">
                     {renderFriendRequestToOtherPeople(sendFriendRequestList)}
                   </ListGroup>
                 </div>
               </main>
-            </>
+           
           )}
         </main>
-      </div>;
+      </div >;
     }
   };
 
@@ -535,7 +564,7 @@ function PhoneBook(props) {
           />
         )
       }
-      <div className="conversation-list-container" style={{ backgroundColor: 'red' }}>
+      <div className="conversation-list-container" >
         <button className={`vertical-button ${selectedButton === 'friends' ? 'selected' : ''}`} onClick={() => setSelectedButton('friends')}>
           <img src={FriendIcon} width="32px" height="32px" alt="" /> Danh sách bạn bè
         </button>
