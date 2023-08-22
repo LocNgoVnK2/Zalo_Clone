@@ -26,6 +26,7 @@ class Sidebar extends Component {
 
   handleSignOut = () => {
     localStorage.removeItem('token');
+    this.props.selectionChange('default');
     this.props.navigate("/");
 
   }
@@ -80,10 +81,10 @@ class Sidebar extends Component {
 
                 )}
               </SidebarMenu.Nav>
-              <SidebarMenu.Nav.Link eventKey={Message} className="sidebar-tabs">
+              <SidebarMenu.Nav.Link eventKey={Message} className="sidebar-tabs"  onClick={() => this.props.selectionChange('default')}>
                 <img src={ChatIcon} className="icon" alt="" />
               </SidebarMenu.Nav.Link>
-              <SidebarMenu.Nav.Link eventKey={None} className="sidebar-tabs">
+              <SidebarMenu.Nav.Link eventKey={None} className="sidebar-tabs" onClick={() => this.props.selectionChange('phonebook')}>
                 <img src={PhonebookIcon} className="icon" alt="" />
               </SidebarMenu.Nav.Link>
               <SidebarMenu.Nav.Link eventKey="3" className="sidebar-tabs">

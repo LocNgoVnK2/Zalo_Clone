@@ -128,8 +128,9 @@ namespace Zalo_Clone.Controllers
             }
         }
         [HttpDelete("Unfriend")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Unfriend(string userSenderId, string userReceiverId)
         {
             try

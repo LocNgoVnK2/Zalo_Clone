@@ -10,6 +10,10 @@ namespace Zalo_Clone.Models
 
             [Column("user_2")]
             public string User2 { get; set; }
+            public string? UserName { get; set; }
+            public string? Email { get; set; }
+
+            public string? Avatar { get; set; }
 
             [Column("requestDate")]
             public DateTime RequestDate { get; set; }

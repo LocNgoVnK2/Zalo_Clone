@@ -1,6 +1,7 @@
 using AutoMapper;
 using Infrastructure.Entities;
 using Infrastructure.Service;
+using Infrastructure.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
@@ -18,7 +19,7 @@ namespace Zalo_Clone.Controllers
         public MessageController(IMessageService messageService, IMapper mapper)
         {
             this.messageService = messageService;
-            this.mapper = mapper;   
+            this.mapper = mapper;
         }
         [HttpPost("RecallMessage")]
 
@@ -26,7 +27,7 @@ namespace Zalo_Clone.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> RecallMessage(long idMessage)
         {
-           
+
             bool result = await messageService.RecallMessage(idMessage);
             if (result)
             {
@@ -41,14 +42,14 @@ namespace Zalo_Clone.Controllers
         public async Task<IActionResult> SendMessageToUser(MessageContactModel model)
         {
             var message = mapper.Map<Message>(model);
-            bool result = await messageService.SendMessageToContact(message,model.ContactId,model.AttachmentByBase64);
-            if(result)
+            bool result = await messageService.SendMessageToContact(message, model.ContactId, model.AttachmentByBase64);
+            if (result)
             {
                 return NoContent();
             }
             return BadRequest();
         }
-    
+
         [HttpPost("SendMessageToDoList")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -89,9 +90,9 @@ namespace Zalo_Clone.Controllers
             return reactions;
         }
         [HttpGet("GetNumberOfReactionInMessage")]
-        public async Task<int> GetNumberOfReactionInMessage(long messageId,int reactionId)
+        public async Task<int> GetNumberOfReactionInMessage(long messageId, int reactionId)
         {
-            int result = messageService.CountReactionInMessage(messageId,reactionId);
+            int result = messageService.CountReactionInMessage(messageId, reactionId);
             return result;
         }
         [HttpGet("GetTotalNumberReactionInMessage")]
@@ -105,7 +106,7 @@ namespace Zalo_Clone.Controllers
         {
             var messages = await messageService.GetMessagesOfGroup(groupId);
             List<MessageContactModel> result = new List<MessageContactModel>();
-            foreach(var m in messages)
+            foreach (var m in messages)
             {
                 long idMessage = m.Id;
                 MessageContactModel messageGroupModel = mapper.Map<MessageContactModel>(m);
@@ -116,8 +117,8 @@ namespace Zalo_Clone.Controllers
                     result.Add(messageGroupModel);
                     continue;
                 }
-                    
-                foreach(MessageAttachment attachment in attachments)
+
+                foreach (MessageAttachment attachment in attachments)
                 {
                     string attachmentByBase64 = Convert.ToBase64String(attachment.Attachment!);
                     messageGroupModel.AttachmentByBase64.Add(attachmentByBase64);
@@ -152,11 +153,12 @@ namespace Zalo_Clone.Controllers
             }
             return result;
         }
+
         [HttpGet("GetMessagesFromContactOfUser")]
-        public async Task<IActionResult> GetMessagesOfContactUser(string userId,string contactId)
+        public async Task<IActionResult> GetMessagesOfContactUser(string userId, string contactId)
         {
             var messages = await messageService.GetMessagesOfUsersContact(userId, contactId);
-            if(messages == null)
+            if (messages == null)
                 return BadRequest();
             var result = new List<MessageContactModel>();
             foreach (var m in messages)
@@ -181,5 +183,35 @@ namespace Zalo_Clone.Controllers
             }
             return Ok(result);
         }
+        [HttpGet("GetContactsOfUnNotifiedMessage")]
+        public async Task<IActionResult> GetContactsOfUnNotifiedMessage(string userId)
+        {
+            var timeOut = 15000;
+            var frequency = 25;
+            List<Contact>? contacts =  null;
+            try
+            {
+                var waitTask = Task.Run(async () =>
+                {
+            
+                    while (contacts == null)
+                    {
+                        contacts = await messageService.GetContactsOfUnNotifiedMessage(userId);
+                        await Task.Delay(frequency);
+                    }
+                });
+
+                if (waitTask != await Task.WhenAny(waitTask,
+                        Task.Delay(timeOut)))
+                    throw new TimeoutException();
+            }
+            catch (TimeoutException)
+            {
+                return NoContent();
+            }
+            return Ok(contacts);
+
+        }
+
     }
 }

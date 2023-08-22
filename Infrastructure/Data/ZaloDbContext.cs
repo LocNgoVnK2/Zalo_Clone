@@ -26,7 +26,8 @@ namespace Infrastructure.Data
 
         public DbSet<FriendList> FriendLists { get; set; }
         public DbSet<Message> Messages { get; set; }
-        public DbSet<MessageContact> MessageContacts { get; set; }
+        public DbSet<MessageGroup> MessageGroups { get; set; }
+        public DbSet<MessageReceipent> MessageReceipents { get; set; }
         public DbSet<MessageAttachment> MessageAttachments { get; set; }
 
         public DbSet<MessageToDoList> MessagesToDoLists { get; set; }

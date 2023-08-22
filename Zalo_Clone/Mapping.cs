@@ -79,6 +79,10 @@ namespace Zalo_Clone
             // validation
             CreateMap<ValidationByEmailModel, ValidationByEmail>();
             CreateMap<ValidationByEmail, ValidationByEmailModel>();
+            // friendRequest
+
+            CreateMap<FriendRequestModel, FriendRequest>();
+            CreateMap<FriendRequest, FriendRequestModel>();
         }
     }
 }

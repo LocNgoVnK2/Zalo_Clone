@@ -51,7 +51,8 @@ builder.Services.AddScoped<IFriendListService, FriendListService>();
 //Message
 builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
-builder.Services.AddScoped<IMessageContactRepository, MessageContactRepository>();
+builder.Services.AddScoped<IMessageGroupRepository, MessageGroupRepository>();
+builder.Services.AddScoped<IMessageReceipentRepository, MessageReceipentRepository>();
 builder.Services.AddScoped<IMessageAttachmentRepository, MessageAttachmentRepository>();
 builder.Services.AddScoped<IMessageToDoListRepository, MessageToDoListRepository>();
 builder.Services.AddScoped<IMessageReactDetailRepository, MessageReactDetailRepository>();

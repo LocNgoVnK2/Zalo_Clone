@@ -72,7 +72,7 @@ namespace Infrastructure.Service
             bool result = await _friendListRepository.Delete(friend);
             if (result)
             {
-                FriendRequest friendRequest = await _friendRequestRepository.GetAll().FirstOrDefaultAsync(u => u.User1.Equals(userSrcId) && u.User2.Equals(userDesId));
+                FriendRequest friendRequest = await _friendRequestRepository.GetAll().FirstOrDefaultAsync(u => u.User1.Equals(userSrcId) && u.User2.Equals(userDesId)||u.User2.Equals(userSrcId) && u.User1.Equals(userDesId));
                 result = await _friendRequestRepository.Delete(friendRequest);
 
             }

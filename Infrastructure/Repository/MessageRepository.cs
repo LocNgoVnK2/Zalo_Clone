@@ -16,10 +16,15 @@ namespace Infrastructure.Repository
     {
 
     }
-    public interface IMessageContactRepository : IRepository<MessageContact>
+    public interface IMessageReceipentRepository : IRepository<MessageReceipent>
     {
 
     }
+    public interface IMessageGroupRepository : IRepository<MessageGroup>
+    {
+
+    }
+
     public interface IMessageToDoListRepository : IRepository<MessageToDoList>
     {
 
@@ -43,13 +48,21 @@ namespace Infrastructure.Repository
         {
         }
     }
-    public class MessageContactRepository : Repository<MessageContact>, IMessageContactRepository
+    public class MessageReceipentRepository : Repository<MessageReceipent>, IMessageReceipentRepository
     {
-        public MessageContactRepository(ZaloDbContext context) : base(context)
+        public MessageReceipentRepository(ZaloDbContext context) : base(context)
 
         {
         }
     }
+    public class MessageGroupRepository : Repository<MessageGroup>, IMessageGroupRepository
+    {
+        public MessageGroupRepository(ZaloDbContext context) : base(context)
+
+        {
+        }
+    }
+
     public class MessageToDoListRepository : Repository<MessageToDoList>, IMessageToDoListRepository
     {
         public MessageToDoListRepository(ZaloDbContext context) : base(context)

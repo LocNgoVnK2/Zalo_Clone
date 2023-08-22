@@ -3,4 +3,10 @@ const GetMessagesFromContactOfUser = (userId, contactId) => {
 
     return axios.get(`/api/Message/GetMessagesFromContactOfUser?userId=${userId}&contactId=${contactId}`);
 }
-export{GetMessagesFromContactOfUser};   
+
+const PollingForNewMessage = (userId) => {
+
+    return axios.get(`/api/Message/GetContactsOfUnNotifiedMessage?userId=${userId}`);
+}
+export{GetMessagesFromContactOfUser,
+PollingForNewMessage};   

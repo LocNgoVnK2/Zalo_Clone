@@ -13,11 +13,15 @@ namespace Zalo_Clone.Controllers
     {
         private readonly IFriendRequestService friendRequestService;
         private readonly IFriendListService friendListService;
+        private readonly IContactService contactService;
+        private readonly IUserService   userService;
         private readonly IMapper mapper;
-        public FriendRequestController(IFriendRequestService friendRequestService, IFriendListService friendListService, IMapper mapper)
+        public FriendRequestController(IUserService userService,IContactService contactService,IFriendRequestService friendRequestService, IFriendListService friendListService, IMapper mapper)
         {
             this.friendRequestService = friendRequestService;
             this.friendListService = friendListService;
+            this.contactService = contactService;
+            this.userService = userService;
             this.mapper = mapper;
         }
         [HttpPost("SendFriendRequest")]
@@ -81,9 +85,25 @@ namespace Zalo_Clone.Controllers
         {
             try
             {
-                var friendRequests = await friendRequestService.GetFriendRequestByIdForSender(userID);
+                List<FriendRequest> friendRequests = await friendRequestService.GetFriendRequestByIdForSender(userID);
+                List<FriendRequestModel> friendRequestsModels = mapper.Map<List<FriendRequestModel>>(friendRequests);
+                foreach (FriendRequestModel friendRequestModel in friendRequestsModels){
+                    Contact contact = await contactService.GetContactData(friendRequestModel.User1);
+                    User user = await userService.GetUserById(contact.Id);
 
-                return Ok(friendRequests);
+                    friendRequestModel.UserName = contact.ContactName;
+                    friendRequestModel.Email = user.Email;
+                    if (contact.Avatar != null)
+                    {
+                        friendRequestModel.Avatar = Convert.ToBase64String(contact.Avatar);
+                    }
+                    else
+                    {
+                        friendRequestModel.Avatar = null;
+                    }
+                    
+                }
+                return Ok(friendRequestsModels);
             }
             catch (Exception ex)
             {
@@ -96,7 +116,23 @@ namespace Zalo_Clone.Controllers
             try
             {
                 var friendRequests = await friendRequestService.GetFriendRequestByIdForReceiver(userID);
-                return Ok(friendRequests);
+                 List<FriendRequestModel> friendRequestsModels = mapper.Map<List<FriendRequestModel>>(friendRequests);
+                foreach (FriendRequestModel friendRequestModel in friendRequestsModels){
+                    Contact contact = await contactService.GetContactData(friendRequestModel.User2);
+                    User user = await userService.GetUserById(contact.Id);
+                    friendRequestModel.UserName = contact.ContactName;
+                    friendRequestModel.Email=user.Email;
+                    if (contact.Avatar != null)
+                    {
+                        friendRequestModel.Avatar = Convert.ToBase64String(contact.Avatar);
+                    }
+                    else
+                    {
+                        friendRequestModel.Avatar = null;
+                    }
+                    
+                }
+                return Ok(friendRequestsModels);
             }
             catch (Exception ex)
             {

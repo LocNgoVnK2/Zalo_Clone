@@ -8,6 +8,11 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Entities
 {
+    public enum MessageStatus{
+        Sent = 0,
+        Received = 1,
+        Seen = 2
+    }
     [Table("MESSAGE")]
     public class Message
     {
