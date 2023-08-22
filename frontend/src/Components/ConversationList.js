@@ -71,8 +71,11 @@ class ConversationList extends Component {
             key={contacts[i].id}
             action
             onClick={(e) => {
-              if (this.state.contactChosenId !== contacts[i].id)
-                updateChatView(contacts[i].id, e);
+              if (this.state.contactChosenId !== contacts[i].id){
+                updateChatView();
+                this.props.updateContact(contacts[i].id, e)
+              }
+                
               this.setState({ contactChosenId: contacts[i].id });
             }}
           >

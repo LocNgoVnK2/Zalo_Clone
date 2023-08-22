@@ -1,38 +1,41 @@
 import React, { useEffect, useState } from "react";
 import Test from "./assets/test.png";
 import Message from "./Message";
-import { PollingForNewMessage } from "../Services/MessageServices";
+import {
+  PollingForNewMessage,
+  GetMessagesFromContactOfUser,
+} from "../Services/MessageServices";
 
 function Main(props) {
   const [contactName, setContactName] = useState();
+  const [contactInformation, setContactInformation] = useState();
   const [message, setMessage] = useState();
   const [isThereNewMessage, setIsThereNewMessage] = useState(false);
   const [isChatting, setIsChatting] = useState(false);
   const [chattingFrame, setChattingFrame] = useState();
 
   useEffect(() => {
-    
-    if (isChatting && props.messageContact.length !== 0) {
-      let apiTimeout = setTimeout(pollingFunc, 1000);
-      function pollingFunc(){
-        PollingForNewMessage(
-          props.userId
-        ).then((res) => {
-          if(res.status === 200){
-            props.updateConversationList();
-            apiTimeout = setTimeout(pollingFunc,1000);
-            setIsThereNewMessage(true);
-          }else if(res.status === 204){
-            apiTimeout = setTimeout(pollingFunc,1000);
-            setIsThereNewMessage(true);
-          }else{
-            clearTimeout(apiTimeout);
-          }
-        });
-      };
-      
+    console.log(props);
+    // if (isChatting && props.messageContact.length !== 0) {
+    let apiTimeout = setTimeout(pollingFunc, 1000);
+    function pollingFunc() {
+      PollingForNewMessage(props.userId).then((res) => {
+        if (res.status === 200) {
+          props.updateConversationList();
+          props.updateChatView();
+          apiTimeout = setTimeout(pollingFunc, 1000);
+          setIsThereNewMessage(true);
+        } else if (res.status === 204) {
+          apiTimeout = setTimeout(pollingFunc, 1000);
+          setIsThereNewMessage(true);
+        } else {
+          clearTimeout(apiTimeout);
+        }
+      });
     }
-  }, [props.messageContact]);
+
+    // }
+  }, []);
   useEffect(() => {
     if (props.messageContact.length !== 0) {
       let messageTemp = [];
@@ -68,7 +71,9 @@ function Main(props) {
               <div className="subtitle">subtitle</div>
             </div>
           </header>
-          <article className="chat-view">{message}</article>
+          <article className="chat-view" id="chat-view">
+            {message}
+          </article>
           <div className="text-input"></div>
         </div>
       );
