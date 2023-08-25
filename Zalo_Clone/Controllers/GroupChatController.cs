@@ -29,8 +29,10 @@ namespace Zalo_Clone.Controllers
         public async Task<IActionResult> CreateGroupChat(GroupChatModel model)
         {
             GroupChat groupChat = _mapper.Map<GroupChat>(model);
+            
             try
             {
+
                 string result = await _groupChatService.AddGroupChat(groupChat, model.imageByBase64);
 
                 if (result!=null)

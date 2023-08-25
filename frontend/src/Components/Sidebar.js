@@ -87,7 +87,7 @@ class Sidebar extends Component {
               <SidebarMenu.Nav.Link eventKey={None} className="sidebar-tabs" onClick={() => this.props.selectionChange('phonebook')}>
                 <img src={PhonebookIcon} className="icon" alt="" />
               </SidebarMenu.Nav.Link>
-              <SidebarMenu.Nav.Link eventKey="3" className="sidebar-tabs">
+              <SidebarMenu.Nav.Link eventKey="3" className="sidebar-tabs" onClick={() => this.props.selectionChange('todolist')}>
                 <img src={TodoIcon} className="icon" alt="" />
               </SidebarMenu.Nav.Link>
             </div>

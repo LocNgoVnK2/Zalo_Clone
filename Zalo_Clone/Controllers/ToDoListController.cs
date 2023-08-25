@@ -28,6 +28,7 @@ namespace Zalo_Clone.Controllers
         public async Task<IActionResult> CreateToDoList(ToDoListModel model)
         {
             ToDoList toDoList = _mapper.Map<ToDoList>(model);
+            toDoList.StartDate = DateTime.Now;
             try
             {
                 bool result = await _toDoListService.AddToDoList(toDoList,model.UserToDoTask);
