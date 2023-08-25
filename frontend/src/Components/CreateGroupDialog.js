@@ -66,6 +66,7 @@ class CreateGroupDialog extends Component {
                 })); 
                 let addUserIntoGrRes = await AddManyGroupUser(usersToAdd);
                 if (addUserIntoGrRes) {
+                    window.location.reload();
                     alert("Tạo nhóm và thêm thành viên thành công!");
                 }
             }

@@ -7,7 +7,7 @@ import jwtDecode from "jwt-decode";
 import { getuserApi, GetContactInformationById, GetUserContacts } from "../Services/userService";
 import { GetMessagesFromContactOfUser } from "../Services/MessageServices";
 import Main from "./Main";
-
+import ToDoList from "./ToDoList";
 
 const HomeState = {
   None: "none",
@@ -93,7 +93,7 @@ class Home extends Component {
     this.currentState = state;
   };
   selectionChange=(selectionFromUser)=>{
-    this.setState({selection:selectionFromUser})
+    this.setState({selection: selectionFromUser});
   }
 
   renderContent = () => {
@@ -154,8 +154,16 @@ class Home extends Component {
           <Sidebar changeState={this.changeState} user={this.state.user} navigate={this.props.navigate} selectionChange={this.selectionChange} />
           <PhoneBook userId ={this.state.userId}/>
         </div>
+      );//todolist
+    } else if (user && this.isUserLoaded && this.state.selection === 'todolist') {
+      return (
+        <div>
+          <Sidebar changeState={this.changeState} user={this.state.user} navigate={this.props.navigate} selectionChange={this.selectionChange} />
+          <ToDoList userId ={this.state.userId}></ToDoList>
+        
+        </div>
       );
-    } else {
+    }else{
       return this.renderContent();
     }
   };
