@@ -5,12 +5,18 @@ import GroupAvatar from "./assets/community-3245739_640.png";
 import FriendIcon from "./assets/icon/icons8-group-50.png";
 import GroupIcon from "./assets/icon/icons8-group-64.png";
 import LetterIcon from "./assets/icon/icons8-letter-64.png";
+import ToDoListIcon from "./assets/icon/icons8-todo-list-48.png";
+import ToReceivelist from "./assets/icon/icons8-edit-property-48.png";
+import ToFollowlist from "./assets/icon/icons8-tasklist-48.png";
+import TaskAvatar from "./assets/icon/icons8-goal-50.png";
+
+
 import SearchIcon from "./assets/icon/searchIcon.png";
 import { Modal, Button, Form, FormControl, InputGroup } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 //api
 import { GetListFriend } from '../Services/friendService';
-import { createToDoList } from '../Services/toDoListService';
+import { createToDoList,GetAllTasksDoneByUserCreationAPI,GetAllTasksNotDoneByUserCreationAPI } from '../Services/toDoListService';
 //react bootstrap
 import { ListGroup, ListGroupItem, OverlayTrigger } from 'react-bootstrap';
 import { Popover } from 'react-bootstrap';
@@ -28,12 +34,19 @@ function ToDoList(props) {
     const [deadline, setDeadline] = useState('');
     const [userList, setUserList] = useState([]);
     const [selectedStatusButton, setSelectedStatusButton] = useState('');
+    const [taskDoneByUserCreatedList, setTaskDoneByUserCreatedList] = useState([]);
+    const [taskNotDoneByUserCreatedList, setTaskNotDoneByUserCreatedList] = useState([]);
+
     const fetchData = useCallback(async () => {
         try {
-            const [listFriendResponse] = await Promise.all([
-                GetListFriend(props.userId)
+            const [listFriendResponse,taskDoneByUserCreatedList,taskNotDoneByUserCreatedList] = await Promise.all([
+                GetListFriend(props.userId),
+                GetAllTasksDoneByUserCreationAPI(props.userId),
+                GetAllTasksNotDoneByUserCreationAPI(props.userId)
             ]);
             setUserList(listFriendResponse.data)
+            setTaskDoneByUserCreatedList(taskDoneByUserCreatedList.data)
+            setTaskNotDoneByUserCreatedList(taskNotDoneByUserCreatedList.data)
         } catch (error) {
             if (error.response) {
                 alert(error.response.data.error);
@@ -69,6 +82,7 @@ function ToDoList(props) {
                 showConfirmButton: false,
                 timer: 1500
             });
+         
 
             // Clear the state here
             setContent('');
@@ -102,56 +116,135 @@ function ToDoList(props) {
         setShowModal(!showModal);
     };
     const handleButtonClick = (buttonName) => {
+        setSelectedStatusButton('');
         setSelectedButton(buttonName);
     }
 
 
     const handleCheckStatusButton = (buttonId) => {
-        selectedStatusButton(buttonId);
+        setSelectedStatusButton(buttonId);
     };
+// render content for check status
+    const renderMyTaskCreatedHasNotBeenCompleted = (MyTaskCreatedHasNotBeenCompletedList) => {
+        return MyTaskCreatedHasNotBeenCompletedList.map((task) => (
+        <ListGroup.Item
+        key={task.id}
+        style={{
+          borderBottom: '1px solid black',
+          paddingTop: '5px',
+          paddingBottom: '5px',
+          boxShadow: '0px 1px 0px 0px #ccc',
+        }}
+        
+      >
+        <div className="row align-items-center">
+          <div className="col-2 d-flex justify-content-center">
+            <img
+              src={TaskAvatar}
+              className="rounded-circle user-avatar border"
+              width="64px"
+              height="64px"
+              alt=""
+            />
+          </div>
+          <div className="col user-details">
+            <span className="user-name">{task.title}</span>
+          </div>
+        </div>
+      </ListGroup.Item>
+        ));
+    };
+    const renderMyTaskCreatedHasBeenCompleted = (MyTaskCreatedHasBeenCompletedList) => {
+        return MyTaskCreatedHasBeenCompletedList.map((task) => (
+        <ListGroup.Item
+        key={task.id}
+        style={{
+          borderBottom: '1px solid black',
+          paddingTop: '5px',
+          paddingBottom: '5px',
+          boxShadow: '0px 1px 0px 0px #ccc',
+        }}
+        
+      >
+        <div className="row align-items-center">
+          <div className="col-2 d-flex justify-content-center">
+            <img
+              src={TaskAvatar}
+              className="rounded-circle user-avatar border"
+              width="64px"
+              height="64px"
+              alt=""
+            />
+          </div>
+          <div className="col user-details">
+            <span className="user-name">{task.title}</span>
+          </div>
+        </div>
+      </ListGroup.Item>
+        ));
+    };
+
+
+
+
+
 
     const renderContent = () => {
         if (selectedButton === 'CreateToDo') {
             return (
                 <>
-                    <button className="option-buttons-active" onClick={() => handleCheckStatusButton('CreateToDo')}>
-                        Tôi giao
-                    </button>
-                    <button className="option-buttons" onClick={() => handleCheckStatusButton('ReceiveToDo')}>
-                        Tôi giao
-                    </button>
-                    <button className="option-buttons" onClick={() => handleCheckStatusButton('FollowToDo')}>
-                        Tôi giao
-                    </button>
-                    {/* render content cho từng option status */}
+                    <div className={`full-width-button`} >
+                        <div className="under-buttons">
+                            <button className={`option-buttons ${selectedStatusButton === 'MyTaskCreatedHasNotBeenCompleted' ? 'option-buttons-active' : ''}`} onClick={() => handleCheckStatusButton('MyTaskCreatedHasNotBeenCompleted')}>
+                                Chưa xong
+                            </button>
+                            <button className={`option-buttons ${selectedStatusButton === 'MyCreationTaskIsCompleted' ? 'option-buttons-active' : ''}`} onClick={() => handleCheckStatusButton('MyCreationTaskIsCompleted')}>
+                                Đã xong
+                            </button>
+                        </div>
+                    </div>
+                    {selectedStatusButton === 'MyTaskCreatedHasNotBeenCompleted' ? (
+                        <ListGroup className="user-list">
+                                {renderMyTaskCreatedHasNotBeenCompleted(taskNotDoneByUserCreatedList)}
+
+                        </ListGroup>
+                    ) : null}
+                    {selectedStatusButton === 'MyCreationTaskIsCompleted' ? (
+                        <ListGroup className="user-list">
+                            {renderMyTaskCreatedHasBeenCompleted(taskDoneByUserCreatedList)}
+                        </ListGroup>
+                    ) : null}
                 </>
             );
         } else if (selectedButton === 'ReceiveToDo') {
             return (
                 <>
-                    <button className="option-buttons" onClick={() => handleCheckStatusButton('CreateToDo')}>
-                        Tôi giao
-                    </button>
-                    <button className="option-buttons-active" onClick={() => handleCheckStatusButton('ReceiveToDo')}>
-                        Tôi giao
-                    </button>
-                    <button className="option-buttons" onClick={() => handleCheckStatusButton('FollowToDo')}>
-                        Tôi giao
-                    </button>
+                    <div className={`full-width-button`} >
+                        <div className="under-buttons">
+                            <button className={`option-buttons ${selectedStatusButton === 'MyTaskHasNotBeenCompleted' ? 'option-buttons-active' : ''}`} onClick={() => handleCheckStatusButton('MyTaskHasNotBeenCompleted')}>
+                                Chưa xong
+                            </button>
+                            <button className={`option-buttons ${selectedStatusButton === 'MyTaskIsCompleted' ? 'option-buttons-active' : ''}`} onClick={() => handleCheckStatusButton('MyTaskIsCompleted')}>
+                                Đã xong
+                            </button>
+
+                        </div>
+                    </div>
                 </>
             );
         } else if (selectedButton === 'FollowToDo') {
             return (
                 <>
-                    <button className="option-buttons" onClick={() => handleCheckStatusButton('CreateToDo')}>
-                        Tôi giao
-                    </button>
-                    <button className="option-buttons" onClick={() => handleCheckStatusButton('ReceiveToDo')}>
-                        Tôi giao
-                    </button>
-                    <button className="option-buttons-active" onClick={() => handleCheckStatusButton('FollowToDo')}>
-                        Tôi giao
-                    </button>
+                    <div className={`full-width-button`} >
+                        <div className="under-buttons">
+                            <button className="option-buttons-active" onClick={() => handleCheckStatusButton('CreateToDo')}>
+                                Chưa xong
+                            </button>
+                            <button className="option-buttons" onClick={() => handleCheckStatusButton('ReceiveToDo')}>
+                                Đã xong
+                            </button>
+                        </div>
+                    </div>
                 </>
             );
         }
@@ -236,24 +329,23 @@ function ToDoList(props) {
             <div className="button-container">
                 <div className="top-buttons">
                     <button className={`vertical-button ${selectedButton === 'CreateToDo' ? 'selected' : ''}`} onClick={() => handleButtonClick('CreateToDo')}>
-                        <img src={FriendIcon} width="32px" height="32px" alt="" /> Tôi giao
+                        <img src={ToDoListIcon} width="32px" height="32px" alt="" /> Tôi giao
                     </button>
 
                     <button className={`vertical-button ${selectedButton === 'ReceiveToDo' ? 'selected' : ''}`} onClick={() => handleButtonClick('ReceiveToDo')}>
-                        <img src={GroupIcon} width="32px" height="32px" alt="" /> Cần làm
+                        <img src={ToReceivelist} width="32px" height="32px" alt="" /> Cần làm
                     </button>
 
                     <button className={`vertical-button ${selectedButton === 'FollowToDo' ? 'selected' : ''}`} onClick={() => handleButtonClick('FollowToDo')}>
-                        <img src={LetterIcon} width="32px" height="32px" alt="" /> Theo dõi
+                        <img src={ToFollowlist} width="32px" height="32px" alt="" /> Theo dõi
                     </button>
                 </div>
 
-                <div className={`full-width-button`} >
-                    <div className="under-buttons">
-                        {renderContent()}
-                        {/*render button theo từng lựa chọn*/}
 
-                        {/*
+                {renderContent()}
+                {/*render button theo từng lựa chọn*/}
+
+                {/*
                     <button className="option-buttons-active" >
                         Tôi giao
                     </button>
@@ -264,8 +356,7 @@ function ToDoList(props) {
                         Tôi giao
                     </button>
                                     */}
-                    </div>
-                </div>
+
             </div>
 
             {/*renderContent()*/}

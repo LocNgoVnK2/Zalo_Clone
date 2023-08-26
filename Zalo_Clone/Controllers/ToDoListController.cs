@@ -238,5 +238,55 @@ namespace Zalo_Clone.Controllers
                 return new BadRequestObjectResult(ex.Message);
             }
         }
+         [HttpGet("GetAllTasksDoneByUserCreation")] 
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetAllTasksDoneByUserCreation(string userId)
+        {
+           
+            try
+            {
+
+                List<ToDoList> toDoLists = await _toDoListService.GetAll();
+                toDoLists = toDoLists.Where(e => e.UserSrc == userId && e.IsDone == true).ToList();
+                if (toDoLists!=null)
+                {
+                    return Ok(toDoLists);
+                }
+                else
+                {
+                    return BadRequest("cannot get todolist");
+                }
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestObjectResult(ex.Message);
+            }
+        }
+           [HttpGet("GetAllTasksNotDoneByUserCreation")] 
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetAllTasksNotDoneByUserCreation(string userId)
+        {
+           
+            try
+            {
+
+                List<ToDoList> toDoLists = await _toDoListService.GetAll();
+                toDoLists = toDoLists.Where(e => e.UserSrc == userId && e.IsDone == false).ToList();
+                if (toDoLists!=null)
+                {
+                    return Ok(toDoLists);
+                }
+                else
+                {
+                    return BadRequest("cannot get todolist");
+                }
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestObjectResult(ex.Message);
+            }
+        }
     }
 }

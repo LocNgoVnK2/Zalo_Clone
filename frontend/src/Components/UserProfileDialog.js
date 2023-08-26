@@ -5,6 +5,7 @@ import avatar from "./assets/test.png";
 import UserAvatar from "./assets/friends.png";
 import background from './assets/background-may-dep-cho-khai-giang.jpg';
 import { UpdateUserInformationApi } from '../Services/userService';
+import Swal from 'sweetalert2';
 class UserProfileDialog extends Component {
     constructor(props) {
         super(props);
@@ -106,9 +107,20 @@ class UserProfileDialog extends Component {
                 
         } catch (error) {
             if (error.response ) {
-                alert(error.response.data.error);
+                Swal.fire({
+                    icon: 'warning',
+                    title: error.response.data.error,
+                    showConfirmButton: false,
+                    timer: 1500
+                  });
+            
             } else {
-                alert("An error occurred");
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Có lỗi xảy ra',
+                    showConfirmButton: false,
+                    timer: 1500
+                  });
             }
         }
        
