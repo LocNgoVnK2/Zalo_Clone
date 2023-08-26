@@ -15,5 +15,14 @@ const createToDoList = (userSrc, content, endDate, title, userToDoTask) => {
 
     return axios.post("/api/ToDoList/CreateToDoList", data);
 };
+const GetAllTasksDoneByUserCreationAPI = (userId) => {
 
-export { createToDoList};
+    return axios.get(`/api/ToDoList/GetAllTasksDoneByUserCreation?userId=${userId}`);
+}
+const GetAllTasksNotDoneByUserCreationAPI = (userId) => {
+
+    return axios.get(`/api/ToDoList/GetAllTasksNotDoneByUserCreation?userId=${userId}`);
+}
+
+
+export { createToDoList,GetAllTasksDoneByUserCreationAPI,GetAllTasksNotDoneByUserCreationAPI};

@@ -17,7 +17,7 @@ import { Popover } from 'react-bootstrap';
 import { Spinner } from "react-bootstrap";
 import UserInforSearchedDialog from './UserInforSearchedDialog';
 import { useCallback } from 'react';
-
+import Swal from 'sweetalert2';
 
 function PhoneBook(props) {
 
@@ -53,9 +53,22 @@ function PhoneBook(props) {
       setListGroupTmp(listGroupResponse.data);
     } catch (error) {
       if (error.response) {
+
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.error,
+          showConfirmButton: false,
+          timer: 1500
+        });
         alert(error.response.data.error);
       } else {
-        alert("An error occurred");
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Có lỗi gì đó xảy ra.',
+          showConfirmButton: false,
+          timer: 1500
+        });
       }
     } finally {
       setIsLoading(false);
@@ -109,7 +122,13 @@ function PhoneBook(props) {
     UnfriendAPI(userSenderId, userReceiverId)
       .then((response) => {
         if (response) {
-          alert("Xóa thành công");
+          Swal.fire({
+            icon: 'success',
+            title: 'Xóa kết bạn thành công',
+            showConfirmButton: false,
+            timer: 1500
+          });
+
           GetListFriend(userSenderId).then((response) => {
             setUserList(response.data);
             setUserListTmp(response.data);
@@ -118,7 +137,14 @@ function PhoneBook(props) {
         }
       })
       .catch((error) => {
-        alert("Lỗi kết nối. Vui lòng thử lại sau.");
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Lỗi kết nối. vui lòng thử lại sau',
+          showConfirmButton: false,
+          timer: 1500
+        });
+
       });
   };
   const handleOpenUserInforSearchedDialog = async (email) => {
@@ -130,9 +156,21 @@ function PhoneBook(props) {
       }
     } catch (error) {
       if (error.response) {
-        alert(error.response.data.error);
+
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.error,
+          showConfirmButton: false,
+          timer: 1500
+        });
       } else {
-        alert("An error occurred");
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Có lỗi gì đó xảy ra.',
+          showConfirmButton: false,
+          timer: 1500
+        });
       }
     }
 
@@ -147,15 +185,32 @@ function PhoneBook(props) {
       AcceptFriendRequestAPI(UserSrcId, UserDesId).then((response) => {
         if (response) {
           fetchData();
-          alert("Xác nhận thành công");
+          Swal.fire({
+            icon: 'success',
+            title: 'Thêm bạn thành công',
+            showConfirmButton: false,
+            timer: 1500
+          });
+
 
         }
       });
     } catch (error) {
       if (error.response) {
-        alert(error.response.data.error);
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.error,
+          showConfirmButton: false,
+          timer: 1500
+        });
       } else {
-        alert("An error occurred");
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Có lỗi gì đó xảy ra.',
+          showConfirmButton: false,
+          timer: 1500
+        });
       }
     }
   }
@@ -164,14 +219,31 @@ function PhoneBook(props) {
       DeniedFriendRequestAPI(UserSrcId, UserDesId).then((response) => {
         if (response) {
           fetchData();
-          alert("Hủy thành công");
+          Swal.fire({
+            icon: 'success',
+            title: 'Hủy lời mời kết bạn thành công',
+            showConfirmButton: false,
+            timer: 1500
+          });
+
         }
       });
     } catch (error) {
       if (error.response) {
-        alert(error.response.data.error);
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.error,
+          showConfirmButton: false,
+          timer: 1500
+        });
       } else {
-        alert("An error occurred");
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Có lỗi gì đó xảy ra.',
+          showConfirmButton: false,
+          timer: 1500
+        });
       }
     }
   };
@@ -297,7 +369,7 @@ function PhoneBook(props) {
   const renderFriendRequestToOtherPeople = (FrienRequestList) => {
     if (FrienRequestList.length === 0) {
       return (
-        <div  style={{
+        <div style={{
           backgroundColor: 'white'
         }}>
           <h3>Không có lời mời nào hiện tại</h3>
@@ -518,35 +590,35 @@ function PhoneBook(props) {
               <Spinner animation="border" variant="primary" />
             </div>
           ) : (
-          
-              <main style={{ flex: 1 }}>
-                <div className="card-title">
-                  Lời mời đã nhận
-                </div>
-                <div style={{
-                  height: '50%',
-                  maxHeight: '240px',
-                  overflowY: 'auto',
-                }}>
-                  <ListGroup className="user-list">
-                    {renderFriendRequestToMe(receiveFriendRequestList)}
-                  </ListGroup>
-                </div>
 
-                <div className="card-title">
-                  Lời mời đã gửi
-                </div>
-                <div style={{
-                  height: '50%',
-                  maxHeight: '235px',
-                  overflowY: 'auto',
-                }}>
-                  <ListGroup className="user-list">
-                    {renderFriendRequestToOtherPeople(sendFriendRequestList)}
-                  </ListGroup>
-                </div>
-              </main>
-           
+            <main style={{ flex: 1 }}>
+              <div className="card-title">
+                Lời mời đã nhận
+              </div>
+              <div style={{
+                height: '50%',
+                maxHeight: '240px',
+                overflowY: 'auto',
+              }}>
+                <ListGroup className="user-list">
+                  {renderFriendRequestToMe(receiveFriendRequestList)}
+                </ListGroup>
+              </div>
+
+              <div className="card-title">
+                Lời mời đã gửi
+              </div>
+              <div style={{
+                height: '50%',
+                maxHeight: '235px',
+                overflowY: 'auto',
+              }}>
+                <ListGroup className="user-list">
+                  {renderFriendRequestToOtherPeople(sendFriendRequestList)}
+                </ListGroup>
+              </div>
+            </main>
+
           )}
         </main>
       </div >;

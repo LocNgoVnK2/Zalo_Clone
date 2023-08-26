@@ -4,7 +4,7 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import { UpdatePasswordApi } from '../Services/userService';
-import { Alert } from 'react-bootstrap';
+import Swal from 'sweetalert2';
 class UpdatePassword extends Component {
     constructor(props) {
         super(props);
@@ -38,14 +38,29 @@ class UpdatePassword extends Component {
 
     handlerePassword = async () => {
         if (!this.state.password || !this.state.repassword) {
-            alert("Dien du cac truong");
+            Swal.fire({
+                icon: 'warning',
+                title: 'Vui lòng điền đủ các trường để tiếp tục',
+                showConfirmButton: false,
+                timer: 1500
+              });
         } else if (this.state.password !== this.state.repassword) {
-            alert("Ko giong nhau");
+            Swal.fire({
+                icon: 'error',
+                title: 'Nhập lại mật khẩu không giống nhau',
+                showConfirmButton: false,
+                timer: 1500
+              });
         } else {
             try {
                 let res = await UpdatePasswordApi(this.state.token, this.state.password);
                 if (res) {
-                    alert("Cập nhật thành công");
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Cập nhật thành công',
+                        showConfirmButton: false,
+                        timer: 1500
+                      });
                     localStorage.removeItem('tokenRP');
                     setTimeout(() => {
                         this.props.navigate("/");
@@ -54,9 +69,19 @@ class UpdatePassword extends Component {
                 }
             } catch (error) {
                 if (error.response && error.response.status === 400) {
-                    alert("error");
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Cập nhật không thành công',
+                        showConfirmButton: false,
+                        timer: 1500
+                      });
                 } else {
-                    alert("error gi do khong phai 400");
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Có lỗi gì đó không xác định',
+                        showConfirmButton: false,
+                        timer: 1500
+                      });
                 }
 
             }

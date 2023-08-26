@@ -10,6 +10,7 @@ import { getuserApi } from '../Services/userService';
 import { SendFriendRequest, CheckIsFriend, GetRecentSearch, AddSearchLog, RemoveSearchLog } from '../Services/friendService';
 import UserInforSearchedDialog from './UserInforSearchedDialog';
 import { RecommandFriend } from '../Services/friendService';
+import Swal from 'sweetalert2';
 class AddFriendDialog extends Component {
     constructor(props) {
         super(props);
@@ -55,11 +56,25 @@ class AddFriendDialog extends Component {
                     let sendFriendRequestRes = await SendFriendRequest(userId, receiverRes.data.id);
 
                     if (sendFriendRequestRes) {
-                        alert("Send Friend Request success");
+                        
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Gửi lời mời kết bạn thành công',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                        
+                        
                         this.componentDidMount();
                     }
                 } else if (checkFriend === true) {
-                    alert("Đã là bạn bè");
+       
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Đã là bạn bè',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
                     return ("AreFriends");
                 }
             } else {
@@ -67,13 +82,31 @@ class AddFriendDialog extends Component {
             }
         } catch (error) {
             if (error.response && error.response.status === 404) {
-                alert("Đang xử lí yêu cầu");
+       
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Đang xử lý yêu cầu',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
                 return ("Requesting");
             } else if (error.response) {
-                alert(error.response.data.error);
+                Swal.fire({
+                    icon: 'error',
+                    title: error.response.data.error,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+
                 return null;
             } else {
-                alert("An error occurred");
+       
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Có lỗi gì đó xảy ra.',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
                 return null;
             }
         }
@@ -91,9 +124,23 @@ class AddFriendDialog extends Component {
             }
         } catch (error) {
             if (error.response) {
-                alert(error.response.data.error);
+      
+                Swal.fire({
+                    icon: 'error',
+                    title: error.response.data.error,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                
             } else {
-                alert("An error occurred");
+        
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Có lỗi gì đó xảy ra.',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                
             }
         }
 
@@ -112,9 +159,21 @@ class AddFriendDialog extends Component {
             }
         } catch (error) {
             if (error.response) {
-                alert(error.response.data.error);
+
+                Swal.fire({
+                    icon: 'error',
+                    title: error.response.data.error,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
             } else {
-                alert("An error occurred");
+       
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Có lỗi gì đó xảy ra.',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
             }
         }
        

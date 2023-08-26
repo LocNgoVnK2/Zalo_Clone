@@ -5,6 +5,9 @@ import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import { SendTokenForForgotPassword } from '../Services/userService';
 import AlertCustom from './AlertCustom';
+import Swal from 'sweetalert2';
+import SweetAlert2 from 'react-bootstrap-sweetalert';
+
 class ForgotPassword extends Component {
   constructor(props) {
     super(props);
@@ -25,7 +28,13 @@ class ForgotPassword extends Component {
   }
   handleValidation = async () => {
     if (!this.state.email) {
-      alert("Please enter your email here");
+
+      Swal.fire({
+        icon: 'error',
+        title: 'Hãy nhập email của bạn vào',
+        showConfirmButton: false,
+        timer: 1500
+      });
       return;
     }
     try {
@@ -37,11 +46,29 @@ class ForgotPassword extends Component {
       if (error.response && error.response.status === 400) {
         alert(error.response.data.error);
       } else if (error.response && error.response.status === 404) {
-        alert("Account not found");
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Sai thông tin tài khoản',
+          showConfirmButton: false,
+          timer: 1500
+        });
       } else if (error.response && error.response.status === 500) {
-        alert("Server error");
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Có lỗi từ server.',
+          showConfirmButton: false,
+          timer: 1500
+        });
       } else {
-        alert("An error occurred");
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Có lỗi gì đó xảy ra.',
+          showConfirmButton: false,
+          timer: 1500
+        });
       }
       return false;
     }
@@ -101,7 +128,15 @@ class ForgotPassword extends Component {
 
           </div>
           {this.state.showAlert && (
-            <AlertCustom message="Bạn đã đăng ký thành công. Cần chuyển sang trang xác thực và truy cập vào email để chấp nhận xác thực." variant="warning" dismissTime={50000} />
+            <SweetAlert2
+              success
+              title="Gửi mã xác nhận thành công vui lòng kiểm tra Gmail để sang trang xác thực"
+              onConfirm={() => {
+                this.setState({ showAlert: false });
+              }}
+              timeout={5000}
+              show={true}
+            />
           )}
         </div>
 
