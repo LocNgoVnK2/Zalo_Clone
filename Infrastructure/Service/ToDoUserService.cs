@@ -13,6 +13,7 @@ namespace Infrastructure.Service
         Task<bool> AddToDoUser(ToDoUser toDoUser);
         Task<bool> RemoveToDoUser(ToDoUser toDoUser);
         Task<List<ToDoUser>> GetAllUsersOfTask(long taskId);
+        Task<List<ToDoUser>> GetAlltodoTask();
     }
     public class ToDoUserService : IToDoUserService
     {
@@ -34,6 +35,9 @@ namespace Infrastructure.Service
         public async Task<bool> RemoveToDoUser(ToDoUser toDoUser)
         {
             return await _toDoUserRepo.Delete(toDoUser);
+        }
+        public async Task<List<ToDoUser>> GetAlltodoTask(){
+            return await _toDoUserRepo.GetAll().ToListAsync();
         }
     }
 }

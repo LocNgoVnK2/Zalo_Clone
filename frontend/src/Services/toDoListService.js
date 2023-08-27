@@ -23,6 +23,19 @@ const GetAllTasksNotDoneByUserCreationAPI = (userId) => {
 
     return axios.get(`/api/ToDoList/GetAllTasksNotDoneByUserCreation?userId=${userId}`);
 }
+const GetAllTasksDoneByUserDoAPI = (userId) => {
+
+    return axios.get(`/api/ToDoList/GetAllTasksDoneByUserDo?userId=${userId}`);
+}
+const GetAllTasksNotDoneByUserDoAPI = (userId) => {
+
+    return axios.get(`/api/ToDoList/GetAllTasksNotDoneByUserDo?userId=${userId}`);
+}
+const GetAllTasksAndUserNotCompleteOfUserDesAPI = (userId) => {
+
+    return axios.get(`/api/ToDoList/GetAllTasksAndUserNotCompleteOfUserDes?userId=${userId}`);
+}
 
 
-export { createToDoList,GetAllTasksDoneByUserCreationAPI,GetAllTasksNotDoneByUserCreationAPI};
+
+export { createToDoList,GetAllTasksDoneByUserCreationAPI,GetAllTasksNotDoneByUserCreationAPI,GetAllTasksDoneByUserDoAPI,GetAllTasksNotDoneByUserDoAPI,GetAllTasksAndUserNotCompleteOfUserDesAPI};

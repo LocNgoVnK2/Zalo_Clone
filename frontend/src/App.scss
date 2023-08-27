@@ -525,3 +525,46 @@
   padding: 5px 20px;
 */
 //linear-gradient(#a100FFFF,#119CFDFF)
+
+
+.user-list {
+  display: flex;
+  flex-direction: column;
+  
+}
+
+.task-item {
+  margin-bottom: 20px;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 5px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.task-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.task-details {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.task-deadline {
+  font-size: 14px;
+  color: #888888;
+}
+
+.task-uncompleted {
+  font-size: 14px;
+  color: #888888;
+}
+
+.member-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
