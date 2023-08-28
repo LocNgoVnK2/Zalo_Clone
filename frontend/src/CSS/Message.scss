@@ -1,0 +1,32 @@
+.message{
+  background-color: white;
+  border-radius: 15px;
+  min-width: 200px;
+  
+  height: 110px;
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: larger;
+  padding: 15px;
+}
+.message-contact{
+  align-self: flex-start;
+}
+.message-user{
+  height: 90px;
+  align-self: flex-end;
+}
+.message .contact-name{
+  font-size: smaller;
+  color: #616161;
+}
+.message .send-time{
+  font-size: smaller;
+  color: #616161;
+}
+.message .content{
+  font-size: larger;
+
+}

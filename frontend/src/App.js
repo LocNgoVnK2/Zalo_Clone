@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Router, Routes, Route, useNavigate } from "react-router-dom";
-import "./App.scss";
+import "./CSS/App.scss";
 import Login from "./Components/Login";
 import Home from "./Components/Home";
 import Signup from "./Components/Signup";
