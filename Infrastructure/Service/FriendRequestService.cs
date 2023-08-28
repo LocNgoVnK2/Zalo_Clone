@@ -114,13 +114,13 @@ namespace Infrastructure.Service
 
         public async Task<List<FriendRequest>> GetFriendRequestByIdForReceiver(string userID)
         {
-            var friendRequests = await _friendRequestRepository.GetAll().Where(o => o.User1.Equals(userID)).ToListAsync();
+            var friendRequests = await _friendRequestRepository.GetAll().Where(o => o.User1.Equals(userID) && o.AcceptDate==null).ToListAsync();
             return friendRequests.ToList();
         }
 
         public async Task<List<FriendRequest>> GetFriendRequestByIdForSender(string userID)
         {
-            var friendRequests = await _friendRequestRepository.GetAll().Where(o => o.User2.Equals(userID)).ToListAsync();
+            var friendRequests = await _friendRequestRepository.GetAll().Where(o => o.User2.Equals(userID) && o.AcceptDate==null).ToListAsync();
             return friendRequests.ToList();
         }
 

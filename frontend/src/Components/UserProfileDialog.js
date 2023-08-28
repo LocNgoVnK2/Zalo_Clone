@@ -104,8 +104,6 @@ class UserProfileDialog extends Component {
                 , base64StringAvatar
                 , base64StringBackGround).then(() => {this.render()})
                 
-               
-            
         } catch (error) {
             if (error.response ) {
                 alert(error.response.data.error);

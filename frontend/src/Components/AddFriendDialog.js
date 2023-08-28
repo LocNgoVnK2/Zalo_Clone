@@ -86,7 +86,7 @@ class AddFriendDialog extends Component {
                 this.setState({ userInforSearched: true, returnUserInfor: receiverRes.data });
                 if(userButton){
                     await AddSearchLog(this.props.userId,receiverRes.data.id)
-                    
+                    this.componentDidMount();
                 }
             }
         } catch (error) {

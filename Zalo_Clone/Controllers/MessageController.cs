@@ -16,10 +16,14 @@ namespace Zalo_Clone.Controllers
     {
         private readonly IMessageService messageService;
         private readonly IMapper mapper;
-        public MessageController(IMessageService messageService, IMapper mapper)
+        private readonly IContactService contactService;
+        public MessageController(IMessageService messageService
+        ,IMapper mapper
+        ,IContactService contactServices)
         {
             this.messageService = messageService;
             this.mapper = mapper;
+            this.contactService = contactServices;
         }
         [HttpPost("RecallMessage")]
 
@@ -39,13 +43,15 @@ namespace Zalo_Clone.Controllers
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> SendMessageToUser(MessageContactModel model)
+        public async Task<IActionResult> SendMessageToContact(MessageSendModel model)
         {
             var message = mapper.Map<Message>(model);
+            message.SendTime = DateTime.Now;
+            var attachmenets = model.AttachmentByBase64;
             bool result = await messageService.SendMessageToContact(message, model.ContactId, model.AttachmentByBase64);
             if (result)
             {
-                return NoContent();
+                return Ok();
             }
             return BadRequest();
         }
@@ -164,12 +170,14 @@ namespace Zalo_Clone.Controllers
             foreach (var m in messages)
             {
                 long idMessage = m.Id;
-
                 MessageContactModel messageReceipentModel = mapper.Map<MessageContactModel>(m);
+                messageReceipentModel.SenderName = (await contactService.GetContactData(messageReceipentModel.Sender)).ContactName;
+                messageReceipentModel.ContactId = contactId;
+                messageReceipentModel.ContactName = (await contactService.GetContactData(contactId)).ContactName;
                 messageReceipentModel.AttachmentByBase64 = new List<string>();
                 List<MessageAttachment> attachmenets = await messageService.GetAttachmentsOfMessage(idMessage);
                 if (attachmenets is null)
-                {
+                {   
                     result.Add(messageReceipentModel);
                     continue;
                 }

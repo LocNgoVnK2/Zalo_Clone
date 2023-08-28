@@ -24,6 +24,21 @@ const GetRecentSearch =(userSrc)=>{
 const GetListFriend =(userSrc)=>{
     return axios.get(`/api/Friend/GetFriendByID?userId=${userSrc}`);
 }
+const UnfriendAPI =  (userSrc,userDes) =>{
+    return axios.delete(`/api/Friend/Unfriend?userSenderId=${userSrc}&userReceiverId=${userDes}`);
+}
+const DeniedFriendRequestAPI =  (userSrc,userDes) =>{
+    return axios.delete(`/api/FriendRequest/DeniedFriendRequest?userSenderId=${userSrc}&userReceiverId=${userDes}`);
+}
+const AcceptFriendRequestAPI =  (userSrc,userDes) =>{
+    return axios.post(`/api/FriendRequest/AcceptFriendRequest?userSenderId=${userSrc}&userReceiverId=${userDes}`);
+}
+const GetFriendRequestsByIdOfReceiverAPI =  (userSrc) =>{
+    return axios.get(`/api/FriendRequest/GetFriendRequestsByIdOfReceiver?userID=${userSrc}`);
+}
+const GetFriendRequestsByIdOfSenderAPI =  (userSrc) =>{
+    return axios.get(`/api/FriendRequest/GetFriendRequestsByIdOfSender?userID=${userSrc}`); 
+}
 export{SendFriendRequest,
     CheckIsFriend,
     RecommandFriend,
@@ -31,5 +46,10 @@ export{SendFriendRequest,
     AddSearchLog,
     RemoveSearchLog,
     GetRecentSearch,
-    GetListFriend
+    GetListFriend,
+    UnfriendAPI,
+    DeniedFriendRequestAPI,
+    AcceptFriendRequestAPI,
+    GetFriendRequestsByIdOfReceiverAPI,
+    GetFriendRequestsByIdOfSenderAPI
     };   

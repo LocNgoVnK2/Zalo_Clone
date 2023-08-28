@@ -1,5 +1,6 @@
-@import "../node_modules/bootstrap/dist/css/bootstrap.css";
-
+@import "../../node_modules/bootstrap/dist/css/bootstrap.css";
+@import "./Message.scss";
+@import "./MessageView.scss";
 .App {
   text-align: center;
 }
@@ -275,79 +276,8 @@
   }
 
 
-.main{
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  align-items: stretch;
-  max-width: calc(100vw - 410px);
-}
-.main .header{
-  width: calc(100vw - 410px);
-  height: 100px;
-  background-color: red;
-}
 
-.main .chat-title{
-  margin: 20px;
-}
-.main .chat-title .contact-name{
-  font-weight: bold;
-  font-size: larger;
-}
-.main .chat-view{ 
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  width: 100%;
-  margin: auto;
-  padding: auto;
-  flex: auto;
-  overflow-y: scroll;
-  min-height: auto;
-  background-color: rgb(234, 234, 234);
-}
-.main .contact-avatar{
-  width: 64px;
-  height: 64px;
-  margin: 16px;
-}
-.main .text-input{
-  background-color: green;
-  flex: 0 0 106px;
-}
-.message{
-  background-color: white;
-  border-radius: 15px;
-  min-width: 200px;
-  
-  height: 110px;
-  margin: 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  font-size: larger;
-  padding: 15px;
-}
-.message-contact{
-  align-self: flex-start;
-}
-.message-user{
-  height: 90px;
-  align-self: flex-end;
-}
-.message .contact-name{
-  font-size: smaller;
-  color: #616161;
-}
-.message .send-time{
-  font-size: smaller;
-  color: #616161;
-}
-.message .content{
-  font-size: larger;
 
-}
 .z--btn--v2.btn-outline-tertiary-primary {
   
   display: inline;
@@ -391,4 +321,71 @@
 .search-icon {
   width: 20px;
   height: 20px;
+}
+.vertical-button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 10px;
+  border: none;
+  background: none;
+  color: white;
+  font-size: 16px;
+}
+
+.selected {
+  background-color: blue;
+  font-weight: bold;
+}
+
+.user-item {
+  padding: 1px; 
+}
+
+.user-avatar {
+  margin-right: 1px; 
+}
+
+.user-name {
+  font-size: 18px; 
+  font-weight: bold; 
+}
+
+.contact-search-box1 {
+  width: 50%; 
+  margin-bottom: 20px; 
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background-color: #f8f9fa; 
+  padding: 10px; 
+  border: 1px solid #ced4da; 
+  border-radius: 10px; 
+}
+
+.search-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px; 
+}
+
+.search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  font-size: 16px;
+  padding: 5px;
+}
+.card-title {
+  height: 64px!important;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: black;
+
+  background: white;
 }

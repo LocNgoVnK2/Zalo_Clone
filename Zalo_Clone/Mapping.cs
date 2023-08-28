@@ -36,6 +36,8 @@ namespace Zalo_Clone
             //Message
             CreateMap<Message, MessageContactModel>();
             CreateMap<MessageContactModel, Message>();
+            CreateMap<MessageSendModel, Message>();
+            
             //GroupRole
             CreateMap<GroupRole, GroupRoleModel>();
             CreateMap<GroupRoleModel, GroupRole>();
@@ -79,6 +81,10 @@ namespace Zalo_Clone
             // validation
             CreateMap<ValidationByEmailModel, ValidationByEmail>();
             CreateMap<ValidationByEmail, ValidationByEmailModel>();
+            // friendRequest
+
+            CreateMap<FriendRequestModel, FriendRequest>();
+            CreateMap<FriendRequest, FriendRequestModel>();
         }
     }
 }

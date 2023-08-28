@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Sidebar from "./Sidebar";
 import ConversationList from "./ConversationList";
+import PhoneBook from "./PhoneBook";
 
 import jwtDecode from "jwt-decode";
 import {
@@ -11,11 +12,9 @@ import {
 import { GetMessagesFromContactOfUser } from "../Services/MessageServices";
 import Main from "./Main";
 
-const HomeState = {
-  None: "none",
-  Message: "Message",
-};
+
 class Home extends Component {
+
   constructor(props) {
     super(props);
     this.state = {
@@ -24,9 +23,11 @@ class Home extends Component {
       user: null,
       messageContact: [],
       contactInformation: {},
-      contacts: [],
+      selection: 'default',
+      contacts: []
+
     };
-    this.currentState = HomeState.None;
+    this.currentState = HomeState.Message;
     this.isUserLoaded = false;
   }
 
@@ -49,9 +50,12 @@ class Home extends Component {
       getuserApi(emailU).then((response) => {
         this.setState({ email: emailU, userId: response.data.id });
       });
+
       // this.setState({ email: emailU, userId: (await getuserApi(emailU)).id });
       this.state.userId && this.updateConversationList();
+
     }
+    
   };
   componentDidUpdate = async (prevProps, prevState) => {
     if (prevState.email !== this.state.email && !this.isUserLoaded) {
@@ -59,28 +63,12 @@ class Home extends Component {
       this.isUserLoaded = true;
     }
     if (prevState.userId !== this.state.userId) {
-      this.updateConversationList();
+//      this.updateConversationList();
     }
   };
 
-  updateChatView = () => {
-    if (!this.state.userId || !this.state.contactInformation.id) return;
-    GetMessagesFromContactOfUser(
-      this.state.userId,
-      this.state.contactInformation.id
-    ).then((response) => {
-      this.setState({
-        messageContact: response.data,
-      });
-    });
-  };
-  updateConversationList = () => {
-    GetUserContacts(this.state.userId).then((response) => {
-      this.setState({
-        contacts: response.data,
-      });
-    });
-  };
+
+  
   updateContact = (contactId) => {
     GetContactInformationById(contactId).then((response) => {
       this.setState({ contactInformation: response.data });
@@ -89,6 +77,11 @@ class Home extends Component {
   changeState = (state) => {
     this.currentState = state;
   };
+  selectionChange=(selectionFromUser)=>{
+    this.setState({selection:selectionFromUser})
+    
+  }
+
   renderContent = () => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -135,30 +128,39 @@ class Home extends Component {
   };
 
   render = () => {
-    let conversation = (
-      <ConversationList
-        contacts={this.state.contacts}
-        updateChatView={this.updateChatView}
-        updateContact={this.updateContact}
-      />
-    );
+    // let conversation = (
+    //   <ConversationList
+    //     contacts={this.state.contacts}
+    //     updateChatView={this.updateChatView}
+    //     id={this.state.userId}
+    //     updateContact={this.updateContact}
+    //   />
+    // );
     const { user } = this.state;
-    if (user && this.isUserLoaded) {
+    if (user && this.isUserLoaded && this.state.selection === 'default') {
       return (
         <div>
-          <Sidebar
+            <Sidebar
             changeState={this.changeState}
             user={this.state.user}
-            navigate={this.props.navigate}
+            navigate={this.props.navigate} selectionChange={this.selectionChange}
           />
-          {conversation}
+          {/* {//conversation} */}
           <Main
-            messageContact={this.state.messageContact}
-            contactInformation={this.state.contactInformation}
-            userId={this.state.userId}
-            updateConversationList={this.updateConversationList}
-            updateChatView={this.updateChatView}
+            // messageContact={this.state.messageContact}
+            // contactInformation={this.state.contactInformation}
+             userId={this.state.userId}
+            // updateConversationList={this.updateConversationList}
+            // updateChatView={this.updateChatView}
+            state = {this.currentState}
           />
+        </div>
+      );
+    } else if (user && this.isUserLoaded && this.state.selection === 'phonebook') {
+      return (
+        <div>
+          <Sidebar changeState={this.changeState} user={this.state.user} navigate={this.props.navigate} selectionChange={this.selectionChange} />
+          <PhoneBook userId ={this.state.userId}/>
         </div>
       );
     } else {
@@ -167,4 +169,7 @@ class Home extends Component {
   };
 }
 export default Home;
-export const { None, Message } = HomeState;
+export const HomeState  = {
+  None: "none",
+  Message: "Message",
+};
