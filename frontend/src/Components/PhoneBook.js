@@ -10,12 +10,13 @@ import SearchIcon from "./assets/icon/searchIcon.png";
 //api
 import { GetListFriend, UnfriendAPI, GetFriendRequestsByIdOfReceiverAPI, GetFriendRequestsByIdOfSenderAPI, AcceptFriendRequestAPI, DeniedFriendRequestAPI } from '../Services/friendService';
 import { getuserApi } from '../Services/userService';
-import { GetAllGroupChatsOfUserByUserIdAPI } from '../Services/groupService';
+import { GetAllGroupChatsOfUserByUserIdAPI, RemoveGroupUserAPI } from '../Services/groupService';
 //react bootstrap
 import { ListGroup, ListGroupItem, OverlayTrigger } from 'react-bootstrap';
 import { Popover } from 'react-bootstrap';
 import { Spinner } from "react-bootstrap";
 import UserInforSearchedDialog from './UserInforSearchedDialog';
+import ChangeLeaderDialog from './ChangeLeaderDialog.js';
 import { useCallback } from 'react';
 import Swal from 'sweetalert2';
 
@@ -29,11 +30,13 @@ function PhoneBook(props) {
   const [usersListTmp, setUserListTmp] = useState([]);
   const [listGroupTmp, setListGroupTmp] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedGroup, setSelectedGroup] = useState(null);
   const [searchText, setSearchText] = useState("");
   const [searchGroupText, setSearchGroupText] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [userInforSearched, setuserInforSearched] = useState(false);
   const [UserInfor, setUserInfor] = useState(null);
+  const [showDialogChangeLeader, setShowDialogChangeLeader] = useState(false);
 
 
   const fetchData = useCallback(async () => {
@@ -60,7 +63,7 @@ function PhoneBook(props) {
           showConfirmButton: false,
           timer: 1500
         });
-        alert(error.response.data.error);
+     
       } else {
 
         Swal.fire({
@@ -85,9 +88,16 @@ function PhoneBook(props) {
 
     setSelectedUser(user);
   };
+  const handleGroupContextMenu = (e, group) => {
+    e.preventDefault();
 
+    setSelectedGroup(group);
+  };
   const hidePopover = () => {
     setSelectedUser(null);
+  };
+  const hidePopoverGroup = () => {
+    setSelectedGroup(null);
   };
   const HandleSearchChange = (e) => {
     const value = e.target.value;
@@ -147,6 +157,46 @@ function PhoneBook(props) {
 
       });
   };
+
+  const handleOutGroup = (userId, groupId) => {
+    RemoveGroupUserAPI(userId, groupId)
+      .then((response) => {
+        if (response.status === 204) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'Bạn cần đổi lại trưởng nhóm để có thể thoát nhóm',
+            showConfirmButton: false,
+            timer: 1500
+          });
+
+
+
+        } else {
+          Swal.fire({
+            icon: 'success',
+            title: 'Thoát nhóm thành công',
+            showConfirmButton: false,
+            timer: 1500
+          });
+          GetAllGroupChatsOfUserByUserIdAPI(props.userId).then((response) => {
+            setListGroup(response.data);
+            setListGroupTmp(response.data);
+            setSearchGroupText("");
+          });
+
+        }
+      })
+      .catch((error) => {
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Lỗi kết nối. vui lòng thử lại sau',
+          showConfirmButton: false,
+          timer: 1500
+        });
+
+      });
+  };
   const handleOpenUserInforSearchedDialog = async (email) => {
     try {
       let receiverRes = await getuserApi(email);
@@ -175,6 +225,14 @@ function PhoneBook(props) {
     }
 
   }
+  const handleOpenChangeLeaderInGroup = () => {
+    setShowDialogChangeLeader(true);
+  }
+
+  const handleCloseDialogChangeLeader = () => {
+    setShowDialogChangeLeader(false);
+  };
+
   const handleCloseUserInforSearchedDialog = () => {
     setUserInfor(null);
     setuserInforSearched(false);
@@ -269,7 +327,38 @@ function PhoneBook(props) {
       </Popover.Header>
     </Popover>
   );
+  const showPopoverGroup = (group) => (
 
+    <Popover id="popover-basic" className="custom-popover" placement="right">
+      {showDialogChangeLeader && (
+        <ChangeLeaderDialog
+          group={group}
+          userId = {props.userId}
+          showModal={showDialogChangeLeader}
+          fetchDataInPhoneBook={fetchData}
+          onClose={handleCloseDialogChangeLeader}
+        />
+      )}
+      <Popover.Header as="h3">
+        <span className="popover-body" onClick={() => handleOutGroup(props.userId, group.idGroup)}>Thoát nhóm</span>
+      </Popover.Header>
+      {group.leader === props.userId ? (
+        <>
+          <Popover.Body>
+            <span className="popover-body" onClick={handleOpenChangeLeaderInGroup}>Đổi nhóm trưởng</span>
+          </Popover.Body>
+          <Popover.Body>
+            <span className="popover-body" onClick={hidePopoverGroup} >Đóng</span>
+          </Popover.Body>
+        </>
+      ) : (
+        <Popover.Body>
+          <span className="popover-body" onClick={hidePopoverGroup} >Đóng</span>
+        </Popover.Body>
+      )}
+
+    </Popover>
+  );
   const renderUserList = (userList) => {
 
 
@@ -284,21 +373,14 @@ function PhoneBook(props) {
       >
         <ListGroup.Item
           key={user.id}
-          style={{
-            borderBottom: '1px solid black',
-            paddingTop: '5px',
-            paddingBottom: '5px',
-            boxShadow: '0px 1px 0px 0px #ccc',
-          }}
+          className='user-Item'
           onClick={(e) => handleUserContextMenu(e, user)}
         >
           <div className="row align-items-center">
             <div className="col-2 d-flex justify-content-center">
               <img
                 src={user.avatar ? 'data:image;base64,' + user.avatar : UserAvatar}
-                className="rounded-circle user-avatar border"
-                width="64px"
-                height="64px"
+                className="rounded-circle user-avatar border size-Avatar"
                 alt=""
               />
             </div>
@@ -314,11 +396,9 @@ function PhoneBook(props) {
   const renderFriendRequestToMe = (FrienRequestList) => {
     if (FrienRequestList.length === 0) {
       return (
-        <div style={{
-          backgroundColor: 'white'
-        }}>
+        <div className='empty-list-container'>
           <h3>Không có lời mời nào hiện tại</h3>
-          <div style={{ height: '300px' }}></div>
+
         </div>
       );
     }
@@ -326,21 +406,13 @@ function PhoneBook(props) {
 
       <ListGroup.Item
         key={request.user1}
-        style={{
-          borderBottom: '1px solid black',
-          paddingTop: '5px',
-          paddingBottom: '5px',
-          boxShadow: '0px 1px 0px 0px #ccc',
-        }}
-
+        className='user-Item'
       >
         <div className="row align-items-center">
           <div className="col-2" onClick={() => handleOpenUserInforSearchedDialog(request.email)}>
             <img
               src={request.avatar ? 'data:image/jpeg;base64,' + request.avatar : UserAvatar}
-              className="rounded-circle"
-              width="48 px"
-              height="48 px"
+              className="rounded-circle size-Medium-Avatar"
               alt=""
             />
           </div>
@@ -369,11 +441,8 @@ function PhoneBook(props) {
   const renderFriendRequestToOtherPeople = (FrienRequestList) => {
     if (FrienRequestList.length === 0) {
       return (
-        <div style={{
-          backgroundColor: 'white'
-        }}>
+        <div className='empty-list-container'>
           <h3>Không có lời mời nào hiện tại</h3>
-          <div style={{ height: '300px' }}></div>
         </div>
       );
     }
@@ -381,21 +450,14 @@ function PhoneBook(props) {
 
       <ListGroup.Item
         key={request.user2}
-        style={{
-          borderBottom: '1px solid black',
-          paddingTop: '5px',
-          paddingBottom: '5px',
-          boxShadow: '0px 1px 0px 0px #ccc',
-        }}
+        className='user-Item'
         onContextMenu={(e) => handleUserContextMenu(e, request)}
       >
         <div className="row align-items-center">
           <div className="col-2" onClick={() => handleOpenUserInforSearchedDialog(request.email)}>
             <img
               src={request.avatar ? 'data:image/jpeg;base64,' + request.avatar : UserAvatar}
-              className="rounded-circle"
-              width="48 px"
-              height="48 px"
+              className="rounded-circle size-Medium-Avatar"
               alt=""
             />
           </div>
@@ -419,41 +481,42 @@ function PhoneBook(props) {
   const renderListGroupOfUser = (listGroup) => {
     if (listGroup.length === 0) {
       return (
-        <>
+        <div className='empty-list-container'>
           <h3>Không có nhóm nào hiện tại</h3>
-          <div style={{ height: '300px' }}></div>
-        </>
+
+        </div>
       );
     }
     return listGroup.map((request) => (
-
-      <ListGroup.Item
+      <OverlayTrigger
         key={request.idGroup}
-        style={{
-          borderBottom: '1px solid black',
-          paddingTop: '5px',
-          paddingBottom: '5px',
-          boxShadow: '0px 1px 0px 0px #ccc',
-        }}
-      //onContextMenu={(e) => handleUserContextMenu(e, request)}
+        trigger="click"
+        show={selectedGroup === request}
+        onHide={hidePopoverGroup}
+        placement="left"
+        overlay={showPopoverGroup(request)}
       >
-        <div className="row align-items-center">
-          <div className="col-2">
-            <img
-              src={request.imageByBase64
-                ? 'data:image/jpeg;base64,' + request.imageByBase64
-                : GroupAvatar}
-              className="rounded-circle"
-              width="48 px"
-              height="48 px"
-              alt=""
-            />
+        <ListGroup.Item
+          key={request.idGroup}
+          className='user-Item'
+          onClick={(e) => handleGroupContextMenu(e, request)}
+        >
+          <div className="row align-items-center">
+            <div className="col-2">
+              <img
+                src={request.imageByBase64
+                  ? 'data:image/jpeg;base64,' + request.imageByBase64
+                  : GroupAvatar}
+                className="rounded-circle size-Medium-Avatar"
+                alt=""
+              />
+            </div>
+            <div className="col-7">
+              <span className="user-name">{request.name}</span>
+            </div>
           </div>
-          <div className="col-7">
-            <span className="user-name">{request.name}</span>
-          </div>
-        </div>
-      </ListGroup.Item>
+        </ListGroup.Item>
+      </OverlayTrigger>
     ));
 
   };
@@ -461,16 +524,8 @@ function PhoneBook(props) {
   const renderContent = () => {
 
     if (selectedButton === 'friends') {
-      return <div className="main"
-        style={{
-          backgroundColor: 'white',
-          borderLeft: 'solid'
-        }}>
-        <div style={{
-          backgroundColor: 'white',
-          borderBottom: 'solid',
-          borderLeft: 'solid'
-        }}>
+      return <div className="main phone-book-container">
+        <div className='title-select-container'>
           <div className="chat-title">
             <div className="contact-name">
               <img
@@ -479,7 +534,6 @@ function PhoneBook(props) {
           </div>
         </div>
         <div className="contact-search-box1">
-
           <div className="search-container">
             <img src={SearchIcon} alt="" className="search-icon" />
             <input
@@ -500,11 +554,8 @@ function PhoneBook(props) {
             <span className="user-name">
               Bạn bè {'('} {usersList.length} {')'}
             </span>
-            <main style={{ flex: 1 }}>
-              <div style={{
-                height: '330px',
-                overflowY: 'auto',
-              }}>
+            <main flex="1" >
+              <div Site-render-Users>
                 <ListGroup className="user-list">
                   {renderUserList(usersList)}
                 </ListGroup>
@@ -514,15 +565,8 @@ function PhoneBook(props) {
         )}
       </div>
     } else if (selectedButton === 'groups') {
-      return <div className="main" style={{
-        backgroundColor: 'white',
-        borderLeft: 'solid'
-      }}>
-        <div style={{
-          backgroundColor: 'white',
-          borderBottom: 'solid',
-          borderLeft: 'solid'
-        }}>
+      return <div className="main phone-book-container">
+        <div className='title-select-container'>
           <div className="chat-title">
             <div className="contact-name">
               <img
@@ -550,14 +594,11 @@ function PhoneBook(props) {
         ) : (
           <>
 
-            <main style={{ flex: 1 }}>
+            <main flex="1">
               <div className="card-title">
                 Danh sách nhóm :
               </div >
-              <div style={{
-                height: '330px',
-                overflowY: 'auto',
-              }}>
+              <div className='Site-render-Groups'>
                 <ListGroup className="user-list" style={{ height: '330px' }}>
                   {renderListGroupOfUser(listGroup)}
                 </ListGroup>
@@ -568,15 +609,8 @@ function PhoneBook(props) {
 
       </div>;
     } else if (selectedButton === 'invitations') {
-      return <div className="main" style={{
-        backgroundColor: 'white',
-        borderLeft: 'solid'
-      }}>
-        <div style={{
-          backgroundColor: 'white',
-          borderBottom: 'solid',
-          borderLeft: 'solid'
-        }}>
+      return <div className="main phone-book-container" >
+        <div className='title-select-container'>
           <div className="chat-title">
             <div className="contact-name">
               <img
@@ -584,22 +618,18 @@ function PhoneBook(props) {
                 alt="" />Lời mời kết bạn</div>
           </div>
         </div >
-        <main style={{ backgroundColor: 'green' }}>
+        <main style={{ backgroundColor: 'white' }}>
           {isLoading ? (
             <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
               <Spinner animation="border" variant="primary" />
             </div>
           ) : (
 
-            <main style={{ flex: 1 }}>
+            <main flex="1">
               <div className="card-title">
                 Lời mời đã nhận
               </div>
-              <div style={{
-                height: '50%',
-                maxHeight: '240px',
-                overflowY: 'auto',
-              }}>
+              <div className='Site-render-FriendRequests'>
                 <ListGroup className="user-list">
                   {renderFriendRequestToMe(receiveFriendRequestList)}
                 </ListGroup>
@@ -608,11 +638,7 @@ function PhoneBook(props) {
               <div className="card-title">
                 Lời mời đã gửi
               </div>
-              <div style={{
-                height: '50%',
-                maxHeight: '235px',
-                overflowY: 'auto',
-              }}>
+              <div className='Site-render-FriendRequests'>
                 <ListGroup className="user-list">
                   {renderFriendRequestToOtherPeople(sendFriendRequestList)}
                 </ListGroup>
@@ -638,13 +664,13 @@ function PhoneBook(props) {
       }
       <div className="conversation-list-container" >
         <button className={`vertical-button ${selectedButton === 'friends' ? 'selected' : ''}`} onClick={() => setSelectedButton('friends')}>
-          <img src={FriendIcon} width="32px" height="32px" alt="" /> Danh sách bạn bè
+          <img src={FriendIcon} className='size-mini-Avatar' alt="" /> Danh sách bạn bè
         </button>
         <button className={`vertical-button ${selectedButton === 'groups' ? 'selected' : ''}`} onClick={() => setSelectedButton('groups')}>
-          <img src={GroupIcon} width="32px" height="32px" alt="" /> Danh sách nhóm
+          <img src={GroupIcon} className='size-mini-Avatar' alt="" /> Danh sách nhóm
         </button>
         <button className={`vertical-button ${selectedButton === 'invitations' ? 'selected' : ''}`} onClick={() => setSelectedButton('invitations')}>
-          <img src={LetterIcon} width="32px" height="32px" alt="" /> Lời mời kết bạn
+          <img src={LetterIcon} className='size-mini-Avatar' alt="" /> Lời mời kết bạn
         </button>
       </div>
 

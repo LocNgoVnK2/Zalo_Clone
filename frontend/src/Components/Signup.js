@@ -4,7 +4,7 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import { signupApi } from "../Services/userService";
-import AlertCustom from "./AlertCustom";
+
 import Swal from "sweetalert2";
 import SweetAlert2 from 'react-bootstrap-sweetalert';
 class Signup extends Component {
@@ -55,7 +55,12 @@ class Signup extends Component {
     }
     handleSignup = async () => {
         if (!this.state.email || !this.state.password || !this.state.username || !this.state.phonenumber || !this.state.gender || !this.state.dob) {
-            alert("Please fill in all fields");
+            Swal.fire({
+                icon: 'warning',
+                title: "Vui lòng nhập đầy đủ các trường",
+                showConfirmButton: false,
+                timer: 1500
+            });
             return;
         }
         try {
@@ -70,7 +75,13 @@ class Signup extends Component {
 
             }
         } catch (error) {
-            alert("An error occurred");
+
+            Swal.fire({
+                icon: 'error',
+                title: "Có lỗi xảy ra",
+                showConfirmButton: false,
+                timer: 1500
+            });
             return false;
         }
     };

@@ -118,7 +118,7 @@ class Sidebar extends Component {
                 onClick={() => {
                   this.props.selectionChange("default");
                   this.props.changeState(HomeState.Message);
-                  alert(HomeState.Message);
+                  
                 }}
               >
                 <img src={ChatIcon} className="icon" alt="" />
