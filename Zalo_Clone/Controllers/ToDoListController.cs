@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Transactions;
+using AutoMapper;
 using Infrastructure.Entities;
 using Infrastructure.Service;
 using Microsoft.AspNetCore.Http;
@@ -80,24 +81,41 @@ namespace Zalo_Clone.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateToDoList(ToDoListModel model)
         {
-            ToDoList toDoList = _mapper.Map<ToDoList>(model);
-            try
-            {
 
-                bool result = await _toDoListService.UpdateRToDoList(toDoList);
-
-                if (result)
-                {
-                    return Ok("Update todolist chat sussess");
-                }
-                else
-                {
-                    return BadRequest("cannot Update todolist");
-                }
-            }
-            catch (Exception ex)
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                return new BadRequestObjectResult(ex.Message);
+                try
+                {
+                    ToDoList toDoList = await _toDoListService.GetToDoList(model.Id);
+                    toDoList.Title = model.Title;
+                    toDoList.Content = model.Content;
+                    toDoList.EndDate = model.EndDate;
+
+                    List<ToDoUser> toDoUsers = await _toDoUserService.GetAllUsersOfTask(model.Id);
+
+                    if (model.UserToDoTask != null)
+                    {
+                        foreach (string userId in model.UserToDoTask)
+                        {
+                            await _toDoUserService.RemoveToDoUser(toDoUsers.FirstOrDefault(u => u.UserDes == userId));
+                        }
+                    }
+                    bool result = await _toDoListService.UpdateRToDoList(toDoList);
+
+                    if (result)
+                    {
+                        scope.Complete(); // Commit the transaction
+                        return Ok("Update todolist chat sussess");
+                    }
+                    else
+                    {
+                        return BadRequest("cannot Update todolist");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return new BadRequestObjectResult(ex.Message);
+                }
             }
         }
         [HttpGet("GetAllTasks")]
@@ -436,6 +454,33 @@ namespace Zalo_Clone.Controllers
                 if (task != null)
                 {
                     return Ok(task);
+                }
+                else
+                {
+                    return BadRequest("cannot get todolist");
+                }
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestObjectResult(ex.Message);
+            }
+        }
+        [HttpPost("UpdateRemindCount")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateRemindCount(long taskId)
+        {
+            try
+            {
+                ToDoList toDoList = await _toDoListService.GetToDoList(taskId);
+
+                int check = (int)toDoList.RemindCount;
+
+                toDoList.RemindCount = toDoList.RemindCount + 1;
+                bool result = await _toDoListService.UpdateRToDoList(toDoList);
+                if (toDoList.RemindCount == (check + 1) && result)
+                {
+                    return Ok();
                 }
                 else
                 {

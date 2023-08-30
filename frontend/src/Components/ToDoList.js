@@ -298,7 +298,7 @@ function ToDoList(props) {
                         </div>
                     ) : null}
                     {selectedStatusButton === 'MyCreationTaskIsCompleted' ? (
-                        <div sclassName='Site-render-Items'>
+                        <div className='Site-render-Items'>
                             <ListGroup className="user-list">
                                 {renderMyTaskCreatedHasBeenCompleted(taskDoneByUserCreatedList)}
                             </ListGroup>
@@ -381,6 +381,7 @@ function ToDoList(props) {
                     < TaskDetailDialog idTask={taskSelected}
                         showModal={taskDetailShow}
                         handleClose={HandleCloseDetailTask}
+                        fetchData ={fetchData}
                     />
                 )
             }
