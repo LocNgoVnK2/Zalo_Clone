@@ -1,16 +1,103 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, FormControl, InputGroup, Row, Col } from 'react-bootstrap';
 import UserAvatar from "./assets/friends.png";
-import { GetAllUsersInGroupAPI, UpdateChatLeaderAPI } from '../Services/groupService';
+
 import Swal from 'sweetalert2';
+import AlarmIcon from "./assets/icon/icons8-alarm-48.png";
+import TaskRemoveIcon from "./assets/icon/icons8-taskRemove-48.png";
+import TaskDoneIcon from "./assets/icon/icons8-taskDone-48.png";
+import TaskEditIcon from "./assets/icon/icons8-taskEdit-48.png";
+import moment from 'moment';
+import { ListGroup, ListGroupItem, OverlayTrigger } from 'react-bootstrap';
+import { Popover } from 'react-bootstrap';
+import { GetTaskByTaskIdAPI } from '../Services/toDoListService';
+
 function TaskDetailDialog(props) {
+    const [task, setTask] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [remainingDays, setRemainingDays] = useState(null);
+
+    const [showPartners, setShowPartners] = useState(false);
     useEffect(() => {
         const fetchData = () => {
+            //idTask
+            GetTaskByTaskIdAPI(props.idTask).then((task) => {
+                setTask(task.data);
+                calculateRemainingDays(task.data.endDate);
+                setIsLoading(false);
+
+
+            }).catch((error) => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lấy dữ liệu thất bại vui lòng thử lại sau',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            });
         };
 
         fetchData();
     }, []);
 
+    const showPopover = (data) => (
+        <Popover id="popover-basic" className="custom-popover" placement="right">
+            <Popover.Header as="h3">
+                <span className="popover-body">Danh sách thành viên</span>
+            </Popover.Header>
+            <Popover.Body >
+                <div className='Site-render-Members'>
+                    {data.map((partners) => {
+                        return (
+
+                            <div className='user-Item '>
+                                <img src={
+                                    partners.avatar
+                                        ? "data:image;base64," + partners.avatar
+                                        : UserAvatar}
+                                    alt=""
+                                    className="rounded-circle user-avatar border size-mini-Avatar"
+                                />
+                                <span>{partners.contactName}</span>
+
+
+                            </div>
+                        );
+                    })}
+                </div>
+            </Popover.Body>
+        </Popover >
+    );
+
+    const hidePopover = () => {
+        setShowPartners(false);
+    };
+
+
+    const calculateRemainingDays = (endDate) => {
+        const now = moment();
+        const end = moment(endDate);
+        const diff = end.diff(now, 'days');
+        setRemainingDays(diff);
+    };
+    const renderDeadlineMessage = () => {
+        if (remainingDays !== null) {
+            if (remainingDays > 0) {
+                return `còn ${remainingDays} ngày`;
+            } else if (remainingDays === 0) {
+                return 'Hôm nay là hạn cuối';
+            } else {
+                return `Quá hạn ${Math.abs(remainingDays)} ngày`;
+            }
+        }
+        return null;
+    };
+
+    // delay to load task 
+    if (isLoading) {
+        return <Modal show={props.showModal} onHide={props.handleClose} size="lg">
+        </Modal>
+    }
 
     return (
         <Modal show={props.showModal} onHide={props.handleClose} size="lg">
@@ -24,10 +111,10 @@ function TaskDetailDialog(props) {
                             <div >
                                 <div className='review-main'>
                                     <div className='review-title'>
-                                        cc
+                                        {task.title}
                                     </div>
                                     <div className='review-content'>
-                                        cc
+                                        {task.content}
                                     </div>
                                 </div>
                                 <div>
@@ -51,7 +138,7 @@ function TaskDetailDialog(props) {
 
                                     <div>
                                         <span className='pr-status-content' >
-                                            cc {/* render status here */}
+                                            {task.isDone === true ? 'Đã hoàn thành' : 'Chưa hoàn thành'}
                                         </span>
                                     </div>
                                 </div>
@@ -65,11 +152,11 @@ function TaskDetailDialog(props) {
                                 <div className='label-status'>
                                     <div>
                                         <span className='pr-status-content-deadline' >
-                                            ngày nào đó {/* render deadline here */}
+                                            {moment(task.endDate).format('DD/MM/YYYY')}
                                         </span>
                                         <br />
                                         <span className='pr-status-content' >
-                                            còn xxx ngày {/* render deadline here */}
+                                            {renderDeadlineMessage()}
                                         </span>
                                     </div>
                                 </div>
@@ -80,9 +167,17 @@ function TaskDetailDialog(props) {
                                         Giao cho
                                     </span>
                                 </div>
-                                <Button variant="primary">
-                                    Xem danh sách thành viên
-                                </Button>
+                                <OverlayTrigger
+                                    placement="right"
+                                    show={showPartners}
+                                    onHide={hidePopover}
+                                    overlay={showPopover(task.partners)}
+
+                                >
+                                    <Button variant="primary" onClick={() => setShowPartners(!showPartners)}>
+                                        Xem danh sách thành viên
+                                    </Button>
+                                </OverlayTrigger>
 
                             </div>
                             <div className='right-column-section' style={{ height: '260px', backgroundColor: 'yellow' }}>
@@ -91,22 +186,23 @@ function TaskDetailDialog(props) {
                                         Tác vụ
                                     </span>
                                 </div>
-                                <div>
-                                    <Button variant='light' className='gray-button'>
-                                       
-                                        Button 1
+                                <div className='button-container'>
+                                    <Button variant='light' className='setting-button'>
+                                        <img src={TaskDoneIcon} className='size-mini-Avatar' alt="" />
+                                        Hoàn thành
                                     </Button>
-                                    <Button variant='light' className='gray-button'>
-                                       
-                                        Button 2
+                                    <Button variant='light' className='setting-button'>
+                                        <img src={AlarmIcon} className='size-mini-Avatar' alt="" />
+                                        Nhắc nhỡ {task.remindCount === 0 ? '' : <span style={{ color: 'red' }}> lần thứ ({task.remindCount})</span>}
+                                        {/* denine task if who is person do this task */}
                                     </Button>
-                                    <Button variant='light' className='gray-button'>
-                                        
-                                        Button 3
+                                    <Button variant='light' className='setting-button'>
+                                        <img src={TaskEditIcon} className='size-mini-Avatar' alt="" />
+                                        Chỉnh sửa
                                     </Button>
-                                    <Button variant='light' className='gray-button'>
-                                       
-                                        Button 4
+                                    <Button variant='light' className='setting-button'>
+                                        <img src={TaskRemoveIcon} className='size-mini-Avatar' alt="" />
+                                        Xóa công việc
                                     </Button>
                                 </div>
                             </div>

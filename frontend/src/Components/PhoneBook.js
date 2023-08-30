@@ -555,8 +555,8 @@ function PhoneBook(props) {
               Bạn bè {'('} {usersList.length} {')'}
             </span>
             <main flex="1" >
-              <div Site-render-Users>
-                <ListGroup className="user-list">
+              <div className="Site-render-Users">
+                <ListGroup className="user-list" >
                   {renderUserList(usersList)}
                 </ListGroup>
               </div>

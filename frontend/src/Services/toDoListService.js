@@ -35,7 +35,17 @@ const GetAllTasksAndUserNotCompleteOfUserDesAPI = (userId) => {
 
     return axios.get(`/api/ToDoList/GetAllTasksAndUserNotCompleteOfUserDes?userId=${userId}`);
 }
+///api/ToDoList/GetTaskByTaskId
 
+const GetTaskByTaskIdAPI = (taskId) => {
 
+    return axios.get(`/api/ToDoList/GetTaskByTaskId?taskId=${taskId}`);
+}
 
-export { createToDoList,GetAllTasksDoneByUserCreationAPI,GetAllTasksNotDoneByUserCreationAPI,GetAllTasksDoneByUserDoAPI,GetAllTasksNotDoneByUserDoAPI,GetAllTasksAndUserNotCompleteOfUserDesAPI};
+export { createToDoList,
+        GetAllTasksDoneByUserCreationAPI,
+        GetAllTasksNotDoneByUserCreationAPI,
+        GetAllTasksDoneByUserDoAPI,
+        GetAllTasksNotDoneByUserDoAPI,
+        GetAllTasksAndUserNotCompleteOfUserDesAPI,
+        GetTaskByTaskIdAPI};

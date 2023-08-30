@@ -16,7 +16,8 @@ namespace Zalo_Clone.Controllers
         IToDoUserService _toDoUserService;
         IContactService _contactService;
         IMapper _mapper;
-        public ToDoListController(IContactService contactService,IToDoListService toDoListService,IToDoUserService toDoUserService,IMapper mapper) { 
+        public ToDoListController(IContactService contactService, IToDoListService toDoListService, IToDoUserService toDoUserService, IMapper mapper)
+        {
             _mapper = mapper;
             _toDoListService = toDoListService;
             _toDoUserService = toDoUserService;
@@ -33,7 +34,7 @@ namespace Zalo_Clone.Controllers
             toDoList.StartDate = DateTime.Now;
             try
             {
-                bool result = await _toDoListService.AddToDoList(toDoList,model.UserToDoTask);
+                bool result = await _toDoListService.AddToDoList(toDoList, model.UserToDoTask);
 
                 if (result)
                 {
@@ -54,7 +55,7 @@ namespace Zalo_Clone.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> DeleteToDoList(long id)
         {
-            
+
             try
             {
                 ToDoList toDoList = await _toDoListService.GetToDoList(id);
@@ -82,7 +83,7 @@ namespace Zalo_Clone.Controllers
             ToDoList toDoList = _mapper.Map<ToDoList>(model);
             try
             {
-                
+
                 bool result = await _toDoListService.UpdateRToDoList(toDoList);
 
                 if (result)
@@ -104,13 +105,13 @@ namespace Zalo_Clone.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAllTask()
         {
-           
+
             try
             {
 
                 List<ToDoList> toDoLists = await _toDoListService.GetAll();
 
-                if (toDoLists!=null)
+                if (toDoLists != null)
                 {
                     return Ok(toDoLists);
                 }
@@ -154,13 +155,13 @@ namespace Zalo_Clone.Controllers
         [HttpPost("AddMoreUserDoThisTask")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> AddMoreUserDoThisTask(long taskId,List<string> userIds)
+        public async Task<IActionResult> AddMoreUserDoThisTask(long taskId, List<string> userIds)
         {
 
             try
             {
 
-                 ToDoList toDoList = await _toDoListService.GetToDoList(taskId);
+                ToDoList toDoList = await _toDoListService.GetToDoList(taskId);
 
                 if (toDoList != null)
                 {
@@ -175,7 +176,7 @@ namespace Zalo_Clone.Controllers
                         await _toDoUserService.AddToDoUser(toDoUser);
                     }
                     return Ok("Add user success");
-                }        
+                }
                 else
                 {
                     return BadRequest("cannot Update todolist");
@@ -198,7 +199,7 @@ namespace Zalo_Clone.Controllers
 
                 if (toDoList != null)
                 {
-                
+
                     return Ok(toDoList);
                 }
                 else
@@ -224,7 +225,7 @@ namespace Zalo_Clone.Controllers
 
                 if (toDoList != null)
                 {
-                    foreach(ToDoUser toDoUser in usersToRemove)
+                    foreach (ToDoUser toDoUser in usersToRemove)
                     {
                         _toDoUserService.RemoveToDoUser(toDoUser);
                     }
@@ -240,18 +241,18 @@ namespace Zalo_Clone.Controllers
                 return new BadRequestObjectResult(ex.Message);
             }
         }
-         [HttpGet("GetAllTasksDoneByUserCreation")] 
+        [HttpGet("GetAllTasksDoneByUserCreation")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAllTasksDoneByUserCreation(string userId)
         {
-           
+
             try
             {
 
                 List<ToDoList> toDoLists = await _toDoListService.GetAll();
                 toDoLists = toDoLists.Where(e => e.UserSrc == userId && e.IsDone == true).ToList();
-                if (toDoLists!=null)
+                if (toDoLists != null)
                 {
                     return Ok(toDoLists);
                 }
@@ -265,18 +266,18 @@ namespace Zalo_Clone.Controllers
                 return new BadRequestObjectResult(ex.Message);
             }
         }
-           [HttpGet("GetAllTasksNotDoneByUserCreation")] 
+        [HttpGet("GetAllTasksNotDoneByUserCreation")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAllTasksNotDoneByUserCreation(string userId)
         {
-           
+
             try
             {
 
                 List<ToDoList> toDoLists = await _toDoListService.GetAll();
                 toDoLists = toDoLists.Where(e => e.UserSrc == userId && e.IsDone == false).ToList();
-                if (toDoLists!=null)
+                if (toDoLists != null)
                 {
                     return Ok(toDoLists);
                 }
@@ -291,7 +292,7 @@ namespace Zalo_Clone.Controllers
             }
         }
 
-             [HttpGet("GetAllTasksDoneByUserDo")] 
+        [HttpGet("GetAllTasksDoneByUserDo")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAllTasksDoneByUserDo(string userId)
@@ -302,14 +303,16 @@ namespace Zalo_Clone.Controllers
                 List<ToDoUser> toDoListsOfUser = await _toDoUserService.GetAlltodoTask();
                 toDoListsOfUser = toDoListsOfUser.Where(u => u.UserDes == userId).ToList();
                 List<ToDoList> toDoList = new List<ToDoList>();
-                foreach (ToDoUser toDoUser in  toDoListsOfUser){
+                foreach (ToDoUser toDoUser in toDoListsOfUser)
+                {
                     ToDoList addToDoList = await _toDoListService.GetToDoList(toDoUser.TaskId);
-                    if(addToDoList.IsDone==true){
-                          toDoList.Add(addToDoList);
+                    if (addToDoList.IsDone == true)
+                    {
+                        toDoList.Add(addToDoList);
                     }
-                
+
                 }
-                if (toDoList!=null)
+                if (toDoList != null)
                 {
                     return Ok(toDoList);
                 }
@@ -323,7 +326,7 @@ namespace Zalo_Clone.Controllers
                 return new BadRequestObjectResult(ex.Message);
             }
         }
-        [HttpGet("GetAllTasksNotDoneByUserDo")] 
+        [HttpGet("GetAllTasksNotDoneByUserDo")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAllTasksNotDoneByUserDo(string userId)
@@ -334,14 +337,16 @@ namespace Zalo_Clone.Controllers
                 List<ToDoUser> toDoListsOfUser = await _toDoUserService.GetAlltodoTask();
                 toDoListsOfUser = toDoListsOfUser.Where(u => u.UserDes == userId).ToList();
                 List<ToDoList> toDoList = new List<ToDoList>();
-                foreach (ToDoUser toDoUser in  toDoListsOfUser){
+                foreach (ToDoUser toDoUser in toDoListsOfUser)
+                {
                     ToDoList addToDoList = await _toDoListService.GetToDoList(toDoUser.TaskId);
-                    if(addToDoList.IsDone==false){
-                          toDoList.Add(addToDoList);
+                    if (addToDoList.IsDone == false)
+                    {
+                        toDoList.Add(addToDoList);
                     }
-                
+
                 }
-                if (toDoList!=null)
+                if (toDoList != null)
                 {
                     return Ok(toDoList);
                 }
@@ -355,7 +360,7 @@ namespace Zalo_Clone.Controllers
                 return new BadRequestObjectResult(ex.Message);
             }
         }
-          [HttpGet("GetAllTasksAndUserNotCompleteOfUserDes")] 
+        [HttpGet("GetAllTasksAndUserNotCompleteOfUserDes")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetAllTasksAndUserNotCompleteOfUserDes(string userId)
@@ -363,13 +368,15 @@ namespace Zalo_Clone.Controllers
             try
             {
                 List<ToDoList> toDoLists = await _toDoListService.GetAll();
-                toDoLists = toDoLists.Where(u => u.UserSrc == userId && u.IsDone==false).ToList();
+                toDoLists = toDoLists.Where(u => u.UserSrc == userId && u.IsDone == false).ToList();
                 List<UncompleteTaskUser> getUserFollowToTask = new List<UncompleteTaskUser>();
-                foreach (ToDoList toDoList in  toDoLists){
+                foreach (ToDoList toDoList in toDoLists)
+                {
                     List<ToDoUser> userUncomplete = await _toDoUserService.GetAllUsersOfTask(toDoList.Id);
-                    List<string> idUserNotCompletes = userUncomplete.Where(u => u.Status == 0).Select(e=>e.UserDes).ToList();
+                    List<string> idUserNotCompletes = userUncomplete.Where(u => u.Status == 0).Select(e => e.UserDes).ToList();
                     List<Contact> contactUncomplete = new List<Contact>();
-                    foreach (string idUserNotComplete in idUserNotCompletes){
+                    foreach (string idUserNotComplete in idUserNotCompletes)
+                    {
                         Contact contact = await _contactService.GetContactData(idUserNotComplete);
                         contactUncomplete.Add(contact);
                     }
@@ -382,11 +389,53 @@ namespace Zalo_Clone.Controllers
                     userFollowToTask.Title = toDoList.Title;
                     userFollowToTask.EndDate = toDoList.EndDate;
                     userFollowToTask.IsDone = toDoList.IsDone;
-                    getUserFollowToTask.Add(userFollowToTask);  
+                    getUserFollowToTask.Add(userFollowToTask);
                 }
-                if (getUserFollowToTask!=null)
+                if (getUserFollowToTask != null)
                 {
                     return Ok(getUserFollowToTask);
+                }
+                else
+                {
+                    return BadRequest("cannot get todolist");
+                }
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestObjectResult(ex.Message);
+            }
+        }
+
+        [HttpGet("GetTaskByTaskId")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetTaskByTaskId(long taskId)
+        {
+            try
+            {
+                ToDoList toDoList = await _toDoListService.GetToDoList(taskId);
+                List<ToDoUser> toDoUsers = await _toDoUserService.GetAllUsersOfTask(toDoList.Id);
+
+                List<Contact> contacts = new List<Contact>();
+                foreach (ToDoUser user in toDoUsers)
+                {
+                    Contact contact = await _contactService.GetContactData(user.UserDes);
+                    contacts.Add(contact);
+                }
+                List<ContactDataModel> partners = _mapper.Map<List<ContactDataModel>>(contacts);
+                // tạo danh sách thông tin những người chưa hoàn thành
+                ToDoListModel task = new ToDoListModel();
+                task.partners = partners;
+                task.UserSrc = toDoList.UserSrc;
+                task.Id = toDoList.Id;
+                task.Content = toDoList.Content;
+                task.Title = toDoList.Title;
+                task.EndDate = toDoList.EndDate;
+                task.IsDone = toDoList.IsDone;
+                task.RemindCount = toDoList.RemindCount;
+                if (task != null)
+                {
+                    return Ok(task);
                 }
                 else
                 {

@@ -72,3 +72,29 @@
     color: red;
     
 }
+.button-container{
+    display: flex;
+    flex-direction: column;
+}
+.setting-button{
+    text-align: left;
+    margin: 6px;
+    font-size: .875rem;
+    font-weight: bold;
+    line-height: 1.5;
+    color: black;
+}
+.Site-render-Partners {
+    height: 200px;
+    overflow-y: auto;
+    display: flex; 
+    flex-direction: column;
+}
+.custom-popover {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: 0px;
+    margin-right: 10px;
+    align-content: flex-start;
+    flex-direction: column;
+}
