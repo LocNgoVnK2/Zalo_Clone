@@ -58,6 +58,26 @@ const UpdateToDoListAPI = (id, content, endDate, title, userToDoTask) => {
 
     return axios.put("/api/ToDoList/UpdateToDoList", data);
 };
+
+
+const UpdateCompleteTaskAPI = (taskId,torf) => {
+
+    return axios.post(`/api/ToDoList/CompleteToDoList?id=${taskId}&success=${torf}`);
+}
+///api/ToDoList/UpdateStatusForPartner
+const UpdateStatusForPartnerAPI = (taskId,userId,torf) => {
+
+    return axios.post(`/api/ToDoList/UpdateStatusForPartner?taskId=${taskId}&userId=${userId}&Status=${torf}`);
+}
+///api/ToDoList/GetStatusOfPartner
+const GetStatusOfPartnerAPI = (taskId,userId) => {
+
+    return axios.get(`/api/ToDoList/GetStatusOfPartner?taskId=${taskId}&userId=${userId}`);
+}
+//​/api​/ToDoList​/RemoveUserDoThisTask
+const RemoveUserDoThisTaskAPI =(taskId,userId) => {
+    return axios.delete(`/api/ToDoList/RemoveUserDoThisTask?taskId=${taskId}&userId=${userId}`);
+}
 export { createToDoList,
         GetAllTasksDoneByUserCreationAPI,
         GetAllTasksNotDoneByUserCreationAPI,
@@ -66,4 +86,8 @@ export { createToDoList,
         GetAllTasksAndUserNotCompleteOfUserDesAPI,
         GetTaskByTaskIdAPI,
         UpdateRemindCountAPI,
-        UpdateToDoListAPI};
+        UpdateToDoListAPI,
+        UpdateCompleteTaskAPI,
+        UpdateStatusForPartnerAPI,
+        GetStatusOfPartnerAPI,
+        RemoveUserDoThisTaskAPI};

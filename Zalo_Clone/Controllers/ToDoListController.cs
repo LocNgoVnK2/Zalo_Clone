@@ -76,6 +76,50 @@ namespace Zalo_Clone.Controllers
                 return new BadRequestObjectResult(ex.Message);
             }
         }
+        // thê vào if success == false thì chỉnh lại hết user status bằng fall
+        [HttpPost("CompleteToDoList")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CompleteToDoList(long id, bool success)
+        {
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                try
+                {
+                    ToDoList toDoList = await _toDoListService.GetToDoList(id);
+                    toDoList.IsDone = success;
+                    bool result = false;
+                    if (toDoList.IsDone == false)
+                    {
+                        List<ToDoUser> toDoUsers = await _toDoUserService.GetAllUsersOfTask(id);
+                        foreach (ToDoUser toDoUser in toDoUsers)
+                        {
+                            toDoUser.Status = 0;
+                            await _toDoUserService.UpdateToDoUser(toDoUser);
+                        }
+                        result = await _toDoListService.UpdateRToDoList(toDoList);
+                    }
+                    else
+                    {
+                        result = await _toDoListService.UpdateRToDoList(toDoList);
+                    }
+
+                    if (result)
+                    {
+                        scope.Complete(); // Commit the transaction
+                        return Ok("update todolist chat sussess");
+                    }
+                    else
+                    {
+                        return BadRequest("cannot remove todolist");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return new BadRequestObjectResult(ex.Message);
+                }
+            }
+        }
         [HttpPut("UpdateToDoList")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -233,25 +277,22 @@ namespace Zalo_Clone.Controllers
         [HttpDelete("RemoveUserDoThisTask")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> RemoveUserDoThisTask(long taskId, List<string> userIds)
+        public async Task<IActionResult> RemoveUserDoThisTask(long taskId, string userId)
         {
             try
             {
 
-                List<ToDoUser> toDoList = await _toDoUserService.GetAllUsersOfTask(taskId);
-                List<ToDoUser> usersToRemove = toDoList.Where(x => userIds.Contains(x.UserDes)).ToList();
+                List<ToDoUser> users = await _toDoUserService.GetAllUsersOfTask(taskId);
+                
+                bool result = await _toDoUserService.RemoveToDoUser(users.FirstOrDefault(X=>X.UserDes==userId));
 
-                if (toDoList != null)
+                if (result == true)
                 {
-                    foreach (ToDoUser toDoUser in usersToRemove)
-                    {
-                        _toDoUserService.RemoveToDoUser(toDoUser);
-                    }
-                    return Ok("Update todolist success");
+                    return Ok("Remove user success");
                 }
                 else
                 {
-                    return BadRequest("cannot Update todolist");
+                    return BadRequest("cannot Remove user");
                 }
             }
             catch (Exception ex)
@@ -485,6 +526,59 @@ namespace Zalo_Clone.Controllers
                 else
                 {
                     return BadRequest("cannot get todolist");
+                }
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestObjectResult(ex.Message);
+            }
+        }
+        [HttpPost("UpdateStatusForPartner")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateStatusForPartner(long taskId, string userId, bool Status)
+        {
+
+            try
+            {
+                ToDoUser toDoUser = await _toDoUserService.GetToDoUserByUserId(userId, taskId);
+                toDoUser.Status = Status == true ? 1 : 0;
+                bool result = await _toDoUserService.UpdateToDoUser(toDoUser);
+
+                //ToDoUser toDoUser = await _toDoUserService.();
+
+                if (result)
+                {
+                    return Ok("Update success");
+                }
+                else
+                {
+                    return BadRequest("cannot Update");
+                }
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestObjectResult(ex.Message);
+            }
+        }
+        [HttpGet("GetStatusOfPartner")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetStatusOfPartner(long taskId, string userId)
+        {
+
+            try
+            {
+                ToDoUser toDoUser = await _toDoUserService.GetToDoUserByUserId(userId, taskId);
+                ToDoUserModel toDoUserModel = _mapper.Map<ToDoUserModel>(toDoUser);
+
+                if (toDoUserModel != null)
+                {
+                    return Ok(toDoUserModel);
+                }
+                else
+                {
+                    return BadRequest("cannot Update");
                 }
             }
             catch (Exception ex)

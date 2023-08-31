@@ -25,6 +25,7 @@ import {
 import { ListGroup } from 'react-bootstrap';
 import { useCallback } from 'react';
 import TaskDetailDialog from './TaskDetailDialog';
+import TaskDetailForPartnerDialog from './TaskDetailForPartnerDialog';
 
 
 function ToDoList(props) {
@@ -44,6 +45,7 @@ function ToDoList(props) {
     //to open task Detail view
     const [taskDetailShow, setTaskDetailShow] = useState(false);
     const [taskSelected, setTaskSelected] = useState('');
+    const [taskDetailForPartnerShow, setTaskDetailForPartnerShow] = useState(false);
     const fetchData = useCallback(async () => {
         try {
             const [listFriendResponse,
@@ -157,6 +159,16 @@ function ToDoList(props) {
         setTaskSelected('');
         setTaskDetailShow(false);
     }
+    const HandleOpenDetailForPartnerTask = (taskId) => {
+
+        setTaskSelected(taskId);
+        setTaskDetailForPartnerShow(true);
+    }
+
+    const HandleCloseDetailForPartnerTask = () => {
+        setTaskSelected('');
+        setTaskDetailForPartnerShow(false);
+    }
     // render content for check status
     const renderMyTaskCreatedHasNotBeenCompleted = (MyTaskCreatedHasNotBeenCompletedList) => {
         return MyTaskCreatedHasNotBeenCompletedList.map((task) => (
@@ -186,6 +198,7 @@ function ToDoList(props) {
             <ListGroup.Item
                 key={task.id}
                 className='user-Item'
+                onClick={()=>HandleOpenDetailTask(task.id)}
             >
                 <div className="row align-items-center">
                     <div className="col-2 d-flex justify-content-center">
@@ -208,6 +221,7 @@ function ToDoList(props) {
             <ListGroup.Item
                 key={task.id}
                 className='user-Item'
+                onClick={()=>HandleOpenDetailForPartnerTask(task.id)}
             >
                 <div className="row align-items-center">
                     <div className="col-2 d-flex justify-content-center">
@@ -229,6 +243,7 @@ function ToDoList(props) {
             <ListGroup.Item
                 key={task.id}
                 className='user-Item'
+                onClick={()=>HandleOpenDetailForPartnerTask(task.id)}
             >
                 <div className="row align-items-center">
                     <div className="col-2 d-flex justify-content-center">
@@ -382,6 +397,16 @@ function ToDoList(props) {
                         showModal={taskDetailShow}
                         handleClose={HandleCloseDetailTask}
                         fetchData ={fetchData}
+                    />
+                )
+            }
+             {
+                taskDetailForPartnerShow && (
+                    < TaskDetailForPartnerDialog idTask={taskSelected}
+                        showModal={taskDetailForPartnerShow}
+                        handleClose={HandleCloseDetailForPartnerTask}
+                        fetchData ={fetchData}
+                        userId={props.userId}
                     />
                 )
             }

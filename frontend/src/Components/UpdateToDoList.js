@@ -52,10 +52,7 @@ function UpdateToDoList(props) {
         
         const date = new Date(props.task.endDate);
         setDeadline(date.toISOString().slice(0, 10));
-        
-        console.log('Title:', title);
-        console.log('Content:', content);
-        console.log('Deadline:', deadline);
+
     }, []);
     return (
 

@@ -10,34 +10,93 @@ import TaskEditIcon from "./assets/icon/icons8-taskEdit-48.png";
 import moment from 'moment';
 import { ListGroup, ListGroupItem, OverlayTrigger } from 'react-bootstrap';
 import { Popover } from 'react-bootstrap';
-import { GetTaskByTaskIdAPI, UpdateRemindCountAPI, UpdateCompleteTaskAPI } from '../Services/toDoListService';
-import UpdateToDoList from './UpdateToDoList';
-function TaskDetailDialog(props) {
+import { GetTaskByTaskIdAPI, UpdateStatusForPartnerAPI, GetStatusOfPartnerAPI,RemoveUserDoThisTaskAPI } from '../Services/toDoListService';
+
+import { useCallback } from 'react';
+function TaskDetailForPartnerDialog(props) {
+
+    // cập nhật lấy  status người dùng để if else nút haonf tất
+    // sort todolisst lên đầu nếu có lượt nhẳ nhỡ cao nhất
+
+
     const [task, setTask] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [remainingDays, setRemainingDays] = useState(null);
     const [updateDialogShow, setUpdateDialogShow] = useState(false);
-
+    const [user, setUser] = useState(null);
     const [showPartners, setShowPartners] = useState(false);
-    const fetchData = () => {
-        //idTask
-        GetTaskByTaskIdAPI(props.idTask).then((task) => {
-            setTask(task.data);
-            calculateRemainingDays(task.data.endDate);
-            setIsLoading(false);
 
-        }).catch((error) => {
-            Swal.fire({
-                icon: 'error',
-                title: 'Lấy dữ liệu thất bại vui lòng thử lại sau',
-                showConfirmButton: false,
-                timer: 1500
-            });
-        });
-    };
+    const fetchData = useCallback(async () => {
+        try {
+            const [taskRes, userRes] = await Promise.all([
+                GetTaskByTaskIdAPI(props.idTask),
+                GetStatusOfPartnerAPI(props.idTask, props.userId)]);
+            // do sthg
+            setTask(taskRes.data);
+            calculateRemainingDays(taskRes.data.endDate);
+            setIsLoading(false);
+            setUser(userRes.data);
+        } catch (error) {
+            if (error.response) {
+                alert(error.response.data.error);
+            } else {
+                alert("An error occurred");
+            }
+        }
+    }, [props.userId, props.idTask]);
+
+
     useEffect(() => {
         fetchData();
     }, []);
+
+    const handleCompleteTaskForPartner = () => {
+
+        UpdateStatusForPartnerAPI(props.idTask, props.userId, true)
+            .then((task) => {
+                props.handleClose();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Chúc mừng bạn đã hoàn thành công việc',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            })
+            .catch((error) => {
+                props.handleClose();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Có lỗi trong quá trình cập nhật',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            });
+
+    }
+
+    const handleOutTask=()=>{
+        RemoveUserDoThisTaskAPI(props.idTask, props.userId).then((res)=>{
+            props.fetchData();
+            props.handleClose();
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Đã thoát công việc',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }).catch((error)=>{
+            props.handleClose();
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Thoát công việc thất bại',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        })
+    }
+
     // chưa xóa công việc
     const showPopover = (data) => (
         <Popover id="popover-basic" className="custom-popover" placement="right">
@@ -91,70 +150,8 @@ function TaskDetailDialog(props) {
         }
         return null;
     };
-    const handleOpenUpdateTaskDialog = () => {
-        setUpdateDialogShow(true);
-    }
-    const handleCloseUpdateTaskDialog = () => {
 
-        setUpdateDialogShow(false);
-    }
-    const handleUpdateRemindCount = () => {
-        UpdateRemindCountAPI(task.id).then(() => {
-            fetchData();
-            Swal.fire({
-                icon: 'success',
-                title: 'Nhắc nhở thành công',
-                showConfirmButton: false,
-                timer: 1500
-            });
-        }).catch((error) => {
-            Swal.fire({
-                icon: 'error',
-                title: 'Nhắc nhở thất bại',
-                showConfirmButton: false,
-                timer: 1500
-            });
-        });
-    }
 
-    const handleCompleteTask = () => {
-        UpdateCompleteTaskAPI(task.id, true).then((res) => {
-            props.fetchData();
-            props.handleClose();
-            Swal.fire({
-                icon: 'success',
-                title: 'Hoàn thành công việc',
-                showConfirmButton: false,
-                timer: 1500
-            });
-        }).catch((error) => {
-            Swal.fire({
-                icon: 'error',
-                title: 'Cập nhật thất bại',
-                showConfirmButton: false,
-                timer: 1500
-            });
-        });
-    }
-    const handleReOpenTask = () => {
-        UpdateCompleteTaskAPI(task.id, false).then((res) => {
-            props.fetchData();
-            props.handleClose();
-            Swal.fire({
-                icon: 'success',
-                title: 'Mở lại công việc thành công',
-                showConfirmButton: false,
-                timer: 1500
-            });
-        }).catch((error) => {
-            Swal.fire({
-                icon: 'error',
-                title: 'Cập nhật thất bại',
-                showConfirmButton: false,
-                timer: 1500
-            });
-        });
-    }
     // delay to load task 
     if (isLoading) {
         return <Modal show={props.showModal} onHide={props.handleClose} size="lg">
@@ -162,16 +159,7 @@ function TaskDetailDialog(props) {
     }
 
     return (<>
-        {
-            updateDialogShow && (
-                < UpdateToDoList task={task}
-                    showModal={updateDialogShow}
-                    handleClose={handleCloseUpdateTaskDialog}
-                    fetchData={props.fetchData}
-                    fetchDataDetails={fetchData}
-                />
-            )
-        }
+
         <Modal show={props.showModal} onHide={props.handleClose} size="lg">
             <Modal.Header closeButton>
                 <Modal.Title>Chi tiết công việc</Modal.Title>
@@ -273,37 +261,27 @@ function TaskDetailDialog(props) {
                                 </div>
                                 {task.isDone === false ? (
                                     <div className='button-container'>
-                                        <Button variant='light' className='setting-button' onClick={handleCompleteTask}>
-                                            <img src={TaskDoneIcon} className='size-mini-Avatar' alt="" />
-                                            Hoàn thành
-                                        </Button>
-                                        <Button variant='light' className='setting-button' onClick={handleUpdateRemindCount}>
-                                            <img src={AlarmIcon} className='size-mini-Avatar' alt="" />
-                                            Nhắc nhỡ {task.remindCount === 0 ? '' : <span style={{ color: 'red' }}> lần thứ ({task.remindCount})</span>}
-                                            {/* denine task if who is person do this task */}
-                                        </Button>
-                                        <Button variant='light' className='setting-button' onClick={handleOpenUpdateTaskDialog}>
-                                            <img src={TaskEditIcon} className='size-mini-Avatar' alt="" />
-                                            Chỉnh sửa
-                                        </Button>
-                                        <Button variant='light' className='setting-button'>
+                                        {user.status === 1 ?
+                                            (<Button variant='success' className='setting-button' >
+                                                <img src={TaskDoneIcon} className='size-mini-Avatar' alt="" />
+                                                Bạn đã hoàn thành
+                                            </Button>)
+                                            :
+                                            (<Button variant='light' className='setting-button' onClick={handleCompleteTaskForPartner}>
+                                                <img src={TaskDoneIcon} className='size-mini-Avatar' alt="" />
+                                                Hoàn thành
+                                            </Button>)
+                                        }
+                                        <Button variant='light' className='setting-button'  onClick={handleOutTask}>
                                             <img src={TaskRemoveIcon} className='size-mini-Avatar' alt="" />
-                                            Xóa công việc
+                                            Thoát công việc
                                         </Button>
                                     </div>
                                 ) : (
                                     <div className='button-container'>
-                                        <Button variant='light' className='setting-button' onClick={handleReOpenTask}>
-                                            <img src={TaskDoneIcon} className='size-mini-Avatar' alt="" />
-                                            Mở lại
-                                        </Button>
-                                        <Button variant='light' className='setting-button' onClick={handleOpenUpdateTaskDialog}>
-                                            <img src={TaskEditIcon} className='size-mini-Avatar' alt="" />
-                                            Chỉnh sửa
-                                        </Button>
-                                        <Button variant='light' className='setting-button'>
+                                        <Button variant='light' className='setting-button' onClick={handleOutTask}>
                                             <img src={TaskRemoveIcon} className='size-mini-Avatar' alt="" />
-                                            Xóa công việc
+                                            Thoát công việc
                                         </Button>
                                     </div>
                                 )}
@@ -317,4 +295,4 @@ function TaskDetailDialog(props) {
     </>);
 
 }
-export default TaskDetailDialog;
+export default TaskDetailForPartnerDialog;
