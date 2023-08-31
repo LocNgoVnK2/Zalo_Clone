@@ -11,9 +11,8 @@ function Message(props) {
 
 
 useEffect(() => {
-  GetContactInformationById(props.message.sender).then((response) => {
-    setSender(response.contactName);
-  });
+  setSender(props.message.senderName);
+
   let time = new Date(props.message.sendTime);
   let hours = time.getHours();
   let minutes = time.getMinutes();

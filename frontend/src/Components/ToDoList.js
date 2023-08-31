@@ -24,6 +24,8 @@ import {
 //react bootstrap
 import { ListGroup } from 'react-bootstrap';
 import { useCallback } from 'react';
+import TaskDetailDialog from './TaskDetailDialog';
+import TaskDetailForPartnerDialog from './TaskDetailForPartnerDialog';
 
 
 function ToDoList(props) {
@@ -40,7 +42,10 @@ function ToDoList(props) {
     const [tasksDoneByUserDoList, setTasksDoneByUserDoList] = useState([]);
     const [tasksNotDoneByUserDo, setTasksNotDoneByUserDo] = useState([]);
     const [tasksAndUserNotComplete, setTasksAndUserNotComplete] = useState([]);
-
+    //to open task Detail view
+    const [taskDetailShow, setTaskDetailShow] = useState(false);
+    const [taskSelected, setTaskSelected] = useState('');
+    const [taskDetailForPartnerShow, setTaskDetailForPartnerShow] = useState(false);
     const fetchData = useCallback(async () => {
         try {
             const [listFriendResponse,
@@ -140,26 +145,44 @@ function ToDoList(props) {
     const handleCheckStatusButton = (buttonId) => {
         setSelectedStatusButton(buttonId);
     };
+
+
+
+    // handle to open detail of task
+    const HandleOpenDetailTask = (taskId) => {
+
+        setTaskSelected(taskId);
+        setTaskDetailShow(true);
+    }
+
+    const HandleCloseDetailTask = () => {
+        setTaskSelected('');
+        setTaskDetailShow(false);
+    }
+    const HandleOpenDetailForPartnerTask = (taskId) => {
+
+        setTaskSelected(taskId);
+        setTaskDetailForPartnerShow(true);
+    }
+
+    const HandleCloseDetailForPartnerTask = () => {
+        setTaskSelected('');
+        setTaskDetailForPartnerShow(false);
+    }
     // render content for check status
     const renderMyTaskCreatedHasNotBeenCompleted = (MyTaskCreatedHasNotBeenCompletedList) => {
         return MyTaskCreatedHasNotBeenCompletedList.map((task) => (
+
             <ListGroup.Item
                 key={task.id}
-                style={{
-                    borderBottom: '1px solid black',
-                    paddingTop: '5px',
-                    paddingBottom: '5px',
-                    boxShadow: '0px 1px 0px 0px #ccc',
-                }}
-
+                className='user-Item'
+                onClick={()=>HandleOpenDetailTask(task.id)}
             >
                 <div className="row align-items-center">
                     <div className="col-2 d-flex justify-content-center">
                         <img
                             src={TaskAvatar}
-                            className="rounded-circle user-avatar border"
-                            width="64px"
-                            height="64px"
+                            className="rounded-circle user-avatar border size-Avatar"
                             alt=""
                         />
                     </div>
@@ -174,21 +197,14 @@ function ToDoList(props) {
         return MyTaskCreatedHasBeenCompletedList.map((task) => (
             <ListGroup.Item
                 key={task.id}
-                style={{
-                    borderBottom: '1px solid black',
-                    paddingTop: '5px',
-                    paddingBottom: '5px',
-                    boxShadow: '0px 1px 0px 0px #ccc',
-                }}
-
+                className='user-Item'
+                onClick={()=>HandleOpenDetailTask(task.id)}
             >
                 <div className="row align-items-center">
                     <div className="col-2 d-flex justify-content-center">
                         <img
                             src={TaskAvatar}
-                            className="rounded-circle user-avatar border"
-                            width="64px"
-                            height="64px"
+                            className="rounded-circle user-avatar border size-Avatar"
                             alt=""
                         />
                     </div>
@@ -204,21 +220,14 @@ function ToDoList(props) {
         return MyTaskDoHasBeenCompletedList.map((task) => (
             <ListGroup.Item
                 key={task.id}
-                style={{
-                    borderBottom: '1px solid black',
-                    paddingTop: '5px',
-                    paddingBottom: '5px',
-                    boxShadow: '0px 1px 0px 0px #ccc',
-                }}
-
+                className='user-Item'
+                onClick={()=>HandleOpenDetailForPartnerTask(task.id)}
             >
                 <div className="row align-items-center">
                     <div className="col-2 d-flex justify-content-center">
                         <img
                             src={TaskAvatar}
-                            className="rounded-circle user-avatar border"
-                            width="64px"
-                            height="64px"
+                            className="rounded-circle user-avatar border size-Avatar"
                             alt=""
                         />
                     </div>
@@ -233,21 +242,14 @@ function ToDoList(props) {
         return MyTaskDoHasNotBeenCompletedList.map((task) => (
             <ListGroup.Item
                 key={task.id}
-                style={{
-                    borderBottom: '1px solid black',
-                    paddingTop: '5px',
-                    paddingBottom: '5px',
-                    boxShadow: '0px 1px 0px 0px #ccc',
-                }}
-
+                className='user-Item'
+                onClick={()=>HandleOpenDetailForPartnerTask(task.id)}
             >
                 <div className="row align-items-center">
                     <div className="col-2 d-flex justify-content-center">
                         <img
                             src={TaskAvatar}
-                            className="rounded-circle user-avatar border"
-                            width="64px"
-                            height="64px"
+                            className="rounded-circle user-avatar border size-Avatar"
                             alt=""
                         />
                     </div>
@@ -265,20 +267,13 @@ function ToDoList(props) {
 
             <div
                 key={member.id}
-                style={{
-                    borderBottom: '1px solid black',
-                    paddingTop: '5px',
-                    paddingBottom: '5px',
-                    boxShadow: '0px 1px 0px 0px #ccc',
-                }}
+                className='user-Item'
             >
                 <div className="row align-items-center">
                     <div className="col-2 d-flex justify-content-center">
                         <img
                             src={member.avatar ? 'data:image/jpeg;base64,' + member.avatar : UserAvatar}
-                            className="rounded-circle user-avatar border"
-                            width="64px"
-                            height="64px"
+                            className="rounded-circle user-avatar border size-Avatar"
                             alt=""
                         />
                     </div>
@@ -310,11 +305,7 @@ function ToDoList(props) {
                         </div>
                     </div>
                     {selectedStatusButton === 'MyTaskCreatedHasNotBeenCompleted' ? (
-                        <div style={{
-                            height: '50%',
-                            maxHeight: '550px',
-                            overflowY: 'auto',
-                        }}>
+                        <div className='Site-render-Items'>
                             <ListGroup className="user-list">
                                 {renderMyTaskCreatedHasNotBeenCompleted(taskNotDoneByUserCreatedList)}
 
@@ -322,11 +313,7 @@ function ToDoList(props) {
                         </div>
                     ) : null}
                     {selectedStatusButton === 'MyCreationTaskIsCompleted' ? (
-                        <div style={{
-                            height: '50%',
-                            maxHeight: '550px',
-                            overflowY: 'auto',
-                        }}>
+                        <div className='Site-render-Items'>
                             <ListGroup className="user-list">
                                 {renderMyTaskCreatedHasBeenCompleted(taskDoneByUserCreatedList)}
                             </ListGroup>
@@ -348,11 +335,7 @@ function ToDoList(props) {
                         </div>
                     </div>
                     {selectedStatusButton === 'ReceiveToDoMyTaskHasNotBeenCompleted' ? (
-                        <div style={{
-                            height: '50%',
-                            maxHeight: '550px',
-                            overflowY: 'auto',
-                        }}>
+                        <div className='Site-render-Items'>
                             <ListGroup className="user-list">
                                 {renderMyTaskDoHasNotBeenCompleted(tasksNotDoneByUserDo)}
 
@@ -360,11 +343,7 @@ function ToDoList(props) {
                         </div>
                     ) : null}
                     {selectedStatusButton === 'ReceiveToDoMyTaskIsCompleted' ? (
-                        <div style={{
-                            height: '50%',
-                            maxHeight: '550px',
-                            overflowY: 'auto',
-                        }}>
+                        <div className='Site-render-Items'>
                             <ListGroup className="user-list">
                                 {renderMyTaskDoHasBeenCompleted(tasksDoneByUserDoList)}
                             </ListGroup>
@@ -383,13 +362,7 @@ function ToDoList(props) {
 
                         </div>
                     </div>
-                    <div style={{
-                        height: '50%',
-                        width: '100%',
-                        maxHeight: '550px',
-                        overflowY: 'auto',
-                        overflowX: 'hidden',
-                    }}>
+                    <div className='Site-render-to-following-process'>
                         <div className="user-list">
 
                             <div>
@@ -418,6 +391,25 @@ function ToDoList(props) {
 
     return (
         <>
+            {
+                taskDetailShow && (
+                    < TaskDetailDialog idTask={taskSelected}
+                        showModal={taskDetailShow}
+                        handleClose={HandleCloseDetailTask}
+                        fetchData ={fetchData}
+                    />
+                )
+            }
+             {
+                taskDetailForPartnerShow && (
+                    < TaskDetailForPartnerDialog idTask={taskSelected}
+                        showModal={taskDetailForPartnerShow}
+                        handleClose={HandleCloseDetailForPartnerTask}
+                        fetchData ={fetchData}
+                        userId={props.userId}
+                    />
+                )
+            }
             <Modal show={showModal} onHide={callModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>Giao công việc mới</Modal.Title>
@@ -453,7 +445,7 @@ function ToDoList(props) {
                                         label={
                                             <div>
                                                 <img src={user.avatar ? 'data:image;base64,' + user.avatar : UserAvatar}
-                                                    width="32px" height="32px" alt="" className="rounded-circle user-avatar border" />
+                                                    alt="" className="rounded-circle user-avatar border size-mini-Avatar" />
                                                 <span>{user.userName}</span>
                                             </div>
                                         }
@@ -487,22 +479,22 @@ function ToDoList(props) {
                 </Modal.Footer>
             </Modal>
             <div className={`to-do-header-container`} >
-                <button style={{ fontSize: "24px", padding: "5px 20px" }} onClick={callModal}>
+                <button className='custom-new-task-button' onClick={callModal}>
                     Giao công việc mới
                 </button>
             </div>
             <div className="button-container">
                 <div className="top-buttons">
                     <button className={`vertical-button ${selectedButton === 'CreateToDo' ? 'selected' : ''}`} onClick={() => handleButtonClick('CreateToDo')}>
-                        <img src={ToDoListIcon} width="32px" height="32px" alt="" /> Tôi giao {'('} {taskDoneByUserCreatedList.length + taskNotDoneByUserCreatedList.length} {')'}
+                        <img src={ToDoListIcon} className='size-mini-Avatar' alt="" /> Tôi giao {'('} {taskDoneByUserCreatedList.length + taskNotDoneByUserCreatedList.length} {')'}
                     </button>
 
                     <button className={`vertical-button ${selectedButton === 'ReceiveToDo' ? 'selected' : ''}`} onClick={() => handleButtonClick('ReceiveToDo')}>
-                        <img src={ToReceivelist} width="32px" height="32px" alt="" /> Cần làm {'('} {tasksDoneByUserDoList.length + tasksNotDoneByUserDo.length} {')'}
+                        <img src={ToReceivelist} className='size-mini-Avatar' alt="" /> Cần làm {'('} {tasksDoneByUserDoList.length + tasksNotDoneByUserDo.length} {')'}
                     </button>
 
                     <button className={`vertical-button ${selectedButton === 'FollowToDo' ? 'selected' : ''}`} onClick={() => handleButtonClick('FollowToDo')}>
-                        <img src={ToFollowlist} width="32px" height="32px" alt="" /> Theo dõi
+                        <img src={ToFollowlist} className='size-mini-Avatar' alt="" /> Theo dõi
                     </button>
                 </div>
 
@@ -514,6 +506,6 @@ function ToDoList(props) {
         </>
     );
 }
-//tasksDoneByUserDoList,tasksNotDoneByUserDo
+
 
 export default ToDoList;

@@ -1,0 +1,100 @@
+.message-site-container {
+    width: 500px;
+    height: 480px;
+    overflow-y: auto;
+    background-color: rgb(150, 228, 150);
+    padding: 10px;
+
+}
+
+.split-content {
+    border-right: 1px solid black;
+}
+
+.setup-site-container {
+    width: 250px;
+    height: 550px;
+    background-color: blue;
+    padding: 10px;
+}
+
+.review-main {
+    border-bottom: 1px solid #d6dbe1;
+    margin: 20px 24px 0;
+}
+
+.review-title {
+    font-size: 1.125rem;
+    font-weight: 500;
+    line-height: 1.5;
+    color: #081c36;
+    margin-bottom: 8px;
+    word-break: break-word;
+}
+
+.review-content {
+    font-size: .875rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #081c36;
+    margin-bottom: 20px;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.label-status {
+    margin-bottom: 8px;
+}
+
+.label-status-text {
+    font-size: .875rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #081c36;
+}
+
+
+.pr-status-content {
+    margin-left: 1em;
+    padding: 3px 0;
+    cursor: default;
+    font-size: .875rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: white;
+    justify-content: center;
+    color: black;
+}
+.pr-status-content-deadline {
+    font-size: .875rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: red;
+    
+}
+.button-container{
+    display: flex;
+    flex-direction: column;
+}
+.setting-button{
+    text-align: left;
+    margin: 6px;
+    font-size: .875rem;
+    font-weight: bold;
+    line-height: 1.5;
+    color: black;
+}
+.Site-render-Partners {
+    height: 200px;
+    overflow-y: auto;
+    display: flex; 
+    flex-direction: column;
+}
+.custom-popover {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: 0px;
+    margin-right: 10px;
+    align-content: flex-start;
+    flex-direction: column;
+}

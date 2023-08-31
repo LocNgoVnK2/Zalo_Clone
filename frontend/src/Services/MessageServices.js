@@ -8,5 +8,16 @@ const PollingForNewMessage = (userId) => {
 
     return axios.get(`/api/Message/GetContactsOfUnNotifiedMessage?userId=${userId}`);
 }
+const SendMessageToContact = (userId,contactId,content,idMessageSrc,attachmentByBase64) => {
+    const data = {
+        sender : userId,
+        contactId : contactId,
+        idMessageSrc : idMessageSrc,
+        attachmentByBase64 : attachmentByBase64,
+        content : content
+    };
+    return axios.post("/api/Message/SendMessageToContact",data);
+}
 export{GetMessagesFromContactOfUser,
-PollingForNewMessage};   
+PollingForNewMessage,
+SendMessageToContact};   

@@ -19,9 +19,8 @@ class ConversationList extends Component {
 
       contactChosenId: "",
       showAddFriendDialog: false,
-      showCreateGroupDialog:false
+      showCreateGroupDialog: false,
     };
-
   }
 
   componentDidMount = () => {
@@ -43,20 +42,18 @@ class ConversationList extends Component {
     //   });
     // }
   }
-  handleOpenCreateGroupDialog = ()=>{
+  handleOpenCreateGroupDialog = () => {
     this.setState({ showCreateGroupDialog: true });
-  }
+  };
   handleCloseCreateGroupDialog = () => {
-    this.setState({ showCreateGroupDialog: false});
-
+    this.setState({ showCreateGroupDialog: false });
   };
   handleOpenAddFriendDialog = () => {
     this.setState({ showAddFriendDialog: true });
   };
 
   handleCloseAddFriendDialog = () => {
-    this.setState({ showAddFriendDialog: false});
-
+    this.setState({ showAddFriendDialog: false });
   };
 
   render = () => {
@@ -71,8 +68,11 @@ class ConversationList extends Component {
             key={contacts[i].id}
             action
             onClick={(e) => {
-              if (this.state.contactChosenId !== contacts[i].id)
+              if (this.state.contactChosenId !== contacts[i].id) {
                 updateChatView(contacts[i].id, e);
+                this.props.setContactInformation(contacts[i], e);
+              }
+
               this.setState({ contactChosenId: contacts[i].id });
             }}
           >
@@ -87,20 +87,25 @@ class ConversationList extends Component {
             </div>
             <div className="float-start ms-3">
               <span className="float-right">{name}</span>
-              <div className="text-muted">
-                {this.props.contacts[i].lastMessageContent}
-              </div>
+              <div className="text-muted">{contacts[i].lastMessageContent}</div>
             </div>
           </ListGroupItem>
         );
       }
-
     }
 
     return (
       <>
-      <CreateGroupDialog show={this.state.showCreateGroupDialog} handleClose={this.handleCloseCreateGroupDialog} userId={this.props.id}/>
-       <AddFriendDialog show={this.state.showAddFriendDialog} handleClose={this.handleCloseAddFriendDialog} userId={this.props.id}/>
+        <CreateGroupDialog
+          show={this.state.showCreateGroupDialog}
+          handleClose={this.handleCloseCreateGroupDialog}
+          userId={this.props.id}
+        />
+        <AddFriendDialog
+          show={this.state.showAddFriendDialog}
+          handleClose={this.handleCloseAddFriendDialog}
+          userId={this.props.id}
+        />
         <div className="conversation-list-container">
           <div className="contact-search">
             <span className="contact-search-box">
@@ -122,12 +127,20 @@ class ConversationList extends Component {
               </Button>
             </span>
             <span className="float-start ms-1">
-              <Button variant="light" onClick={this.handleOpenCreateGroupDialog}> 
-                <img src={AddGroupUserIcon} alt="" width="14 px" height="14 px" />
+              <Button
+                variant="light"
+                onClick={this.handleOpenCreateGroupDialog}
+              >
+                <img
+                  src={AddGroupUserIcon}
+                  alt=""
+                  width="14 px"
+                  height="14 px"
+                />
               </Button>
             </span>
           </div>
-          <div className="conversation-list"> 
+          <div className="conversation-list">
             <ListGroup variant="pills">{rows}</ListGroup>
           </div>
         </div>

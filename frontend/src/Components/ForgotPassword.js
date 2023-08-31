@@ -4,7 +4,7 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import { SendTokenForForgotPassword } from '../Services/userService';
-import AlertCustom from './AlertCustom';
+
 import Swal from 'sweetalert2';
 import SweetAlert2 from 'react-bootstrap-sweetalert';
 

@@ -36,6 +36,8 @@ namespace Zalo_Clone
             //Message
             CreateMap<Message, MessageContactModel>();
             CreateMap<MessageContactModel, Message>();
+            CreateMap<MessageSendModel, Message>();
+            
             //GroupRole
             CreateMap<GroupRole, GroupRoleModel>();
             CreateMap<GroupRoleModel, GroupRole>();

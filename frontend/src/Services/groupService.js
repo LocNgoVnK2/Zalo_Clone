@@ -18,7 +18,20 @@ const AddManyGroupUser = (users) => {
 const GetAllGroupChatsOfUserByUserIdAPI =  (userSrc) =>{
     return axios.get(`/api/GroupChat/GetAllGroupChatsOfUserByUserId?userId=${userSrc}`);
 }
+const RemoveGroupUserAPI=  (userSrc,idGroup) =>{
+    return axios.post(`/api/GroupUser/RemoveGroupUser?idGroup=${idGroup}&&idUser=${userSrc}`);
+}
+//api/GroupUser/GetAllUsersInGroup
+const GetAllUsersInGroupAPI =  (groupId) =>{
+    return axios.get(`/api/GroupUser/GetAllUsersInGroup?groupId=${groupId}`);
+}
+const UpdateChatLeaderAPI = (idGroup,newLeaderId) =>{
+    return axios.put(`/api/GroupChat/UpdateGroupChatLeader?id=${idGroup}&&newLeader=${newLeaderId}`);
+}
 export{CreateGroupChat,
     AddManyGroupUser,
-    GetAllGroupChatsOfUserByUserIdAPI
+    GetAllGroupChatsOfUserByUserIdAPI,
+    RemoveGroupUserAPI,
+    GetAllUsersInGroupAPI,
+    UpdateChatLeaderAPI
     };   

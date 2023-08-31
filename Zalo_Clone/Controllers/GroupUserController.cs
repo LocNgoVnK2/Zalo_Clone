@@ -12,11 +12,15 @@ namespace Zalo_Clone.Controllers
     public class GroupUserController : ControllerBase
     {
         private readonly IGroupUserService _groupUserService;
+        private readonly IGroupChatService _groupChatService;
+        private readonly IContactService _contactService;
         private readonly IMapper _mapper;
 
-        public GroupUserController(IGroupUserService groupUserService, IMapper mapper)
+        public GroupUserController(IContactService contactService, IGroupChatService groupChatService, IGroupUserService groupUserService, IMapper mapper)
         {
             _groupUserService = groupUserService;
+            _groupChatService = groupChatService;
+            _contactService = contactService;
             _mapper = mapper;
         }
 
@@ -24,8 +28,17 @@ namespace Zalo_Clone.Controllers
         public async Task<IActionResult> GetAllUsersInGroup(string groupId)
         {
             var groupUsers = await _groupUserService.GetAllUserInGroup(groupId);
-            var result = _mapper.Map<List<GroupUserModel>>(groupUsers);
-            return Ok(result);
+            List<ContactDataModel> userInGroup = new List<ContactDataModel>();
+            if (groupUsers != null)
+            {
+                foreach (var user in groupUsers)
+                {
+                    Contact contact = await _contactService.GetContactData(user.IdUser);
+                    ContactDataModel contactData = _mapper.Map<ContactDataModel>(contact);
+                    userInGroup.Add(contactData);
+                }
+            }
+            return Ok(userInGroup);
         }
         [HttpPost("AddGroupUser")]
         public async Task<IActionResult> AddGroupUser(GroupUserModel groupUserModel)
@@ -44,7 +57,8 @@ namespace Zalo_Clone.Controllers
         [HttpPost("AddManyGroupUser")]
         public async Task<IActionResult> AddManyGroupUser(GroupUserModel[] groupUserModel)
         {
-            foreach(GroupUserModel groupUser in groupUserModel){
+            foreach (GroupUserModel groupUser in groupUserModel)
+            {
                 var groupUserToAdd = _mapper.Map<GroupUser>(groupUser);
                 var success = await _groupUserService.AddGroupUser(groupUserToAdd);
                 if (!success)
@@ -52,20 +66,29 @@ namespace Zalo_Clone.Controllers
                     return BadRequest("Failed to add group user.");
                 }
             }
-                return Ok(" Many group user added successfully.");
+            return Ok(" Many group user added successfully.");
         }
 
         [HttpPost("RemoveGroupUser")]
-        public async Task<IActionResult> RemoveGroupUser(string idGroup,string idUser)
+        public async Task<IActionResult> RemoveGroupUser(string idGroup, string idUser)
         {
-            var success = await _groupUserService.RemoveGroupUser(idGroup, idUser);
-            if (success)
+            var listGroup = await _groupChatService.GetAll();
+            var isLeader = listGroup.Where(g => g.Id == idGroup && g.Leader == idUser).FirstOrDefault();
+            if (isLeader == null)
             {
-                return Ok("Group user removed successfully.");
+                var success = await _groupUserService.RemoveGroupUser(idGroup, idUser);
+                if (success)
+                {
+                    return Ok("Group user removed successfully.");
+                }
+                else
+                {
+                    return BadRequest("Failed to remove group user.");
+                }
             }
             else
             {
-                return BadRequest("Failed to remove group user.");
+                return NoContent();
             }
         }
         [HttpPut("UpdateGroupUser")]
