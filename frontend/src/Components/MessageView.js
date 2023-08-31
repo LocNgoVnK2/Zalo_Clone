@@ -31,26 +31,33 @@ function MessageView(props) {
     inputFile.current?.click();
   };
   const submitImage = (file) => {
+    console.log(file.type);
     const avatarImage = file;
     // if (avatarImage && avatarImage.type.startsWith('image/')) {
     //     fileToBase64(avatarImage, (callback) => console.log(callback));
     // }
     fileToBase64(avatarImage, (fileByBase64) => {
-      let stringBase64 = [fileByBase64.split(',')[1],fileByBase64.split(',')[1]]
+      let stringBase64 = fileByBase64.split(",")[1];
+      let messageAttachment = [
+        {
+          fileName: file.name,
+          fileType: file.type,
+          attachmentByBase64: stringBase64,
+        },
+      ];
+
       SendMessageToContact(
         userId,
         contactInformation.id,
         null,
         idMessageSrc,
-        stringBase64,
+        messageAttachment
       ).then((response) => {
         if (response.status === 200) {
-          console.log("send success");
+          setIsThereNewMessage(true);
         }
-      })}
-    );
-  
-      
+      });
+    });
   };
   const scrollToBottom = () => {
     bottomRef.current?.scrollIntoView({
@@ -76,8 +83,7 @@ function MessageView(props) {
       null
     ).then((response) => {
       if (response.status === 200) {
-        updateChatView(contactInformation.id);
-        updateConversationList();
+        setIsThereNewMessage(true);
 
         messageInput.current.value = "";
       } else {
@@ -89,8 +95,20 @@ function MessageView(props) {
     if (!userId || !contactId) return;
     GetMessagesFromContactOfUser(userId, contactId).then((response) => {
       let messageTemp = [];
+
       response.data.forEach((element) => {
         messageTemp.push(<Message message={element} userId={userId} />);
+        if (element.messageAttachments) {
+          element.messageAttachments.forEach((messageAttachment) => {
+            messageTemp.push(
+              <Message
+                message={element}
+                userId={userId}
+                messageAttachment={messageAttachment}
+              />
+            );
+          });
+        }
       });
       setMessage(messageTemp);
     });
@@ -116,8 +134,9 @@ function MessageView(props) {
     }
   }, []);
   useEffect(() => {
-    if (!contactInformation) return;
+    if (!isThereNewMessage) return;
     updateConversationList();
+    if (!contactInformation) return;
     updateChatView(contactInformation.id);
     setIsThereNewMessage(false);
   }, [isThereNewMessage]);
@@ -156,7 +175,9 @@ function MessageView(props) {
                 ref={inputFile}
                 onChange={(event) => {
                   submitImage(event.target.files[0]);
+                  event.target.value = null;
                 }}
+            
               />
               <button onClick={openFileDialog}>
                 <img src={ImageIcon} alt="" />
@@ -170,7 +191,9 @@ function MessageView(props) {
               type="text"
               placeholder="Nhập tin nhắn"
               ref={messageInput}
-              onChange={(event) => handleMessageInputChange(event.target.value)}
+              onChange={(event) => {
+                handleMessageInputChange(event.target.value);
+              }}
             />
             <button className="submit" onClick={handleSendMessage}>
               GỬI

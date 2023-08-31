@@ -15,7 +15,7 @@ namespace Infrastructure.Service
 
     public interface IMessageService
     {
-        Task<bool> SendMessageToContact(Message message, string contactId, List<string>? attachments);
+        Task<bool> SendMessageToContact(Message message, string contactId, List<MessageAttachment>? attachments);
         Task<bool> SendMessageToDoList(Message message, long taskId, List<string>? attachments);
         Task<bool> ReactToMessage(MessageReactDetail messageReactDetail);
         Task<bool> RecallMessage(long idMessage);
@@ -33,7 +33,6 @@ namespace Infrastructure.Service
         Task<bool> IsThereNewMessage(long lastMessageId, UserContact contact);
         Task<List<Contact>> GetContactsOfUnNotifiedMessage(string userId);
         Task<bool> ChangeMessageStatus(long messageId, string userReceiveId, MessageStatus status);
-
     }
 
     public class MessageService : IMessageService
@@ -90,7 +89,7 @@ namespace Infrastructure.Service
 
         public async Task<List<MessageAttachment>?> GetAttachmentsOfMessage(long idMessage)
         {
-            var rs = _messageAttachmentRepo.GetAll().Where(x => x.Id == idMessage);
+            var rs = _messageAttachmentRepo.GetAll().Where(x => x.IdMessage == idMessage);
             if (!rs.Any())
                 return null;
             return await rs.ToListAsync();
@@ -207,13 +206,17 @@ namespace Infrastructure.Service
             {
                 return await GetMessagesOfGroup(contactId);
             }
+
             var messages = _messageRepo.GetAll();
             var messageContacts = _messageReceipentRepo.GetAll();
             var joinTable = messages.Join(messageContacts, x => x.Id, y => y.MessageId, (messages, messageContacts) => new { messages, messageContacts })
                 .Where(x => (x.messages.Sender.Equals(userId) && x.messageContacts.UserId.Equals(contactId))
                 || (x.messages.Sender.Equals(contactId) && x.messageContacts.UserId.Equals(userId)))
-                .Select(x => x.messages)
-                .ToListAsync();
+                .Select(x => x.messages).ToListAsync();
+
+            // var messageAttachment = _messageAttachmentRepo.GetAll();
+            // var messageAttachmentJoinTable = messageAttachment.Join(joinTable, x=>x.IdMessage,y=>y.Id,
+            // (messageAttachment,joinTable) => new {messageAttachment,joinTable}).Select(x=>x.joinTable).ToListAsync();
             return await joinTable;
 
 
@@ -236,7 +239,7 @@ namespace Infrastructure.Service
             return await _messageRepo.GetById(id);
         }
 
-        public async Task<bool> SendMessageToContact(Message message, string contactId, List<string>? attachments)
+        public async Task<bool> SendMessageToContact(Message message, string contactId, List<MessageAttachment>? attachments)
         {
             var transaction = await _messageRepo.BeginTransaction();
             if (await contactRepository.GetById(contactId) == null)
@@ -275,12 +278,14 @@ namespace Infrastructure.Service
             }
             if (attachments != null || attachments?.Count > 0)
             {
-                foreach (var attachmentString in attachments)
+                foreach (var messageAttachment in attachments)
                 {
                     var attachment = new MessageAttachment()
                     {
-                        Id = message.Id,
-                        Attachment = Convert.FromBase64String(attachmentString)
+                        IdMessage = message.Id,
+                        Attachment = Convert.FromBase64String(messageAttachment.AttachmentByBase64!),
+                        FileName = messageAttachment.FileName,
+                        FileType = messageAttachment.FileType
                     };
                     result = await _messageAttachmentRepo.Add(attachment);
                 }

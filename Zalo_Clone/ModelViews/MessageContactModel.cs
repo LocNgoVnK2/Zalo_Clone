@@ -1,4 +1,6 @@
-﻿namespace Zalo_Clone.Models
+﻿
+using Zalo_Clone.Models;
+namespace Zalo_Clone.Models
 {
     public class MessageContactModel
     {
@@ -12,7 +14,7 @@
         public int Status { get; set; }
         public int? IdMessageSrc { get; set; } = null;
         public string? Content { get; set; }
-        public List<string>? AttachmentByBase64 { get; set; }
+        public List<MessageAttachmentModel>? MessageAttachments { get; set; }
         
     }
 }

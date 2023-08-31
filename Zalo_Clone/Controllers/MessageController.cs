@@ -47,8 +47,8 @@ namespace Zalo_Clone.Controllers
         {
             var message = mapper.Map<Message>(model);
             message.SendTime = DateTime.Now;
-            var attachmenets = model.AttachmentByBase64;
-            bool result = await messageService.SendMessageToContact(message, model.ContactId, model.AttachmentByBase64);
+            var attachmenets = mapper.Map<List<MessageAttachment>>(model.MessageAttachments);
+            bool result = await messageService.SendMessageToContact(message, model.ContactId, attachmenets);
             if (result)
             {
                 return Ok();
@@ -116,9 +116,9 @@ namespace Zalo_Clone.Controllers
             {
                 long idMessage = m.Id;
                 MessageContactModel messageGroupModel = mapper.Map<MessageContactModel>(m);
-                messageGroupModel.AttachmentByBase64 = new List<string>();
+                messageGroupModel.MessageAttachments = new List<MessageAttachmentModel>();
                 List<MessageAttachment> attachments = await messageService.GetAttachmentsOfMessage(idMessage);
-                if (attachments is null)
+                if (attachments == null)
                 {
                     result.Add(messageGroupModel);
                     continue;
@@ -126,8 +126,10 @@ namespace Zalo_Clone.Controllers
 
                 foreach (MessageAttachment attachment in attachments)
                 {
+                    var messageAttachmentModel = mapper.Map<MessageAttachmentModel>(attachment);
                     string attachmentByBase64 = Convert.ToBase64String(attachment.Attachment!);
-                    messageGroupModel.AttachmentByBase64.Add(attachmentByBase64);
+                    messageAttachmentModel.AttachmentByBase64 = attachmentByBase64;
+                    messageGroupModel.MessageAttachments.Add(messageAttachmentModel);
                 }
                 result.Add(messageGroupModel);
             }
@@ -174,9 +176,9 @@ namespace Zalo_Clone.Controllers
                 messageReceipentModel.SenderName = (await contactService.GetContactData(messageReceipentModel.Sender)).ContactName;
                 messageReceipentModel.ContactId = contactId;
                 messageReceipentModel.ContactName = (await contactService.GetContactData(contactId)).ContactName;
-                messageReceipentModel.AttachmentByBase64 = new List<string>();
+                messageReceipentModel.MessageAttachments = new List<MessageAttachmentModel>();
                 List<MessageAttachment> attachmenets = await messageService.GetAttachmentsOfMessage(idMessage);
-                if (attachmenets is null)
+                if (attachmenets == null)
                 {   
                     result.Add(messageReceipentModel);
                     continue;
@@ -184,8 +186,11 @@ namespace Zalo_Clone.Controllers
 
                 foreach (MessageAttachment attachment in attachmenets)
                 {
-                    string attachmentByBase64 = Convert.ToBase64String(attachment.Attachment);
-                    messageReceipentModel.AttachmentByBase64.Add(attachmentByBase64);
+                     var messageAttachmentModel = mapper.Map<MessageAttachmentModel>(attachment);
+                    string attachmentByBase64 = Convert.ToBase64String(attachment.Attachment!);
+                    messageAttachmentModel.AttachmentByBase64 = attachmentByBase64;
+          
+                    messageReceipentModel.MessageAttachments.Add(messageAttachmentModel);
                 }
                 result.Add(messageReceipentModel);
             }

@@ -13,8 +13,11 @@ namespace Infrastructure.Entities
     {
         [Key]
         public long Id { get; set; }
-        public byte[]? Attachment { get; set; }
-
-
+        public long IdMessage { get; set; }
+        public byte[] Attachment { get; set; }
+        public string FileName { get; set; }
+        public string FileType {get ; set;}
+        [NotMapped]
+        public string AttachmentByBase64 { get; set; }
     }
 }
