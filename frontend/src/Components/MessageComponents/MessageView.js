@@ -1,19 +1,20 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import Test from "./assets/test.png";
+import Test from "../assets/test.png";
 import Message from "./Message";
 import {
   PollingForNewMessage,
   GetMessagesFromContactOfUser,
   SendMessageToContact,
-} from "../Services/MessageServices";
-import { fileToBase64 } from "../Services/Util";
-import ImageIcon from "./assets/icon/imageIcon.png";
+} from "../../Services/MessageServices";
+import { fileToBase64 } from "../../Services/Util";
+import ImageIcon from "../assets/icon/imageIcon.png";
 import {
   GetUserContacts,
   GetContactInformationById,
-} from "../Services/userService";
-import ConversationList from "./ConversationList";
+} from "../../Services/userService";
+import ConversationList from "../ConversationList";
 import { Button, Form, FormControl } from "react-bootstrap";
+import MessageAttachment from "./MessageAttachment";
 function MessageView(props) {
   const [contacts, setContacts] = useState();
   const [contactInformation, setContactInformation] = useState();
@@ -97,11 +98,14 @@ function MessageView(props) {
       let messageTemp = [];
 
       response.data.forEach((element) => {
-        messageTemp.push(<Message message={element} userId={userId} />);
+        if(element.content){
+          messageTemp.push(<Message message={element} userId={userId} />);
+        }
+
         if (element.messageAttachments) {
           element.messageAttachments.forEach((messageAttachment) => {
             messageTemp.push(
-              <Message
+              <MessageAttachment
                 message={element}
                 userId={userId}
                 messageAttachment={messageAttachment}
@@ -204,7 +208,7 @@ function MessageView(props) {
       setIsChatting(true);
       setTimeout(() => {
         scrollToBottom();
-      }, 50);
+      }, 1000);
     }
   }, [contactInformation, message]);
   return isChatting ? (

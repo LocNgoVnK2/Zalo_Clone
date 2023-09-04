@@ -8,7 +8,8 @@
 .message-view .header{
   width: calc(100vw - 410px);
   height: 100px;
-  background-color: red;
+  background-color: white;
+  border-bottom: thin solid gray;
 }
 
 .message-view .chat-title{

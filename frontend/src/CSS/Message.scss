@@ -1,33 +1,46 @@
 .message{
+
   display: flex;
   flex-direction: column  ;
  // justify-content:space-between;
   font-size: larger;
-  padding: 15px;  
-
-  border-radius: 15px;
   min-width: 200px;
   max-width: 500px;
   min-height: fit-content;
   margin: 10px;
-  
 }
 .message-contact{
+  margin: 10px;
+  border-radius: 15px;
   background-color: white;
   align-self: flex-start;
+  box-shadow: 0 1px 2px gray;
 }
 .message-user{
+  margin: 10px;
+  border-radius: 15px;
   background-color: white;
   align-self: flex-end;
+  box-shadow: 0 1px 2px gray;
 }
 .message .contact-name{
+  margin-bottom: 10px;
   font-size: smaller;
   color: #616161;
 }
 .message .send-time{
+  margin-top: 10px;
   font-size: smaller;
   color: #616161;
 }
 .message .content{
+  max-width: 100%;
   overflow-wrap: break-word;
+}
+.attachmentButton{
+  background-color: white;
+  border: none;
+}
+.attachmentButton:hover{
+  background-color: white;
 }
