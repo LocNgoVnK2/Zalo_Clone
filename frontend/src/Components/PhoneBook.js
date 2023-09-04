@@ -19,6 +19,8 @@ import UserInforSearchedDialog from './UserInforSearchedDialog';
 import ChangeLeaderDialog from './ChangeLeaderDialog.js';
 import { useCallback } from 'react';
 import Swal from 'sweetalert2';
+// import component
+
 
 function PhoneBook(props) {
 
@@ -305,10 +307,6 @@ function PhoneBook(props) {
       }
     }
   };
-
-
-
-
   const showPopover = (user) => (
     <Popover id="popover-basic" className="custom-popover" placement="right">
       <Popover.Header as="h3">
@@ -327,6 +325,7 @@ function PhoneBook(props) {
       </Popover.Header>
     </Popover>
   );
+  
   const showPopoverGroup = (group) => (
 
     <Popover id="popover-basic" className="custom-popover" placement="right">
@@ -359,8 +358,8 @@ function PhoneBook(props) {
 
     </Popover>
   );
+  
   const renderUserList = (userList) => {
-
 
     return userList.map((user) => (
       <OverlayTrigger
@@ -392,6 +391,7 @@ function PhoneBook(props) {
       </OverlayTrigger>
     ));
   };
+
   // nhận từ các người khác send cho mình
   const renderFriendRequestToMe = (FrienRequestList) => {
     if (FrienRequestList.length === 0) {
@@ -438,6 +438,7 @@ function PhoneBook(props) {
     ));
 
   };
+  // render here
   const renderFriendRequestToOtherPeople = (FrienRequestList) => {
     if (FrienRequestList.length === 0) {
       return (
