@@ -11,7 +11,7 @@ import {
 } from "../Services/userService";
 import { GetMessagesFromContactOfUser } from "../Services/MessageServices";
 import Main from "./Main";
-
+import ToDoList from "./ToDoList";
 
 class Home extends Component {
 
@@ -80,6 +80,7 @@ class Home extends Component {
   selectionChange=(selectionFromUser)=>{
     this.setState({selection:selectionFromUser})
     
+    this.setState({selection: selectionFromUser});
   }
 
   renderContent = () => {
@@ -162,8 +163,16 @@ class Home extends Component {
           <Sidebar changeState={this.changeState} user={this.state.user} navigate={this.props.navigate} selectionChange={this.selectionChange} />
           <PhoneBook userId ={this.state.userId}/>
         </div>
+      );//todolist
+    } else if (user && this.isUserLoaded && this.state.selection === 'todolist') {
+      return (
+        <div>
+          <Sidebar changeState={this.changeState} user={this.state.user} navigate={this.props.navigate} selectionChange={this.selectionChange} />
+          <ToDoList userId ={this.state.userId}></ToDoList>
+        
+        </div>
       );
-    } else {
+    }else{
       return this.renderContent();
     }
   };

@@ -118,7 +118,7 @@ class Sidebar extends Component {
                 onClick={() => {
                   this.props.selectionChange("default");
                   this.props.changeState(HomeState.Message);
-                  alert(HomeState.Message);
+                  
                 }}
               >
                 <img src={ChatIcon} className="icon" alt="" />
@@ -130,7 +130,7 @@ class Sidebar extends Component {
               >
                 <img src={PhonebookIcon} className="icon" alt="" />
               </SidebarMenu.Nav.Link>
-              <SidebarMenu.Nav.Link eventKey="3" className="sidebar-tabs">
+              <SidebarMenu.Nav.Link eventKey="3" className="sidebar-tabs" onClick={() => this.props.selectionChange('todolist')}>
                 <img src={TodoIcon} className="icon" alt="" />
               </SidebarMenu.Nav.Link>
             </div>

@@ -6,6 +6,7 @@ import Button from 'react-bootstrap/Button';
 import { loginApi } from '../Services/userService';
 import { Link } from 'react-router-dom';
 import { getuserApi } from '../Services/userService';
+import Swal from 'sweetalert2';
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -28,12 +29,18 @@ class Login extends Component {
   jumpToSignUp = () => {
     this.props.navigate("/signup");
   }
-  jumpToForgotPassword= () => {
+  jumpToForgotPassword = () => {
     this.props.navigate("/forgotPassword");
   }
   handleLogin = async () => {
     if (!this.state.email || !this.state.password) {
-      alert("Please fill in all fields");
+
+      Swal.fire({
+        icon: 'warning',
+        title: 'Hãy nhập đầy đủ các trường',
+        showConfirmButton: false,
+        timer: 1500
+      });
       return;
     }
     try {
@@ -41,19 +48,34 @@ class Login extends Component {
       if (res.data && res.data.token) {
         localStorage.setItem('token', res.data.token);
         this.props.navigate("/home");
-      } else {
-          alert("Invalid account information");
       }
 
     } catch (error) {
       if (error.response && error.response.status === 400) {
         alert(error.response.data.error);
       } else if (error.response && error.response.status === 404) {
-        alert("Account not found");
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Sai thông tin tải khoản',
+          showConfirmButton: false,
+          timer: 1500
+        });
       } else if (error.response && error.response.status === 500) {
-        alert("Server error");
+
+        Swal.fire({
+          icon: 'error',
+          title: 'Có lỗi ở server xảy ra.',
+          showConfirmButton: false,
+          timer: 1500
+        });
       } else {
-        alert("An error occurred");
+        Swal.fire({
+          icon: 'error',
+          title: 'Có lỗi gì đó xảy ra.',
+          showConfirmButton: false,
+          timer: 1500
+        });
       }
       return false;
     }

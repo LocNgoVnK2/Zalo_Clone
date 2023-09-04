@@ -14,12 +14,14 @@ namespace Zalo_Clone.Controllers
         private readonly IMapper _mapper;
         private readonly IGroupChatService _groupChatService;
         private readonly IGroupUserService _groupUserService;
+        private readonly IContactService  _contactService;
 
-        public GroupChatController(IMapper mapper, IGroupChatService groupChatService, IGroupUserService groupUserService)
+        public GroupChatController(IMapper mapper,IContactService  contactService, IGroupChatService groupChatService, IGroupUserService groupUserService)
         {
             _mapper = mapper;
             _groupChatService = groupChatService;
             _groupUserService = groupUserService;
+            _contactService = contactService;
         }
         [HttpPost("CreateGroupChat")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -27,8 +29,10 @@ namespace Zalo_Clone.Controllers
         public async Task<IActionResult> CreateGroupChat(GroupChatModel model)
         {
             GroupChat groupChat = _mapper.Map<GroupChat>(model);
+            
             try
             {
+
                 string result = await _groupChatService.AddGroupChat(groupChat, model.imageByBase64);
 
                 if (result!=null)
@@ -91,6 +95,34 @@ namespace Zalo_Clone.Controllers
                 return Ok();
             else
                 return NotFound("Group chat update fail");
+        }
+        [HttpGet("GetAllGroupChatsOfUserByUserId")]
+        public async Task<IActionResult> GetAllGroupChatsOfUserByUserId(string userId)
+        {
+            List<GroupChat> groupChats = await _groupChatService.GetAll();
+
+            List<GroupUser> groupUsers = await _groupUserService.GetAllGroupsOfUser(userId);
+            List<GroupChatModel> result = new List<GroupChatModel>();
+           
+            foreach (var groupUser in groupUsers)
+            {
+                GroupChat groupChat = groupChats.Where(e =>e.Id == groupUser.IdGroup).FirstOrDefault();
+                var groupChatModel = _mapper.Map<GroupChatModel>(groupChat);
+                Contact contact = await _contactService.GetContactData(groupUser.IdGroup);
+                byte[] imageBytes = contact.Avatar
+                !;
+                groupChatModel.Name = contact.ContactName;
+                groupChatModel.idGroup = groupChat.Id;
+                if (imageBytes != null)
+                {
+                    string imageBase64 = Convert.ToBase64String(imageBytes);
+                    groupChatModel.imageByBase64 = imageBase64;
+                }
+                result.Add(groupChatModel);
+            }
+
+            return Ok(result);
+
         }
     }
 }

@@ -9,6 +9,7 @@ import Test from "./assets/test.png";
 import { GetListFriend } from '../Services/friendService';
 import UserAvatar from "./assets/friends.png";
 import { CreateGroupChat,AddManyGroupUser } from '../Services/groupService';
+import Swal from 'sweetalert2';
 class CreateGroupDialog extends Component {
     constructor(props) {
         super(props);
@@ -40,7 +41,7 @@ class CreateGroupDialog extends Component {
             const listSelectedUser = prevState.listSelectedUser.includes(friend)
                 ? prevState.listSelectedUser.filter(f => f !== friend)
                 : [...prevState.listSelectedUser, friend];
-            console.log(listSelectedUser);
+            
             return { listSelectedUser };
 
         });
@@ -66,7 +67,14 @@ class CreateGroupDialog extends Component {
                 })); 
                 let addUserIntoGrRes = await AddManyGroupUser(usersToAdd);
                 if (addUserIntoGrRes) {
-                    alert("Tạo nhóm và thêm thành viên thành công!");
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Tạo nhóm thành công',
+                        showConfirmButton: true,
+                        timer: 1500
+                    }).then(() => {
+                        window.location.reload();
+                    });
                 }
             }
         }

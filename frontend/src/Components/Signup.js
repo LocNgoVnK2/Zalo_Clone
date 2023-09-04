@@ -4,7 +4,9 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import { signupApi } from "../Services/userService";
-import AlertCustom from "./AlertCustom";
+
+import Swal from "sweetalert2";
+import SweetAlert2 from 'react-bootstrap-sweetalert';
 class Signup extends Component {
     constructor(props) {
         super(props);
@@ -48,16 +50,21 @@ class Signup extends Component {
     handleGenderChange(event) {
         this.setState({ gender: event.target.value });
     }
-    handleDOBChange(event){
+    handleDOBChange(event) {
         this.setState({ dob: event.target.value });
     }
     handleSignup = async () => {
         if (!this.state.email || !this.state.password || !this.state.username || !this.state.phonenumber || !this.state.gender || !this.state.dob) {
-            alert("Please fill in all fields");
+            Swal.fire({
+                icon: 'warning',
+                title: "Vui lòng nhập đầy đủ các trường",
+                showConfirmButton: false,
+                timer: 1500
+            });
             return;
         }
         try {
-            let res = await signupApi(this.state.email, this.state.password, this.state.username, this.state.phonenumber, this.state.gender,this.state.dob);
+            let res = await signupApi(this.state.email, this.state.password, this.state.username, this.state.phonenumber, this.state.gender, this.state.dob);
             if (res) {
 
                 this.setState({ showAlert: true }, () => {
@@ -66,9 +73,15 @@ class Signup extends Component {
                     }, 60000);
                 });
 
-            } 
+            }
         } catch (error) {
-            alert("An error occurred");
+
+            Swal.fire({
+                icon: 'error',
+                title: "Có lỗi xảy ra",
+                showConfirmButton: false,
+                timer: 1500
+            });
             return false;
         }
     };
@@ -90,7 +103,15 @@ class Signup extends Component {
                 <div className="container">
                     <div className="row justify-content-center">
                         {this.state.showAlert && (
-                            <AlertCustom message="Bạn đã đăng ký thành công. Cần chuyển sang trang xác thực và truy cập vào email để chấp nhận xác thực, sau 60s thông báo này và phím chuyển trang sẽ biến mất bạn cần đăng nhập vào để chuyến đến trang xác nhận." variant="warning" dismissTime={50000} />
+                            <SweetAlert2
+                                success
+                                title="Đăng ký thành công vui lòng kiểm tra Gmail để sang trang xác thực"
+                                onConfirm={() => {
+                                    this.setState({ showAlert: false });
+                                }}
+                                timeout={1500}
+                                show={true}
+                            />
                         )}
                         <div className="col-lg-6 col-md-8 col-sm-12">
                             <h1 style={{ fontSize: '1.1em', marginTop: '0px', marginBottom: '100px', textAlign: "center" }}>
