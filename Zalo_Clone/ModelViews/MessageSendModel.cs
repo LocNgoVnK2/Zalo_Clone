@@ -1,4 +1,6 @@
-﻿namespace Zalo_Clone.Models
+﻿using Infrastructure.Entities;
+
+namespace Zalo_Clone.Models
 {
     public class MessageSendModel
     {
@@ -7,7 +9,7 @@
         public string ContactId { get; set; }
         public int? IdMessageSrc { get; set; } = null;
         public string? Content { get; set; }
-        public List<string>? AttachmentByBase64 { get; set; }
+        public List<MessageAttachmentModel>? MessageAttachments { get; set; }
         
     }
 }
