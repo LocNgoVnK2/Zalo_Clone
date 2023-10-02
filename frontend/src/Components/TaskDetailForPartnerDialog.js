@@ -193,7 +193,7 @@ function TaskDetailForPartnerDialog(props) {
                     </Col>
                     <Col md={4}>
                         <div className='setup-site-container' >
-                            <div className='right-column-section' style={{ height: '70px', backgroundColor: 'red' }}>
+                            <div className='right-column-section' style={{ height: '70px'}}>
                                 <div className='label-status'>
                                     <span className='label-status-text'>
                                         Trạng thái
@@ -208,7 +208,7 @@ function TaskDetailForPartnerDialog(props) {
                                     </div>
                                 </div>
                             </div>
-                            <div className='right-column-section' style={{ height: '85px', backgroundColor: 'white' }}>
+                            <div className='right-column-section' style={{ height: '85px' }}>
                                 <div className='label-status'>
                                     <span className='label-status-text'>
                                         Ngày hết hạn
@@ -234,7 +234,7 @@ function TaskDetailForPartnerDialog(props) {
 
                                 </div>
                             </div>
-                            <div className='right-column-section' style={{ height: '80px', backgroundColor: 'green' }}>
+                            <div className='right-column-section' style={{ height: '80px'}}>
                                 <div className='label-status'>
                                     <span className='label-status-text'>
                                         Giao cho
@@ -253,7 +253,7 @@ function TaskDetailForPartnerDialog(props) {
                                 </OverlayTrigger>
 
                             </div>
-                            <div className='right-column-section' style={{ height: '260px', backgroundColor: 'yellow' }}>
+                            <div className='right-column-section' style={{ height: '260px' }}>
                                 <div className='label-status'>
                                     <span className='label-status-text'>
                                         Tác vụ
