@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import avatar from "./assets/test.png";
@@ -6,137 +6,126 @@ import UserAvatar from "./assets/friends.png";
 import background from './assets/background-may-dep-cho-khai-giang.jpg';
 import { UpdateUserInformationApi } from '../Services/userService';
 import Swal from 'sweetalert2';
-class UserProfileDialog extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
 
-            updateDialog: false,
-            userName: this.props.user.userName,
-            gender: this.props.user.gender,
-            dateOfBirth: this.props.user.dateOfBirth,
-            avatarImageToLoad:'data:image/jpeg;base64,'+ this.props.user.avatar,
-            backgroundImageToload:'data:image/jpeg;base64,'+ this.props.user.background,
-            avatarImage: '',
-            backgroundImage: ''
-        }
-        this.handleUserNameChange = this.handleUserNameChange.bind(this);
-        this.handleGenderChange = this.handleGenderChange.bind(this);
-        this.handleDateOfBirthChange = this.handleDateOfBirthChange.bind(this);
-        this.handleAvatarChange = this.handleAvatarChange.bind(this);
-        this.handleBackgroundChange = this.handleBackgroundChange.bind(this);
-    }
-    handleAvatarChange = (event) => {
+function UserProfileDialog(props) {
+    const [updateDialog, setUpdateDialog] = useState(false);
+    const [userName, setUserName] = useState(props.user.userName);
+    const [gender, setGender] = useState(props.user.gender);
+    const [dateOfBirth, setDateOfBirth] = useState(props.user.dateOfBirth);
+    const [avatarImageToLoad, setAvatarImageToLoad] = useState('data:image/jpeg;base64,' + props.user.avatar);
+    const [backgroundImageToload, setBackgroundImageToload] = useState('data:image/jpeg;base64,' + props.user.background);
+    const [avatarImage, setAvatarImage] = useState('');
+    const [backgroundImage, setBackgroundImage] = useState('');
+
+    const handleAvatarChange = (event) => {
         const avatarImage = event.target.files[0];
         if (avatarImage && avatarImage.type.startsWith('image/')) {
-            this.getBase64(avatarImage, (result) => {
-                this.setState({ avatarImage: result });
+            getBase64(avatarImage, (result) => {
+                setAvatarImage(result);
             });
         }
     };
 
-    handleBackgroundChange = (event) => {
+    const handleBackgroundChange = (event) => {
         const backgroundImage = event.target.files[0];
         if (backgroundImage && backgroundImage.type.startsWith('image/')) {
-            this.getBase64(backgroundImage, (result) => {
-                this.setState({ backgroundImage: result }, () => {
-                    console.log("Background Image State:", this.state.backgroundImage);
-                });
+            getBase64(backgroundImage, (result) => {
+                setBackgroundImage(result);
             });
         }
     };
 
-    getBase64(file, cb) {
+    const getBase64 = (file, cb) => {
         let reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = function () {
             cb(reader.result);
-            
         };
         reader.onerror = function (error) {
             console.log('Error: ', error);
         };
-    }
-    handleOpenDialog = () => {
-        this.setState({ updateDialog: true });
     };
-    handleClose = () => {
-        const { handleClose } = this.props;
+
+    const handleOpenDialog = () => {
+        setUpdateDialog(true);
+    };
+
+    const handleClose = () => {
+        const { handleClose } = props;
         if (handleClose) {
             handleClose();
         }
-        this.setState({ updateDialog: false, avatarImage: '',backgroundImage: ''});
-        window.location.reload();
+        setUpdateDialog(false);
+        setAvatarImage('');
+        setBackgroundImage('');
+        //window.location.reload();
     };
 
-    handleUserNameChange = (event) => {
-        this.setState({ userName: event.target.value });
+    const handleUserNameChange = (event) => {
+        setUserName(event.target.value);
     };
 
-    handleGenderChange = (event) => {
-        this.setState({ gender: event.target.value });
+    const handleGenderChange = (event) => {
+        setGender(event.target.value);
     };
 
-    handleDateOfBirthChange = (event) => {
-        this.setState({ dateOfBirth: event.target.value });
+    const handleDateOfBirthChange = (event) => {
+        setDateOfBirth(event.target.value);
     };
-    handleSubmit = async () => {
-        
+
+    const handleSubmit = async () => {
         var base64StringAvatar = null;
         var base64StringBackGround = null;
-        
 
-        if (this.state.avatarImage) {
-            var avatar = this.state.avatarImage;
+        if (avatarImage) {
+            var avatar = avatarImage;
             base64StringAvatar = avatar.split(',')[1];
         }
-        if (this.state.backgroundImage) {
-            var background = this.state.backgroundImage;
+        if (backgroundImage) {
+            var background = backgroundImage;
             base64StringBackGround = background.split(',')[1];
         }
-        
+
         try {
-            
-            UpdateUserInformationApi(this.props.user.id
-                , this.props.user.email
-                , this.state.userName
-                , this.state.gender
-                , this.state.dateOfBirth
-                , base64StringAvatar
-                , base64StringBackGround).then(() => {this.render()})
-                
+            console.log(base64StringAvatar);
+            await UpdateUserInformationApi(
+                props.user.id,
+                props.user.email,
+                userName,
+                gender,
+                dateOfBirth,
+                base64StringAvatar,
+                base64StringBackGround
+            ).then(() => {
+                // You don't need to call render() in functional components
+            });
         } catch (error) {
-            if (error.response ) {
+            if (error.response) {
                 Swal.fire({
                     icon: 'warning',
                     title: error.response.data.error,
                     showConfirmButton: false,
                     timer: 1500
-                  });
-            
+                });
             } else {
                 Swal.fire({
                     icon: 'warning',
                     title: 'Có lỗi xảy ra',
                     showConfirmButton: false,
                     timer: 1500
-                  });
+                });
             }
         }
-       
-    }
-    
-    render() {
-        const { show, handleClose } = this.props;
+    };
 
-        
-        if (this.state.updateDialog) {
-            return (<Modal show={this.state.updateDialog} onHide={this.handleClose} dialogClassName="custom-dialog">
-                <Modal.Header closeButton >
-                    <Modal.Title >Cập nhật thông tin tài khoản</Modal.Title>
+    if (updateDialog) {
+        return (
+            <Modal show={updateDialog} onHide={handleClose} dialogClassName="custom-dialog">
+                <Modal.Header closeButton>
+                    <Modal.Title>Cập nhật thông tin tài khoản</Modal.Title>
                 </Modal.Header>
                 <Modal.Body className="custom-dialog__body">
-                    <form onSubmit={this.handleSubmit}>
+                    <form onSubmit={handleSubmit}>
                         <div className="custom-dialog__profile-photo" style={{ height: '450px' }}>
                             <div style={{ position: 'relative', marginBottom: '10px' }}>
                                 {/* Avatar Image */}
@@ -145,18 +134,16 @@ class UserProfileDialog extends Component {
                                         alt="User's cover"
                                         crossOrigin="Anonymous"
                                         style={{ cursor: 'pointer', width: '466.4px', height: '310.95px', zIndex: 2 }}
-                                        src={ this.state.backgroundImage ? this.state.backgroundImage : this.props.user.background ? this.state.backgroundImageToload : background}
+                                        src={backgroundImage ? backgroundImage : props.user.background ? backgroundImageToload : background}
                                     />
                                 </label>
                                 <div className="avatar-container">
                                     <label htmlFor="avatarInput">
-
                                         <img
                                             alt="User's avatar"
                                             className="a-child"
-                                            src={this.state.avatarImage ? this.state.avatarImage : this.props.user.avatar ? this.state.avatarImageToLoad : avatar}
+                                            src={avatarImage ? avatarImage : props.user.avatar ? avatarImageToLoad : avatar}
                                         />
-
                                     </label>
                                 </div>
                                 <input
@@ -164,7 +151,7 @@ class UserProfileDialog extends Component {
                                     type="file"
                                     accept="image/*"
                                     style={{ display: 'none', zIndex: 1 }}
-                                    onChange={this.handleAvatarChange}
+                                    onChange={handleAvatarChange}
                                 />
                                 {/* Background Image */}
                                 <input
@@ -172,7 +159,7 @@ class UserProfileDialog extends Component {
                                     type="file"
                                     accept="image/*"
                                     style={{ display: 'none' }}
-                                    onChange={this.handleBackgroundChange}
+                                    onChange={handleBackgroundChange}
                                 />
                             </div>
 
@@ -187,8 +174,8 @@ class UserProfileDialog extends Component {
                                         tabIndex="1"
                                         placeholder="Nhập tên hiển thị"
                                         className="user-name-input__field"
-                                        value={this.state.userName}
-                                        onChange={this.handleUserNameChange}
+                                        value={userName}
+                                        onChange={handleUserNameChange}
                                     />
                                 </span>
                                 <div className="display-name">
@@ -202,10 +189,9 @@ class UserProfileDialog extends Component {
                                 </div>
                             </div>
                         </div>
-                        <div >
-
+                        <div>
                             <div>
-                                <p className="custom-dialog__detail-header" >
+                                <p className="custom-dialog__detail-header">
                                     Thông tin cá nhân
                                 </p>
                                 <div style={{ marginBottom: '22px' }}>
@@ -215,13 +201,13 @@ class UserProfileDialog extends Component {
                                         </label>
                                         <div>
                                             <label>
-                                                <input type="radio" value="nam" checked={this.state.gender === "nam"} onChange={this.handleGenderChange} />
+                                                <input type="radio" value="nam" checked={gender === "nam"} onChange={handleGenderChange} />
                                                 Nam
                                             </label>
                                         </div>
                                         <div>
                                             <label>
-                                                <input type="radio" value="nu" checked={this.state.gender === "nu"} onChange={this.handleGenderChange} />
+                                                <input type="radio" value="nu" checked={gender === "nu"} onChange={handleGenderChange} />
                                                 Nữ
                                             </label>
                                         </div>
@@ -229,7 +215,7 @@ class UserProfileDialog extends Component {
                                     <div className="custom-dialog__details-line">
                                         <label>
                                             Ngày sinh :
-                                            <input type="datetime-local" value={this.state.dateOfBirth} onChange={this.handleDateOfBirthChange} />
+                                            <input type="datetime-local" value={dateOfBirth} onChange={handleDateOfBirthChange} />
                                         </label>
                                     </div>
                                 </div>
@@ -238,25 +224,22 @@ class UserProfileDialog extends Component {
                                 <Button type='submit' variant="primary center" value="Update">
                                     Cập nhật thông tin
                                 </Button>
-
                             </div>
-
                         </div>
                     </form>
                 </Modal.Body>
                 <Modal.Footer className="custom-dialog__footer">
-                    <Button variant="secondary" onClick={this.handleClose}>
+                    <Button variant="secondary" onClick={handleClose}>
                         Đóng
                     </Button>
                 </Modal.Footer>
-            </Modal>);
-        }
-
+            </Modal>
+        );
+    } else {
         return (
-            <Modal show={show} onHide={handleClose} dialogClassName="custom-dialog">
-                <Modal.Header closeButton >
-                    <Modal.Title >Thông tin tài khoản</Modal.Title>
-
+            <Modal show={props.show} onHide={props.handleClose} dialogClassName="custom-dialog">
+                <Modal.Header closeButton>
+                    <Modal.Title>Thông tin tài khoản</Modal.Title>
                 </Modal.Header>
                 <Modal.Body className="custom-dialog__body">
                     <div className="custom-dialog__profile-photo">
@@ -265,52 +248,51 @@ class UserProfileDialog extends Component {
                                 alt="User's cover"
                                 crossOrigin="Anonymous"
                                 style={{ cursor: 'pointer', width: ' 466.4px', height: '310.95px' }}
-                                src={this.props.user.background?this.state.backgroundImageToload:background}
+                                src={props.user.background ? backgroundImageToload : background}
                             />
                             <div className="avatar-container">
                                 <img
                                     alt="User's avatar"
                                     className="a-child"
-                                    src={this.props.user.avatar?this.state.avatarImageToLoad:UserAvatar}
+                                    src={props.user.avatar ? avatarImageToLoad : UserAvatar}
                                 />
                             </div>
                         </div>
                         <div className="user-name-container">
                             <div>
-                                <strong>{this.props.user.userName}</strong>
+                                <strong>{props.user.userName}</strong>
                             </div>
                         </div>
                     </div>
                     <div style={{ flex: '1 1 0%' }}>
-                        <p className="custom-dialog__detail-header" >
+                        <p className="custom-dialog__detail-header">
                             Thông tin cá nhân
                         </p>
                         <div>
                             <div style={{ marginBottom: '22px' }}>
                                 <div className="custom-dialog__details-line">
-                                    <span >Điện thoại</span>
-                                    <span style={{ position: 'relative' }}> : +{this.props.user.phoneNumber}</span>
-
+                                    <span>Điện thoại</span>
+                                    <span style={{ position: 'relative' }}> : +{props.user.phoneNumber}</span>
                                 </div>
                                 <div className="custom-dialog__details-line">
-                                    <span >Giới tính</span>
-                                    <span >: {this.props.user.gender === 'nam' ? 'Nam' : 'Nữ'}</span>
+                                    <span>Giới tính</span>
+                                    <span>: {props.user.gender === 'nam' ? 'Nam' : 'Nữ'}</span>
                                 </div>
                                 <div className="custom-dialog__details-line">
-                                    <span >Ngày sinh</span>
-                                    <span style={{ position: 'relative' }}>: {this.props.user.dateOfBirth}</span>
+                                    <span>Ngày sinh</span>
+                                    <span style={{ position: 'relative' }}>: {props.user.dateOfBirth}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div className="custom-dialog__actions" style={{ textAlign: 'center' }}>
-                        <Button variant="primary center" onClick={this.handleOpenDialog}>
+                        <Button variant="primary center" onClick={handleOpenDialog}>
                             Cập nhật thông tin
                         </Button>
                     </div>
                 </Modal.Body>
                 <Modal.Footer className="custom-dialog__footer">
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button variant="secondary" onClick={props.handleClose}>
                         Đóng
                     </Button>
                 </Modal.Footer>

@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
 import ConversationList from "./ConversationList";
 import PhoneBook from "./PhoneBook";
@@ -13,33 +13,26 @@ import { GetMessagesFromContactOfUser } from "../Services/MessageServices";
 import Main from "./Main";
 import ToDoList from "./ToDoList";
 
-class Home extends Component {
+function Home(props) {
+  const [email, setEmail] = useState("");
+  const [userId, setUserId] = useState("");
+  const [user, setUser] = useState(null);
+  const [messageContact, setMessageContact] = useState([]);
+  const [contactInformation, setContactInformation] = useState({});
+  const [selection, setSelection] = useState("default");
+  const [contacts, setContacts] = useState([]);
+  const [currentState, setCurrentState] = useState(HomeState.Message);
+  const [isUserLoaded, setIsUserLoaded] = useState(false);
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      email: "",
-      userId: "",
-      user: null,
-      messageContact: [],
-      contactInformation: {},
-      selection: 'default',
-      contacts: []
-
-    };
-    this.currentState = HomeState.Message;
-    this.isUserLoaded = false;
-  }
-
-  CallApiDataforUser = async (email) => {
+  const CallApiDataforUser = async (email) => {
     let userData = await getuserApi(email);
-
     if (userData) {
-      this.setState({ userId: userData.data.id, user: userData.data });
+      setUserId(userData.data.id);
+      setUser(userData.data);
     }
   };
 
-  componentDidMount = () => {
+  useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       const user = jwtDecode(token);
@@ -47,43 +40,35 @@ class Home extends Component {
         user[
           "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"
         ];
+      setEmail(emailU);
       getuserApi(emailU).then((response) => {
-        this.setState({ email: emailU, userId: response.data.id });
+        setUserId(response.data.id);
       });
-
-      // this.setState({ email: emailU, userId: (await getuserApi(emailU)).id });
-      this.state.userId && this.updateConversationList();
-
     }
-    
-  };
-  componentDidUpdate = async (prevProps, prevState) => {
-    if (prevState.email !== this.state.email && !this.isUserLoaded) {
-      await this.CallApiDataforUser(this.state.email);
-      this.isUserLoaded = true;
-    }
-    if (prevState.userId !== this.state.userId) {
-//      this.updateConversationList();
-    }
-  };
+  }, []);
 
+  useEffect(() => {
+    if (email !== "" && !isUserLoaded) {
+      CallApiDataforUser(email);
+      setIsUserLoaded(true);
+    }
+  }, [email, isUserLoaded]);
 
-  
-  updateContact = (contactId) => {
+  const updateContact = (contactId) => {
     GetContactInformationById(contactId).then((response) => {
-      this.setState({ contactInformation: response.data });
+      setContactInformation(response.data);
     });
   };
-  changeState = (state) => {
-    this.currentState = state;
-  };
-  selectionChange=(selectionFromUser)=>{
-    this.setState({selection:selectionFromUser})
-    
-    this.setState({selection: selectionFromUser});
-  }
 
-  renderContent = () => {
+  const handleStateChange = (state) => {
+    setCurrentState(state);
+  };
+
+  const selectionChange = (selectionFromUser) => {
+    setSelection(selectionFromUser);
+  };
+
+  const renderContent = () => {
     const token = localStorage.getItem("token");
     if (token) {
       return <></>;
@@ -128,57 +113,49 @@ class Home extends Component {
     }
   };
 
-  render = () => {
-    // let conversation = (
-    //   <ConversationList
-    //     contacts={this.state.contacts}
-    //     updateChatView={this.updateChatView}
-    //     id={this.state.userId}
-    //     updateContact={this.updateContact}
-    //   />
-    // );
-    const { user } = this.state;
-    if (user && this.isUserLoaded && this.state.selection === 'default') {
-      return (
+  return (
+    <>
+      {user && isUserLoaded && selection === "default" && (
         <div>
-            <Sidebar
-            changeState={this.changeState}
-            user={this.state.user}
-            navigate={this.props.navigate} selectionChange={this.selectionChange}
+          <Sidebar
+            changeState={handleStateChange}
+            user={user}
+            navigate={props.navigate}
+            selectionChange={selectionChange}
           />
-          {/* {//conversation} */}
-          <Main
-            // messageContact={this.state.messageContact}
-            // contactInformation={this.state.contactInformation}
-             userId={this.state.userId}
-            // updateConversationList={this.updateConversationList}
-            // updateChatView={this.updateChatView}
-            state = {this.currentState}
+          <Main userId={userId} state={currentState} />
+        </div>
+      )}
+      {user && isUserLoaded && selection === "phonebook" && (
+        <div>
+          <Sidebar
+            changeState={handleStateChange}
+            user={user}
+            navigate={props.navigate}
+            selectionChange={selectionChange}
           />
+          <PhoneBook userId={userId} />
         </div>
-      );
-    } else if (user && this.isUserLoaded && this.state.selection === 'phonebook') {
-      return (
+      )}
+      {user && isUserLoaded && selection === "todolist" && (
         <div>
-          <Sidebar changeState={this.changeState} user={this.state.user} navigate={this.props.navigate} selectionChange={this.selectionChange} />
-          <PhoneBook userId ={this.state.userId}/>
+          <Sidebar
+            changeState={handleStateChange}
+            user={user}
+            navigate={props.navigate}
+            selectionChange={selectionChange}
+          />
+          <ToDoList userId={userId}></ToDoList>
         </div>
-      );//todolist
-    } else if (user && this.isUserLoaded && this.state.selection === 'todolist') {
-      return (
-        <div>
-          <Sidebar changeState={this.changeState} user={this.state.user} navigate={this.props.navigate} selectionChange={this.selectionChange} />
-          <ToDoList userId ={this.state.userId}></ToDoList>
-        
-        </div>
-      );
-    }else{
-      return this.renderContent();
-    }
-  };
+      )}
+      {!user && isUserLoaded && renderContent()}
+    </>
+  );
 }
+
 export default Home;
-export const HomeState  = {
+
+export const HomeState = {
   None: "none",
   Message: "Message",
 };

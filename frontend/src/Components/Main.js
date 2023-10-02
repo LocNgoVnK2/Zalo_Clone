@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Test from "./assets/test.png";
-import Message from "./Message";
+import Message from "./MessageComponents/Message";
 import Home, {HomeState} from "./Home";
-import MessageView from "./MessageView";
+import MessageView from "./MessageComponents/MessageView";
 function Main(props) {
   const [contactName, setContactName] = useState();
   const [contactInformation, setContactInformation] = useState();
