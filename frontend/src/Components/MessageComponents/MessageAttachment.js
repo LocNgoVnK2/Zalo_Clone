@@ -15,6 +15,7 @@ function MessageAttachment(props) {
   const [fileType, setFileType] = useState(null);
   const [isImage, setIsImage] = useState(null);
   const [content, setContent] = useState(null);
+  const innerRef = props.innerRef;
   const initMessageInformation = () => {
     setIsUserMessage(props.message.sender === props.userId);
   };
@@ -66,7 +67,7 @@ function MessageAttachment(props) {
       </>
     );
     let messageAttachment = isUserMessage ? (
-      <MessageUser
+      <MessageUser innerRef={innerRef}
         type="button"
         additionalClassName="attachmentButton"
         properties={{ onClick: downLoadFile }}
@@ -74,7 +75,7 @@ function MessageAttachment(props) {
         {content}
       </MessageUser>
     ) : (
-      <MessageContact
+      <MessageContact innerRef={innerRef}
         type="button"
         additionalClassName="attachmentButton"
         properties={{ onClick: downLoadFile }}

@@ -1,9 +1,12 @@
 import axios from "./customize-axios";
-const GetMessagesFromContactOfUser = (userId, contactId) => {
+const GetMessagesFromContactOfUser = (userId, contactId, atIndex) => {
 
-    return axios.get(`/api/Message/GetMessagesFromContactOfUser?userId=${userId}&contactId=${contactId}`);
+    return axios.get(`/api/Message/GetMessagesFromContactOfUser?userId=${userId}&contactId=${contactId}&atIndex=${atIndex}`);
 }
+const GetUnNotifiedMessagesFromContactOfUser = (userId, contactId,) => {
 
+    return axios.get(`/api/Message/GetUnNotifiedMessagesFromContactOfUser?userId=${userId}&contactId=${contactId}`);
+}
 const PollingForNewMessage = (userId) => {
 
     return axios.get(`/api/Message/GetContactsOfUnNotifiedMessage?userId=${userId}`);
@@ -20,4 +23,5 @@ const SendMessageToContact = (userId,contactId,content,idMessageSrc,messageAttac
 }
 export{GetMessagesFromContactOfUser,
 PollingForNewMessage,
-SendMessageToContact};   
+SendMessageToContact,
+GetUnNotifiedMessagesFromContactOfUser};   

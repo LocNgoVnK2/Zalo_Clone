@@ -18,8 +18,8 @@ namespace Zalo_Clone.Controllers
         private readonly IMapper mapper;
         private readonly IContactService contactService;
         public MessageController(IMessageService messageService
-        ,IMapper mapper
-        ,IContactService contactServices)
+        , IMapper mapper
+        , IContactService contactServices)
         {
             this.messageService = messageService;
             this.mapper = mapper;
@@ -163,9 +163,53 @@ namespace Zalo_Clone.Controllers
         }
 
         [HttpGet("GetMessagesFromContactOfUser")]
-        public async Task<IActionResult> GetMessagesOfContactUser(string userId, string contactId)
+        public async Task<IActionResult> GetMessagesOfContactUser(string userId, string contactId, int atIndex = 0)
         {
+            
             var messages = await messageService.GetMessagesOfUsersContact(userId, contactId);
+            if (messages == null)
+                return BadRequest();
+            if(atIndex >=  messages.Count()){
+                return NoContent();
+            }
+            var result = new List<MessageContactModel>();
+            foreach (var m in messages)
+            {
+                long idMessage = m.Id;
+                MessageContactModel messageReceipentModel = mapper.Map<MessageContactModel>(m);
+                messageReceipentModel.SenderName = (await contactService.GetContactData(messageReceipentModel.Sender)).ContactName;
+                messageReceipentModel.ContactId = contactId;
+                messageReceipentModel.ContactName = (await contactService.GetContactData(contactId)).ContactName;
+                messageReceipentModel.MessageAttachments = new List<MessageAttachmentModel>();
+                List<MessageAttachment> attachmenets = await messageService.GetAttachmentsOfMessage(idMessage);
+                if (attachmenets == null)
+                {
+                    result.Add(messageReceipentModel);
+                    continue;
+                }
+
+                foreach (MessageAttachment attachment in attachmenets)
+                {
+                    var messageAttachmentModel = mapper.Map<MessageAttachmentModel>(attachment);
+                    string attachmentByBase64 = Convert.ToBase64String(attachment.Attachment!);
+                    messageAttachmentModel.AttachmentByBase64 = attachmentByBase64;
+
+                    messageReceipentModel.MessageAttachments.Add(messageAttachmentModel);
+                }
+                result.Add(messageReceipentModel);
+            }
+            result.Reverse();
+            int length = result.Count();
+            int numberOfRecords = atIndex + 20 <= length ? 20 : length - atIndex;
+            var cuttedResult = result.GetRange(atIndex, numberOfRecords);
+             cuttedResult.Reverse();
+            return Ok(cuttedResult);
+        }
+        [HttpGet("GetUnNotifiedMessagesFromContactOfUser")]
+        public async Task<IActionResult> GetUnNotifiedMessagesOfContactUser(string userId, string contactId)
+        {
+            
+            var messages = await messageService.GetUnNotifiedMessagesFromUserContact(userId, contactId);
             if (messages == null)
                 return BadRequest();
             var result = new List<MessageContactModel>();
@@ -179,17 +223,17 @@ namespace Zalo_Clone.Controllers
                 messageReceipentModel.MessageAttachments = new List<MessageAttachmentModel>();
                 List<MessageAttachment> attachmenets = await messageService.GetAttachmentsOfMessage(idMessage);
                 if (attachmenets == null)
-                {   
+                {
                     result.Add(messageReceipentModel);
                     continue;
                 }
 
                 foreach (MessageAttachment attachment in attachmenets)
                 {
-                     var messageAttachmentModel = mapper.Map<MessageAttachmentModel>(attachment);
+                    var messageAttachmentModel = mapper.Map<MessageAttachmentModel>(attachment);
                     string attachmentByBase64 = Convert.ToBase64String(attachment.Attachment!);
                     messageAttachmentModel.AttachmentByBase64 = attachmentByBase64;
-          
+
                     messageReceipentModel.MessageAttachments.Add(messageAttachmentModel);
                 }
                 result.Add(messageReceipentModel);
@@ -201,13 +245,13 @@ namespace Zalo_Clone.Controllers
         {
             var timeOut = 15000;
             var frequency = 500;
-            List<Contact>? contacts =  null;
-        
+            List<Contact>? contacts = null;
+
             try
             {
                 var waitTask = Task.Run(async () =>
                 {
-            
+
                     while (contacts == null)
                     {
                         contacts = await messageService.GetContactsOfUnNotifiedMessage(userId);

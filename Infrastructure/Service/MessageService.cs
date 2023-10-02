@@ -33,6 +33,7 @@ namespace Infrastructure.Service
         Task<bool> IsThereNewMessage(long lastMessageId, UserContact contact);
         Task<List<Contact>> GetContactsOfUnNotifiedMessage(string userId);
         Task<bool> ChangeMessageStatus(long messageId, string userReceiveId, MessageStatus status);
+        Task<List<Message>> GetUnNotifiedMessagesFromUserContact(string userId, string contactId);
     }
 
     public class MessageService : IMessageService
@@ -331,14 +332,14 @@ namespace Infrastructure.Service
         }
         public async Task<List<Contact>> GetContactsOfUnNotifiedMessage(string userId)
         {
-            
+
             using var transaction = await _messageRepo.BeginTransaction();
             List<string> groupContactIds = new List<string>();
             List<long> messageReceipentIds = new List<long>();
             var unNotifiedMessages = _messageReceipentRepo.GetAll().Where(x => x.UserId.Equals(userId) && x.Status == MessageStatus.Sent).ToList();
             if (!unNotifiedMessages.Any())
             {
-                
+
                 return null;
             }
 
@@ -389,6 +390,32 @@ namespace Infrastructure.Service
             }
             return false;
 
+        }
+
+        public async Task<List<Message>> GetUnNotifiedMessagesFromUserContact(string userId, string contactId)
+        {
+            using var transaction = await _messageRepo.BeginTransaction();
+            var messages = _messageRepo.GetAll();
+            var messageReceipent = _messageReceipentRepo.GetAll();
+            var messageReceipentJoinTable = messages.Join(messageReceipent, x => x.Id, y => y.MessageId,
+            (messages, messageReceipent) => new { messages, messageReceipent }).Where(
+                x => x.messages.Sender.Equals(contactId) && x.messageReceipent.UserId.Equals(userId)
+                && x.messageReceipent.Status == MessageStatus.Received);
+
+            var result = messageReceipentJoinTable.Select(x=>x.messages).ToList();
+            var unSeenMessages = messageReceipentJoinTable.Select(x=>x.messageReceipent).ToList();
+            foreach (var message in unSeenMessages)
+            {
+                if (!await ChangeMessageStatus(message.MessageId, userId, MessageStatus.Seen))
+                {
+                    transaction.Rollback();
+                    transaction.Dispose();
+                    return null;
+                }
+            }
+            transaction.Commit();
+            transaction.Dispose();
+            return result;
         }
     }
 }

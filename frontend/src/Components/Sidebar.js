@@ -18,6 +18,7 @@ class Sidebar extends Component {
       showDialog: false,
       showPopover: true,
       avatarImage: "data:image/jpeg;base64," + this.props.user.avatar,
+
     };
   }
 

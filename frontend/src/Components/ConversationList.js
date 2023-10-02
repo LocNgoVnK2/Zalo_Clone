@@ -57,7 +57,6 @@ class ConversationList extends Component {
   };
 
   render = () => {
-    let updateChatView = this.props.updateChatView;
     let rows = [];
     if (this.props.contacts) {
       let contacts = this.props.contacts;
@@ -69,7 +68,6 @@ class ConversationList extends Component {
             action
             onClick={(e) => {
               if (this.state.contactChosenId !== contacts[i].id) {
-                updateChatView(contacts[i].id, e);
                 this.props.setContactInformation(contacts[i], e);
               }
 
