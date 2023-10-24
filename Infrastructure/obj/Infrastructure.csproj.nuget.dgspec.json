@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "e:\\Project C-sharp\\ZaloClone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj": {}
+    "E:\\Project C-sharp\\ZaloClone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj": {}
   },
   "projects": {
-    "e:\\Project C-sharp\\ZaloClone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj": {
+    "E:\\Project C-sharp\\ZaloClone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "e:\\Project C-sharp\\ZaloClone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj",
+        "projectUniqueName": "E:\\Project C-sharp\\ZaloClone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj",
         "projectName": "Infrastructure",
-        "projectPath": "e:\\Project C-sharp\\ZaloClone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj",
+        "projectPath": "E:\\Project C-sharp\\ZaloClone\\Zalo_Clone\\Infrastructure\\Infrastructure.csproj",
         "packagesPath": "C:\\Users\\LENOVO\\.nuget\\packages\\",
-        "outputPath": "e:\\Project C-sharp\\ZaloClone\\Zalo_Clone\\Infrastructure\\obj\\",
+        "outputPath": "E:\\Project C-sharp\\ZaloClone\\Zalo_Clone\\Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\LENOVO\\AppData\\Roaming\\NuGet\\NuGet.Config",
